@@ -9,7 +9,9 @@
     "preview": "vite preview --host 127.0.0.1",
     "test": "vitest run",
     "smoke": "node scripts/smoke.mjs",
-    "sim": "node scripts/run-balance.mjs"
+    "sim": "node scripts/run-balance.mjs",
+    "build:parity": "tsc --noEmit && npm --prefix drafts/3d-web run build:parity",
+    "verify:parity": "npm --prefix drafts/3d-web run verify:parity"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",

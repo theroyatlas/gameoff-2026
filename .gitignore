@@ -21,3 +21,6 @@ artifacts/motion/minimal-*.png
 drafts/3d-web/dist-perf/
 artifacts/fix-2d/
 artifacts/perf-3d/
+drafts/3d-web/dist-parity/
+artifacts/3d-parity/*.webm
+artifacts/3d-parity/video/
