@@ -73,10 +73,11 @@ describe('傷害、靜止靶與勝負', () => {
     expect(g.boss.hp).toBe(C.boss.hp-C.damage.burstExtra); expect(g.monsters).toHaveLength(1);
     expect(g.events[0].targetDamage.some(t=>t.killed)).toBe(true);
   });
-  it('按設定發數生成靜止怪物', () => {
+  it('依時間波次生成靜止怪物，發射次數不加快波次', () => {
     const g = active();
     for(let i=0;i<C.monsters.everyShots*2;i++) { g.fire(-1); advance(g,28); }
-    expect(g.shots).toBe(C.monsters.everyShots*2); expect(g.monsters).toHaveLength(2);
+    expect(g.shots).toBe(C.monsters.everyShots*2); expect(g.monsters).toHaveLength(0);
+    g.balls=[]; g.tick=C.difficulty.firstWaveSeconds/C.dt-1; g.step(); expect(g.monsters).toHaveLength(2);
     const positions = g.monsters.map(m=>[m.x,m.y]); advance(g,30);
     expect(g.monsters.map(m=>[m.x,m.y])).toEqual(positions);
     expect(g.monsters.every(m=>m.hp===C.monsters.hp)).toBe(true);
@@ -91,7 +92,7 @@ describe('傷害、靜止靶與勝負', () => {
   });
   it('第十一隻怪物出現才輸，第十隻仍可玩', () => {
     const g = active();
-    for(let i=0;i<C.monsters.everyShots*11;i++) { g.tick=i*28; g.fire(-1); if(i===C.monsters.everyShots*10-1)expect(g.status).toBe('playing'); }
+    for(let i=0;i<11;i++) { g.spawnMonster(); g.checkOutcome(); if(i===9)expect(g.status).toBe('playing'); }
     expect(g.status).toBe('lost'); expect(g.monsters).toHaveLength(11);
   });
   it('Boss 歸零勝利，終局不能發射或繼續模擬', () => {

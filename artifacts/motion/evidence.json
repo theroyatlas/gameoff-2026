@@ -1,0 +1,1132 @@
+[
+  {
+    "name": "夜光",
+    "choice": "glow",
+    "video": "D:\\Projects\\Active\\competitions\\game-off-2026\\g4-resonance\\artifacts\\motion\\夜光.webm",
+    "seconds": 36.56,
+    "errors": [],
+    "externalRequests": [],
+    "firstChain": 3.716666666666667,
+    "shifts": [
+      {
+        "tick": 2520,
+        "kind": "warning"
+      },
+      {
+        "tick": 2604,
+        "kind": "active"
+      },
+      {
+        "tick": 3204,
+        "kind": "release"
+      }
+    ],
+    "replays": [
+      {
+        "tick": 572,
+        "depth": 2,
+        "ballIds": [
+          2,
+          4,
+          3
+        ],
+        "kills": 0,
+        "bossDamage": 20,
+        "shift": false
+      },
+      {
+        "tick": 813,
+        "depth": 2,
+        "ballIds": [
+          5,
+          6
+        ],
+        "kills": 0,
+        "bossDamage": 20,
+        "shift": false
+      },
+      {
+        "tick": 1591,
+        "depth": 2,
+        "ballIds": [
+          11,
+          12,
+          9
+        ],
+        "kills": 0,
+        "bossDamage": 20,
+        "shift": false
+      },
+      {
+        "tick": 2019,
+        "depth": 2,
+        "ballIds": [
+          13,
+          14,
+          15,
+          18
+        ],
+        "kills": 0,
+        "bossDamage": 0,
+        "shift": false
+      },
+      {
+        "tick": 3204,
+        "depth": 1,
+        "ballIds": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29
+        ],
+        "kills": 0,
+        "bossDamage": 1080,
+        "shift": true
+      },
+      {
+        "tick": 3892,
+        "depth": 2,
+        "ballIds": [
+          32,
+          33
+        ],
+        "kills": 0,
+        "bossDamage": 20,
+        "shift": false
+      }
+    ],
+    "feedback": {
+      "impact": 1161,
+      "ignite": 5,
+      "burst": 50,
+      "shift": 1,
+      "release": 1,
+      "launch": 32,
+      "replay": 6,
+      "audioState": "running",
+      "notes": 1219,
+      "style": "glow"
+    },
+    "times": [
+      0.4,
+      1.1,
+      1.25,
+      2.2,
+      3.919,
+      4.108,
+      21.445,
+      22.242,
+      23.992,
+      27.24,
+      28.09,
+      33
+    ],
+    "samples": [
+      {
+        "wall": 0.492,
+        "tick": 25,
+        "phase": "idle",
+        "events": 0,
+        "chain": false,
+        "replay": false,
+        "feedback": {
+          "impact": 0,
+          "ignite": 0,
+          "burst": 0,
+          "shift": 0,
+          "release": 0,
+          "launch": 1,
+          "replay": 0,
+          "audioState": "running",
+          "notes": 1,
+          "style": "glow"
+        },
+        "effectKinds": [
+          "launch"
+        ]
+      },
+      {
+        "wall": 5.073,
+        "tick": 575,
+        "phase": "idle",
+        "events": 4,
+        "chain": true,
+        "replay": true,
+        "feedback": {
+          "impact": 17,
+          "ignite": 1,
+          "burst": 4,
+          "shift": 0,
+          "release": 0,
+          "launch": 5,
+          "replay": 1,
+          "audioState": "running",
+          "notes": 30,
+          "style": "glow"
+        },
+        "effectKinds": [
+          "impact"
+        ]
+      },
+      {
+        "wall": 7.083,
+        "tick": 816,
+        "phase": "idle",
+        "events": 6,
+        "chain": true,
+        "replay": true,
+        "feedback": {
+          "impact": 25,
+          "ignite": 2,
+          "burst": 6,
+          "shift": 0,
+          "release": 0,
+          "launch": 7,
+          "replay": 2,
+          "audioState": "running",
+          "notes": 44,
+          "style": "glow"
+        },
+        "effectKinds": []
+      },
+      {
+        "wall": 13.545,
+        "tick": 1592,
+        "phase": "idle",
+        "events": 12,
+        "chain": true,
+        "replay": true,
+        "feedback": {
+          "impact": 71,
+          "ignite": 3,
+          "burst": 12,
+          "shift": 0,
+          "release": 0,
+          "launch": 14,
+          "replay": 3,
+          "audioState": "running",
+          "notes": 109,
+          "style": "glow"
+        },
+        "effectKinds": [
+          "impact",
+          "launch"
+        ]
+      },
+      {
+        "wall": 17.116,
+        "tick": 2020,
+        "phase": "idle",
+        "events": 16,
+        "chain": true,
+        "replay": true,
+        "feedback": {
+          "impact": 102,
+          "ignite": 4,
+          "burst": 16,
+          "shift": 0,
+          "release": 0,
+          "launch": 17,
+          "replay": 4,
+          "audioState": "running",
+          "notes": 152,
+          "style": "glow"
+        },
+        "effectKinds": []
+      },
+      {
+        "wall": 21.295,
+        "tick": 2522,
+        "phase": "warning",
+        "events": 18,
+        "chain": true,
+        "replay": true,
+        "feedback": {
+          "impact": 138,
+          "ignite": 4,
+          "burst": 18,
+          "shift": 0,
+          "release": 0,
+          "launch": 21,
+          "replay": 4,
+          "audioState": "running",
+          "notes": 199,
+          "style": "glow"
+        },
+        "effectKinds": [
+          "impact",
+          "resonate",
+          "warning"
+        ]
+      },
+      {
+        "wall": 21.992,
+        "tick": 2605,
+        "phase": "active",
+        "events": 18,
+        "chain": true,
+        "replay": true,
+        "feedback": {
+          "impact": 154,
+          "ignite": 4,
+          "burst": 18,
+          "shift": 1,
+          "release": 0,
+          "launch": 22,
+          "replay": 4,
+          "audioState": "running",
+          "notes": 218,
+          "style": "glow"
+        },
+        "effectKinds": [
+          "damage",
+          "impact",
+          "resonate",
+          "shift"
+        ]
+      },
+      {
+        "wall": 26.988,
+        "tick": 3205,
+        "phase": "idle",
+        "events": 45,
+        "chain": true,
+        "replay": false,
+        "feedback": {
+          "impact": 900,
+          "ignite": 4,
+          "burst": 45,
+          "shift": 1,
+          "release": 1,
+          "launch": 27,
+          "replay": 4,
+          "audioState": "running",
+          "notes": 948,
+          "style": "glow"
+        },
+        "effectKinds": [
+          "damage",
+          "impact",
+          "burst",
+          "release"
+        ]
+      },
+      {
+        "wall": 27.09,
+        "tick": 3217,
+        "phase": "idle",
+        "events": 45,
+        "chain": true,
+        "replay": true,
+        "feedback": {
+          "impact": 916,
+          "ignite": 4,
+          "burst": 45,
+          "shift": 1,
+          "release": 1,
+          "launch": 27,
+          "replay": 5,
+          "audioState": "running",
+          "notes": 964,
+          "style": "glow"
+        },
+        "effectKinds": [
+          "damage",
+          "impact",
+          "burst",
+          "release"
+        ]
+      },
+      {
+        "wall": 32.744,
+        "tick": 3896,
+        "phase": "idle",
+        "events": 49,
+        "chain": true,
+        "replay": true,
+        "feedback": {
+          "impact": 1144,
+          "ignite": 5,
+          "burst": 49,
+          "shift": 1,
+          "release": 1,
+          "launch": 32,
+          "replay": 6,
+          "audioState": "running",
+          "notes": 1200,
+          "style": "glow"
+        },
+        "effectKinds": [
+          "impact"
+        ]
+      },
+      {
+        "wall": 35.484,
+        "tick": 4225,
+        "phase": "idle",
+        "events": 50,
+        "chain": true,
+        "replay": true,
+        "feedback": {
+          "impact": 1161,
+          "ignite": 5,
+          "burst": 50,
+          "shift": 1,
+          "release": 1,
+          "launch": 32,
+          "replay": 6,
+          "audioState": "running",
+          "notes": 1219,
+          "style": "glow"
+        },
+        "effectKinds": []
+      }
+    ],
+    "sampleCount": 650
+  },
+  {
+    "name": "紙本",
+    "choice": "paper",
+    "video": "D:\\Projects\\Active\\competitions\\game-off-2026\\g4-resonance\\artifacts\\motion\\紙本.webm",
+    "seconds": 36.64,
+    "errors": [],
+    "externalRequests": [],
+    "firstChain": 3.75,
+    "shifts": [
+      {
+        "tick": 2366,
+        "kind": "warning"
+      },
+      {
+        "tick": 2450,
+        "kind": "active"
+      },
+      {
+        "tick": 3050,
+        "kind": "release"
+      }
+    ],
+    "replays": [
+      {
+        "tick": 570,
+        "depth": 2,
+        "ballIds": [
+          2,
+          4,
+          3
+        ],
+        "kills": 0,
+        "bossDamage": 20,
+        "shift": false
+      },
+      {
+        "tick": 1681,
+        "depth": 2,
+        "ballIds": [
+          12,
+          8,
+          13
+        ],
+        "kills": 0,
+        "bossDamage": 40,
+        "shift": false
+      },
+      {
+        "tick": 2159,
+        "depth": 3,
+        "ballIds": [
+          14,
+          15,
+          8,
+          18,
+          19
+        ],
+        "kills": 0,
+        "bossDamage": 20,
+        "shift": false
+      },
+      {
+        "tick": 3050,
+        "depth": 1,
+        "ballIds": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28
+        ],
+        "kills": 0,
+        "bossDamage": 1040,
+        "shift": true
+      },
+      {
+        "tick": 3834,
+        "depth": 2,
+        "ballIds": [
+          33,
+          32,
+          31
+        ],
+        "kills": 0,
+        "bossDamage": 20,
+        "shift": false
+      }
+    ],
+    "feedback": {
+      "impact": 1027,
+      "ignite": 6,
+      "burst": 49,
+      "shift": 1,
+      "release": 1,
+      "launch": 32,
+      "replay": 5,
+      "audioState": "running",
+      "notes": 1099,
+      "style": "paper"
+    },
+    "times": [
+      0.4,
+      1.1,
+      1.25,
+      2.2,
+      3.884,
+      4.148,
+      20.134,
+      20.943,
+      22.693,
+      25.892999999999997,
+      26.743,
+      33
+    ],
+    "samples": [
+      {
+        "wall": 0.474,
+        "tick": 24,
+        "phase": "idle",
+        "events": 0,
+        "chain": false,
+        "replay": false,
+        "feedback": {
+          "impact": 0,
+          "ignite": 0,
+          "burst": 0,
+          "shift": 0,
+          "release": 0,
+          "launch": 1,
+          "replay": 0,
+          "audioState": "running",
+          "notes": 1,
+          "style": "paper"
+        },
+        "effectKinds": [
+          "launch"
+        ]
+      },
+      {
+        "wall": 5.009,
+        "tick": 571,
+        "phase": "idle",
+        "events": 4,
+        "chain": true,
+        "replay": true,
+        "feedback": {
+          "impact": 17,
+          "ignite": 1,
+          "burst": 4,
+          "shift": 0,
+          "release": 0,
+          "launch": 5,
+          "replay": 1,
+          "audioState": "running",
+          "notes": 30,
+          "style": "paper"
+        },
+        "effectKinds": [
+          "impact"
+        ]
+      },
+      {
+        "wall": 14.278,
+        "tick": 1682,
+        "phase": "idle",
+        "events": 12,
+        "chain": true,
+        "replay": true,
+        "feedback": {
+          "impact": 78,
+          "ignite": 4,
+          "burst": 12,
+          "shift": 0,
+          "release": 0,
+          "launch": 14,
+          "replay": 2,
+          "audioState": "running",
+          "notes": 118,
+          "style": "paper"
+        },
+        "effectKinds": [
+          "impact",
+          "resonate"
+        ]
+      },
+      {
+        "wall": 18.271,
+        "tick": 2162,
+        "phase": "idle",
+        "events": 17,
+        "chain": true,
+        "replay": true,
+        "feedback": {
+          "impact": 117,
+          "ignite": 5,
+          "burst": 17,
+          "shift": 0,
+          "release": 0,
+          "launch": 18,
+          "replay": 3,
+          "audioState": "running",
+          "notes": 170,
+          "style": "paper"
+        },
+        "effectKinds": [
+          "impact",
+          "resonate"
+        ]
+      },
+      {
+        "wall": 19.984,
+        "tick": 2368,
+        "phase": "warning",
+        "events": 17,
+        "chain": true,
+        "replay": true,
+        "feedback": {
+          "impact": 127,
+          "ignite": 5,
+          "burst": 17,
+          "shift": 0,
+          "release": 0,
+          "launch": 20,
+          "replay": 3,
+          "audioState": "running",
+          "notes": 185,
+          "style": "paper"
+        },
+        "effectKinds": [
+          "impact",
+          "resonate",
+          "warning"
+        ]
+      },
+      {
+        "wall": 20.693,
+        "tick": 2452,
+        "phase": "active",
+        "events": 17,
+        "chain": true,
+        "replay": true,
+        "feedback": {
+          "impact": 137,
+          "ignite": 5,
+          "burst": 17,
+          "shift": 1,
+          "release": 0,
+          "launch": 21,
+          "replay": 3,
+          "audioState": "running",
+          "notes": 197,
+          "style": "paper"
+        },
+        "effectKinds": [
+          "impact",
+          "shift",
+          "damage"
+        ]
+      },
+      {
+        "wall": 25.692,
+        "tick": 3052,
+        "phase": "idle",
+        "events": 43,
+        "chain": true,
+        "replay": false,
+        "feedback": {
+          "impact": 809,
+          "ignite": 5,
+          "burst": 43,
+          "shift": 1,
+          "release": 1,
+          "launch": 26,
+          "replay": 3,
+          "audioState": "running",
+          "notes": 866,
+          "style": "paper"
+        },
+        "effectKinds": [
+          "damage",
+          "impact",
+          "burst",
+          "release"
+        ]
+      },
+      {
+        "wall": 25.743,
+        "tick": 3058,
+        "phase": "idle",
+        "events": 43,
+        "chain": true,
+        "replay": true,
+        "feedback": {
+          "impact": 815,
+          "ignite": 5,
+          "burst": 43,
+          "shift": 1,
+          "release": 1,
+          "launch": 26,
+          "replay": 4,
+          "audioState": "running",
+          "notes": 870,
+          "style": "paper"
+        },
+        "effectKinds": [
+          "damage",
+          "impact",
+          "burst",
+          "release"
+        ]
+      },
+      {
+        "wall": 32.24,
+        "tick": 3838,
+        "phase": "idle",
+        "events": 48,
+        "chain": true,
+        "replay": true,
+        "feedback": {
+          "impact": 1012,
+          "ignite": 6,
+          "burst": 48,
+          "shift": 1,
+          "release": 1,
+          "launch": 32,
+          "replay": 5,
+          "audioState": "running",
+          "notes": 1083,
+          "style": "paper"
+        },
+        "effectKinds": [
+          "impact"
+        ]
+      },
+      {
+        "wall": 35.474,
+        "tick": 4226,
+        "phase": "idle",
+        "events": 49,
+        "chain": true,
+        "replay": true,
+        "feedback": {
+          "impact": 1027,
+          "ignite": 6,
+          "burst": 49,
+          "shift": 1,
+          "release": 1,
+          "launch": 32,
+          "replay": 5,
+          "audioState": "running",
+          "notes": 1099,
+          "style": "paper"
+        },
+        "effectKinds": []
+      }
+    ],
+    "sampleCount": 606
+  },
+  {
+    "name": "極簡",
+    "choice": "minimal",
+    "video": "D:\\Projects\\Active\\competitions\\game-off-2026\\g4-resonance\\artifacts\\motion\\極簡.webm",
+    "seconds": 36.64,
+    "errors": [],
+    "externalRequests": [],
+    "firstChain": 3.716666666666667,
+    "shifts": [
+      {
+        "tick": 2364,
+        "kind": "warning"
+      },
+      {
+        "tick": 2448,
+        "kind": "active"
+      },
+      {
+        "tick": 3048,
+        "kind": "release"
+      }
+    ],
+    "replays": [
+      {
+        "tick": 573,
+        "depth": 2,
+        "ballIds": [
+          2,
+          4,
+          3
+        ],
+        "kills": 0,
+        "bossDamage": 20,
+        "shift": false
+      },
+      {
+        "tick": 2021,
+        "depth": 2,
+        "ballIds": [
+          12,
+          15,
+          14,
+          18
+        ],
+        "kills": 0,
+        "bossDamage": 0,
+        "shift": false
+      },
+      {
+        "tick": 3048,
+        "depth": 3,
+        "ballIds": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28
+        ],
+        "kills": 0,
+        "bossDamage": 1040,
+        "shift": true
+      },
+      {
+        "tick": 3540,
+        "depth": 2,
+        "ballIds": [
+          29,
+          30,
+          31
+        ],
+        "kills": 0,
+        "bossDamage": 60,
+        "shift": false
+      }
+    ],
+    "feedback": {
+      "impact": 1115,
+      "ignite": 6,
+      "burst": 48,
+      "shift": 1,
+      "release": 1,
+      "launch": 32,
+      "replay": 4,
+      "audioState": "running",
+      "notes": 1171,
+      "style": "minimal"
+    },
+    "times": [
+      0.4,
+      1.1,
+      1.25,
+      2.2,
+      3.965,
+      4.145,
+      20.177999999999997,
+      20.979,
+      22.729,
+      25.955,
+      26.805,
+      33
+    ],
+    "samples": [
+      {
+        "wall": 0.531,
+        "tick": 25,
+        "phase": "idle",
+        "events": 0,
+        "chain": false,
+        "replay": false,
+        "feedback": {
+          "impact": 0,
+          "ignite": 0,
+          "burst": 0,
+          "shift": 0,
+          "release": 0,
+          "launch": 1,
+          "replay": 0,
+          "audioState": "running",
+          "notes": 1,
+          "style": "minimal"
+        },
+        "effectKinds": [
+          "launch"
+        ]
+      },
+      {
+        "wall": 5.172,
+        "tick": 580,
+        "phase": "idle",
+        "events": 4,
+        "chain": true,
+        "replay": true,
+        "feedback": {
+          "impact": 17,
+          "ignite": 1,
+          "burst": 4,
+          "shift": 0,
+          "release": 0,
+          "launch": 5,
+          "replay": 1,
+          "audioState": "running",
+          "notes": 30,
+          "style": "minimal"
+        },
+        "effectKinds": [
+          "impact"
+        ]
+      },
+      {
+        "wall": 17.161,
+        "tick": 2021,
+        "phase": "idle",
+        "events": 15,
+        "chain": true,
+        "replay": true,
+        "feedback": {
+          "impact": 96,
+          "ignite": 2,
+          "burst": 15,
+          "shift": 0,
+          "release": 0,
+          "launch": 17,
+          "replay": 2,
+          "audioState": "running",
+          "notes": 143,
+          "style": "minimal"
+        },
+        "effectKinds": [
+          "impact"
+        ]
+      },
+      {
+        "wall": 20.028,
+        "tick": 2365,
+        "phase": "warning",
+        "events": 17,
+        "chain": true,
+        "replay": true,
+        "feedback": {
+          "impact": 138,
+          "ignite": 4,
+          "burst": 17,
+          "shift": 0,
+          "release": 0,
+          "launch": 20,
+          "replay": 2,
+          "audioState": "running",
+          "notes": 196,
+          "style": "minimal"
+        },
+        "effectKinds": [
+          "impact",
+          "resonate",
+          "warning"
+        ]
+      },
+      {
+        "wall": 20.729,
+        "tick": 2450,
+        "phase": "active",
+        "events": 17,
+        "chain": true,
+        "replay": true,
+        "feedback": {
+          "impact": 141,
+          "ignite": 4,
+          "burst": 17,
+          "shift": 1,
+          "release": 0,
+          "launch": 21,
+          "replay": 2,
+          "audioState": "running",
+          "notes": 201,
+          "style": "minimal"
+        },
+        "effectKinds": [
+          "launch",
+          "shift"
+        ]
+      },
+      {
+        "wall": 25.726,
+        "tick": 3049,
+        "phase": "idle",
+        "events": 43,
+        "chain": true,
+        "replay": false,
+        "feedback": {
+          "impact": 858,
+          "ignite": 4,
+          "burst": 43,
+          "shift": 1,
+          "release": 1,
+          "launch": 26,
+          "replay": 2,
+          "audioState": "running",
+          "notes": 911,
+          "style": "minimal"
+        },
+        "effectKinds": [
+          "impact",
+          "launch",
+          "damage",
+          "burst",
+          "release"
+        ]
+      },
+      {
+        "wall": 25.805,
+        "tick": 3058,
+        "phase": "idle",
+        "events": 43,
+        "chain": true,
+        "replay": true,
+        "feedback": {
+          "impact": 871,
+          "ignite": 4,
+          "burst": 43,
+          "shift": 1,
+          "release": 1,
+          "launch": 26,
+          "replay": 3,
+          "audioState": "running",
+          "notes": 920,
+          "style": "minimal"
+        },
+        "effectKinds": [
+          "impact",
+          "damage",
+          "burst",
+          "release"
+        ]
+      },
+      {
+        "wall": 29.856,
+        "tick": 3544,
+        "phase": "idle",
+        "events": 46,
+        "chain": true,
+        "replay": true,
+        "feedback": {
+          "impact": 1063,
+          "ignite": 5,
+          "burst": 46,
+          "shift": 1,
+          "release": 1,
+          "launch": 30,
+          "replay": 4,
+          "audioState": "running",
+          "notes": 1112,
+          "style": "minimal"
+        },
+        "effectKinds": [
+          "impact"
+        ]
+      },
+      {
+        "wall": 35.485,
+        "tick": 4220,
+        "phase": "idle",
+        "events": 48,
+        "chain": true,
+        "replay": false,
+        "feedback": {
+          "impact": 1115,
+          "ignite": 6,
+          "burst": 48,
+          "shift": 1,
+          "release": 1,
+          "launch": 32,
+          "replay": 4,
+          "audioState": "running",
+          "notes": 1171,
+          "style": "minimal"
+        },
+        "effectKinds": [
+          "impact"
+        ]
+      }
+    ],
+    "sampleCount": 623
+  }
+]

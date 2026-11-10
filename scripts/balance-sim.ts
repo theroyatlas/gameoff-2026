@@ -66,6 +66,7 @@ export function simulate(seed: number, strategy: Strategy) {
   const random = () => { state = (Math.imul(state, 1664525) + 1013904223) >>> 0; return state / 4294967296; };
   game.start();
   const interval = Math.round(2 / C.dt), limit = Math.round(600 / C.dt);
+  const bins: { sum: number; ticks: number }[] = [];
   while (game.status === 'playing' && game.tick < limit) {
     if (game.tick % interval === 0) {
       const offset = random() * 2 - 1;
@@ -74,14 +75,23 @@ export function simulate(seed: number, strategy: Strategy) {
       if (!game.fire(angle)) throw new Error('固定策略發射失敗');
     }
     game.step();
+    const index=Math.floor((game.tick-1)*C.dt/30);
+    bins[index] ??= {sum:0,ticks:0}; bins[index].sum+=game.monsters.length; bins[index].ticks++;
   }
   return { seed, status: game.status === 'playing' ? 'timeout' : game.status, shots: game.shots,
+    monsterBins: bins, shiftCount: game.shifts.filter(s=>s.kind==='active').length, firstChainSeconds: game.events.find(e=>e.depth>=2)?.tick! * C.dt || null,
     seconds: game.tick * C.dt, bossHp: game.boss.hp, monsters: game.monsters.length,
     ...waveStats(game.events, C.boss.hp, game.tick) };
 }
-export function summarize(games: ReturnType<typeof simulate>[]) {
+export function summarize(games: (Omit<ReturnType<typeof simulate>, 'monsterBins' | 'shiftCount' | 'firstChainSeconds'> & Partial<Pick<ReturnType<typeof simulate>, 'monsterBins' | 'shiftCount' | 'firstChainSeconds'>>)[]) {
   const count = games.length, wins = games.filter(g => g.status === 'won').length;
-  return { games: count, wins, losses: games.filter(g => g.status === 'lost').length,
+  const bins=Array.from({length:Math.max(0,...games.map(g=>g.monsterBins?.length??0))},(_,i)=>{
+    const present=games.filter(g=>g.monsterBins?.[i]);
+    const ticks=present.reduce((s,g)=>s+g.monsterBins![i].ticks,0);
+    return {from:i*30,to:(i+1)*30,activeGames:present.length,average:present.reduce((s,g)=>s+g.monsterBins![i].sum,0)/ticks};
+  });
+  return { monsterCurve: bins, earlyLossRate: games.filter(g=>g.status==='lost'&&g.seconds<=60).length/count,
+    shiftCount: distribution(games.map(g=>g.shiftCount??0)), firstChainWithin10: games.filter(g=>g.firstChainSeconds!==null&&g.firstChainSeconds!==undefined&&g.firstChainSeconds<=10).length, games: count, wins, losses: games.filter(g => g.status === 'lost').length,
     timeouts: games.filter(g => g.status === 'timeout').length, winRate: wins / count,
     averageShots: games.reduce((sum, g) => sum + g.shots, 0) / count,
     averageSeconds: games.reduce((sum, g) => sum + g.seconds, 0) / count,
@@ -122,17 +132,14 @@ export async function run(args: string[]) {
       const games = SEEDS.slice(0, count).map(seed => simulate(seed, strategy));
       return { strategy, summary: summarize(games), games };
     });
-    const [random, aimed] = results.map(r => r.summary);
     const checks = {
-      quietBoth: results.every(r => r.summary.quietRatio.median >= .6),
-      wowBoth: results.every(r => r.summary.wow.any / count >= .5),
-      randomLossRate: random.losses / count >= .1 && random.losses / count <= .4,
-      durationBoth: results.every(r => r.summary.averageSeconds >= 120 && r.summary.averageSeconds <= 300),
-      aimedWinAdvantage: aimed.wins - random.wins >= count * .1,
+      earlySafety: results.every(r=>r.summary.earlyLossRate<=.05),
+      durationBoth: results.every(r=>r.summary.averageSeconds>=180&&r.summary.averageSeconds<=300),
+      risingPressure: results.every(r=>r.summary.monsterCurve.some(b=>b.from>=150&&b.average>r.summary.monsterCurve[1].average)),
+      openingChain: results.every(r=>r.summary.firstChainWithin10===count),
+      shiftsOneOrTwo: results.every(r=>r.games.every(g=>g.shiftCount>=1&&g.shiftCount<=2)),
     };
-    const acceptance = { checks, allPassed: Object.values(checks).every(Boolean),
-      aimedWinAdvantagePoints: (aimed.wins - random.wins) / count * 100,
-      formalSample: count === 40 };
+    const acceptance = {checks,allPassed:Object.values(checks).every(Boolean),formalSample:count===40};
     const report = { acceptance, label: candidate.name, config: structuredClone(C), seeds: SEEDS.slice(0, count),
       protocol: { intervalSeconds: 2, timeoutSeconds: 600, firstShotTick: 0, randomUpHalfAngleDegrees: 60,
         bossNear: '每發在 Boss 中心左右一個半徑內取水平瞄準點；保留遊戲扇形隨機偏移',

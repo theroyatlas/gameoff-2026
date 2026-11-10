@@ -10,3 +10,9 @@ artifacts/*.json
 !artifacts/balance-round2-final.json
 !artifacts/smoke-result.json
 artifacts/sweep/
+
+artifacts/motion/*.webm
+artifacts/motion/glow-*.png
+artifacts/motion/paper-*.png
+artifacts/motion/minimal-*.png
+!artifacts/balance-morning.json
