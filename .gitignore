@@ -16,3 +16,8 @@ artifacts/motion/glow-*.png
 artifacts/motion/paper-*.png
 artifacts/motion/minimal-*.png
 !artifacts/balance-morning.json
+
+.preview/
+drafts/3d-web/dist-perf/
+artifacts/fix-2d/
+artifacts/perf-3d/

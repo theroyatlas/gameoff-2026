@@ -4,8 +4,8 @@
 <body>
 <main>
   <header><div><h1>共振桌</h1><p>Resonance · 3D 視覺原型</p></div><div class="phase"><span id="phase">等待第一顆球</span><small id="status">木、黃銅與玻璃之間</small></div></header>
-  <section id="stage" aria-label="共振球場"><canvas id="scene" tabindex="0" aria-label="3D 球場：從下方黃銅發射座朝場內拖拉後放開，或左右方向鍵瞄準、空白鍵發射"></canvas><div id="failure" hidden>無法建立 3D 畫面。請使用已啟用圖形加速的 Microsoft Edge 重新開啟。</div></section>
-  <footer><p><strong>從下緣發射座朝場內拖拉，放開。</strong><span>只選方向，力道固定。球會留下，下一次碰撞就可能接上連鎖。</span></p><p class="keyboard">← → 瞄準 · 空白鍵發射<br><span>無勝負的場景試作</span></p></footer>
+  <section id="stage" aria-label="共振球場"><canvas id="scene" tabindex="0" aria-label="3D 球場：從下方黃銅發射座朝場內拖拉後放開，或左右方向鍵瞄準、空白鍵發射"></canvas><div id="failure" role="status" hidden><h2>這台裝置目前無法顯示 3D 球場</h2><p>瀏覽器的 3D 繪圖功能無法使用，或圖形處理已中斷。你可以直接改玩 2D 版。</p><a id="fallback-link">開啟 2D 版</a></div></section>
+  <footer id="instructions"><p><strong>從下緣發射座朝場內拖拉，放開。</strong><span>只選方向，力道固定。球會留下，下一次碰撞就可能接上連鎖。</span></p><p class="keyboard">← → 瞄準 · 空白鍵發射<br><span>無勝負的場景試作</span></p></footer>
   <p class="sr-only" id="announcement" role="status" aria-live="polite"></p>
 </main><script type="module" src="./main.ts"></script>
 </body></html>

@@ -6,6 +6,8 @@ import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { Study, CONFIG as C } from './adapter';
+import { AdaptiveQuality } from './quality';
+import { LOW_GPU_PROFILE, TWO_D_URL } from './settings';
 
 const canvas = document.querySelector<HTMLCanvasElement>('#scene')!;
 const stage = document.querySelector<HTMLElement>('#stage')!;
@@ -14,10 +16,21 @@ const statusText = document.querySelector<HTMLElement>('#status')!;
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const game = new Study();
 const palette = { brass:0xc49a50, edge:0xe4be72, dark:0x24180e, cyan:0x45f5e4, glass:0xb1e6de, steel:0xbfc8cd };
-let renderer: THREE.WebGLRenderer;
-try { renderer = new THREE.WebGLRenderer({canvas,antialias:true,powerPreference:'high-performance'}); }
-catch (error) { document.querySelector<HTMLElement>('#failure')!.hidden=false; throw error; }
-renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
+const failure=document.querySelector<HTMLElement>('#failure')!;
+const fallbackLink=document.querySelector<HTMLAnchorElement>('#fallback-link')!;
+fallbackLink.setAttribute('href',TWO_D_URL);
+function showFallback(){
+  canvas.hidden=true;canvas.tabIndex=-1;failure.hidden=false;
+  phaseText.textContent='3D 畫面無法使用';statusText.textContent='可改玩 2D 版';
+  document.querySelector<HTMLElement>('#instructions')!.hidden=true;
+}
+function startScene(){
+const quality=new AdaptiveQuality(),qualityHistory:{level:number;fps:number;seconds:number}[]=[];
+let stopped=false;
+const initialPixelRatio=LOW_GPU_PROFILE?1:Math.min(devicePixelRatio,1.5);
+const renderer=new THREE.WebGLRenderer({canvas,antialias:!LOW_GPU_PROFILE,powerPreference:LOW_GPU_PROFILE?'low-power':'high-performance'});
+renderer.setPixelRatio(initialPixelRatio);
+canvas.addEventListener('webglcontextlost',event=>{event.preventDefault();stopped=true;showFallback();});
 renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
 renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=.92;
 renderer.localClippingEnabled=true;
@@ -29,7 +42,7 @@ const composer=new EffectComposer(renderer);composer.addPass(new RenderPass(scen
 const bloom=new UnrealBloomPass(new THREE.Vector2(800,600),.25,.5,1);composer.addPass(bloom);composer.addPass(new OutputPass());
 scene.add(new THREE.HemisphereLight(0xffe5b7,0x3c2820,.65));
 const key=new THREE.SpotLight(0xffc981,55,24,.85,.8,2);key.position.set(-4.8,7,2);key.target.position.set(0,0,0);key.castShadow=true;
-key.shadow.mapSize.set(2048,2048);key.shadow.bias=-.0004;key.shadow.normalBias=.025;scene.add(key,key.target);
+key.shadow.mapSize.set(LOW_GPU_PROFILE?512:2048,LOW_GPU_PROFILE?512:2048);key.shadow.bias=-.0004;key.shadow.normalBias=.025;scene.add(key,key.target);
 const rim=new THREE.DirectionalLight(0xc2dbdf,1.25);rim.position.set(4,6,-5);scene.add(rim);
 const phaseLight=new THREE.PointLight(palette.cyan,0,12,1.3);phaseLight.position.set(0,1.2,0);scene.add(phaseLight);
 const brass=new THREE.MeshStandardMaterial({color:palette.brass,metalness:.86,roughness:.27});
@@ -125,13 +138,16 @@ type VisualEffect={kind:string,born:number,duration:number,mesh:THREE.Object3D,r
 const effects:VisualEffect[]=[];const seen=new WeakSet<object>();
 const eventCounts:Record<string,number>={};let maxDepth=0;
 const arenaClip=[new THREE.Plane(new THREE.Vector3(1,0,0),4),new THREE.Plane(new THREE.Vector3(-1,0,0),4),new THREE.Plane(new THREE.Vector3(0,0,1),3.4),new THREE.Plane(new THREE.Vector3(0,0,-1),3.4)];
-function addRing(x:number,y:number,r:number,kind:string,duration=.65){const material=new THREE.MeshBasicMaterial({color:kind==='burst'?palette.edge:palette.cyan,transparent:true,opacity:.8,depthWrite:false,clippingPlanes:arenaClip});const obj=ring(1,.007,material,(x-400)*.01,.045,(y-340)*.01,effectGroup);obj.castShadow=false;effects.push({kind,born:game.tick*C.dt,duration,mesh:obj,radius:r*.01});}
+function effectLimit(){return quality.level>=3?24:96;}
+function addRing(x:number,y:number,r:number,kind:string,duration=.65){
+  if(effects.length>=effectLimit()){if(kind!=='release')return;disposeEffect(effects.shift()!);}
+  if(quality.level>=3&&kind==='impact'&&(eventCounts.impact??0)%4!==0)return;const material=new THREE.MeshBasicMaterial({color:kind==='burst'?palette.edge:palette.cyan,transparent:true,opacity:.8,depthWrite:false,clippingPlanes:arenaClip});const obj=ring(1,.007,material,(x-400)*.01,.045,(y-340)*.01,effectGroup);obj.castShadow=false;effects.push({kind,born:game.tick*C.dt,duration,mesh:obj,radius:r*.01});}
 function ingest(){for(const e of game.effects){if(seen.has(e))continue;seen.add(e);eventCounts[e.kind]=(eventCounts[e.kind]??0)+1;
   if(e.kind==='burst'){maxDepth=Math.max(maxDepth,e.value);addRing(e.x,e.y,e.radius,e.kind);}
   if(e.kind==='release')addRing(400,340,540,'release',1.05);
   if(e.kind==='impact'&&!reduced)addRing(e.x,e.y,24,'impact',.2);
   if(e.kind==='resonate')addRing(e.x,e.y,35,'resonate',.45);
-  if(e.kind==='ignite'){const geometry=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3((e.fromX!-400)*.01,.15,(e.fromY!-340)*.01),new THREE.Vector3((e.x-400)*.01,.15,(e.y-340)*.01)]);const line=new THREE.Line(geometry,new THREE.LineBasicMaterial({color:palette.edge,transparent:true,opacity:.8}));effectGroup.add(line);effects.push({kind:'ignite',born:game.tick*C.dt,duration:.45,mesh:line,radius:0});}
+  if(e.kind==='ignite'&&effects.length<effectLimit()){const geometry=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3((e.fromX!-400)*.01,.15,(e.fromY!-340)*.01),new THREE.Vector3((e.x-400)*.01,.15,(e.y-340)*.01)]);const line=new THREE.Line(geometry,new THREE.LineBasicMaterial({color:palette.edge,transparent:true,opacity:.8}));effectGroup.add(line);effects.push({kind:'ignite',born:game.tick*C.dt,duration:.45,mesh:line,radius:0});}
 }}
 let currentPhase='',angle=-Math.PI/2,drag:number|null=null,accumulator=0,previous=performance.now();
 let frameCount=0,frameTotal=0;
@@ -144,13 +160,21 @@ canvas.addEventListener('pointerup',e=>{if(drag!==e.pointerId)return;const p=wor
 for(const event of ['pointercancel','lostpointercapture'])canvas.addEventListener(event,()=>drag=null);
 window.addEventListener('blur',()=>drag=null);
 canvas.addEventListener('keydown',e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight'){angle=THREE.MathUtils.clamp(angle+(e.key==='ArrowLeft'?-.12:.12),-Math.PI+.2,-.2);e.preventDefault();}if(e.code==='Space'&&!e.repeat){game.fire(angle);e.preventDefault();}});
-document.addEventListener('visibilitychange',()=>{previous=performance.now();accumulator=0;drag=null;});
+document.addEventListener('visibilitychange',()=>{previous=performance.now();accumulator=0;drag=null;quality.resetWindow();});
 function resize(){const w=stage.clientWidth,h=stage.clientHeight;renderer.setSize(w,h,false);composer.setSize(w,h);camera.aspect=w/h;camera.position.set(.2,8.2,9.3);if(camera.aspect<1.25)camera.position.multiplyScalar(1.25/camera.aspect);camera.lookAt(0,0,0);camera.updateProjectionMatrix();}
-new ResizeObserver(resize).observe(stage);resize();
+new ResizeObserver(()=>{if(!stopped)resize();}).observe(stage);resize();
+function applyQuality(){
+  if(quality.level===1){renderer.shadowMap.enabled=false;scene.traverse(o=>{const mesh=o as THREE.Mesh;const materials=mesh.material?(Array.isArray(mesh.material)?mesh.material:[mesh.material]):[];materials.forEach(m=>m.needsUpdate=true);});}
+  if(quality.level===2){const ratio=Math.max(.5,initialPixelRatio*.75);renderer.setPixelRatio(ratio);composer.setPixelRatio(ratio);resize();}
+  if(quality.level===3){while(effects.length>effectLimit()){const e=effects.shift()!;disposeEffect(e);}}
+  qualityHistory.push({level:quality.level,fps:quality.fps,seconds:game.tick*C.dt});
+}
+function disposeEffect(e:VisualEffect){e.mesh.traverse(o=>{const m=o as THREE.Mesh;m.geometry?.dispose();if(m.material&&!Array.isArray(m.material))m.material.dispose();});effectGroup.remove(e.mesh);}
 function screenPoint(x:number,y:number){const p=new THREE.Vector3((x-400)*.01,0,(y-340)*.01).project(camera),r=canvas.getBoundingClientRect();return{x:r.left+(p.x+1)*r.width/2,y:r.top+(1-p.y)*r.height/2};}
 // 唯讀驗收資訊；不提供強制相變、植入球或改變時鐘的控制。
-Object.assign(window,{studyEvidence:{snapshot:()=>({tick:game.tick,seconds:game.tick*C.dt,shots:game.shots,phase:game.phase,shifts:game.shifts,events:game.events,inputs:game.inputs,balls:game.balls.map(b=>({...b})),counts:{...eventCounts},maxDepth,frameCount,meanFrameMs:frameCount?frameTotal/frameCount:0,friction:game.phase==='active'?C.shift.friction:C.ball.friction,drawCalls:renderer.info.render.calls,triangles:renderer.info.render.triangles}),project:screenPoint}});
-function frame(now:number){requestAnimationFrame(frame);const elapsed=Math.max(0,(now-previous)/1000);previous=now;
+Object.assign(window,{studyEvidence:{timing:()=>({seconds:game.tick*C.dt,phase:game.phase,shots:game.shots,qualityLevel:quality.level}),snapshot:()=>({tick:game.tick,seconds:game.tick*C.dt,shots:game.shots,phase:game.phase,shifts:game.shifts,events:game.events,inputs:game.inputs,balls:game.balls.map(b=>({...b})),counts:{...eventCounts},maxDepth,frameCount,meanFrameMs:frameCount?frameTotal/frameCount:0,friction:game.phase==='active'?C.shift.friction:C.ball.friction,quality:{level:quality.level,fps:quality.fps,history:qualityHistory,shadows:renderer.shadowMap.enabled,pixelRatio:renderer.getPixelRatio(),composerPixelRatio:composer.readBuffer.width/stage.clientWidth,antialias:renderer.getContext().getContextAttributes()?.antialias,shadowMapSize:key.shadow.mapSize.x,effects:effects.length,effectLimit:effectLimit()},drawCalls:renderer.info.render.calls,triangles:renderer.info.render.triangles}),project:screenPoint}});
+function frame(now:number){if(stopped)return;requestAnimationFrame(frame);if(document.hidden){previous=now;return;}const elapsed=Math.max(0,(now-previous)/1000);previous=now;
+  if(quality.sample(elapsed*1000))applyQuality();
   if(!document.hidden){accumulator+=Math.min(elapsed,.25);while(accumulator>=C.dt){game.step();accumulator-=C.dt;ingest();}}
   frameCount++;frameTotal+=elapsed*1000;const t=game.tick*C.dt,active=game.phase==='active',warning=game.phase==='warning';
   for(const b of game.balls){if(!ballVisuals.has(b.id))addBall(b);const v=ballVisuals.get(b.id)!;
@@ -166,10 +190,12 @@ function frame(now:number){requestAnimationFrame(frame);const elapsed=Math.max(0
   phaseLight.intensity=active?7:warning?2.5:.25;bloom.strength=active?.5:.2;
   glow.emissiveIntensity=active?2.4:1.1;crystal.rotation.y=reduced?0:t*.35;orbit1.rotation.z=reduced?0:t*.22;
   cageCrystals.forEach((c,i)=>{c.rotation.y=reduced?0:t*.3+i;});
-  for(let i=effects.length-1;i>=0;i--){const e=effects[i],q=(t-e.born)/e.duration;if(q>=1){e.mesh.traverse(o=>{const m=o as THREE.Mesh;m.geometry?.dispose();if(m.material&&!Array.isArray(m.material))m.material.dispose();});effectGroup.remove(e.mesh);effects.splice(i,1);continue;}const m=e.mesh as THREE.Mesh;(m.material as THREE.MeshBasicMaterial).opacity=(1-q)*(reduced?.22:.65);if(e.kind!=='ignite')m.scale.setScalar(.12+e.radius*(1-(1-q)**3));}
+  for(let i=effects.length-1;i>=0;i--){const e=effects[i],q=(t-e.born)/e.duration;if(q>=1){disposeEffect(e);effects.splice(i,1);continue;}const m=e.mesh as THREE.Mesh;(m.material as THREE.MeshBasicMaterial).opacity=(1-q)*(reduced?.22:.65);if(e.kind!=='ignite')m.scale.setScalar(.12+e.radius*(1-(1-q)**3));}
   aimMesh.visible=drag!==null||document.activeElement===canvas;aimMesh.rotation.y=-angle;barrel.rotation.y=-angle-Math.PI/2;
   if(currentPhase!==game.phase){currentPhase=game.phase;phaseText.textContent=active?'SHIFT · 全場同頻':warning?'正在同步':'累積，等待共振';document.querySelector('.phase')!.setAttribute('data-active',String(active));document.querySelector('#announcement')!.textContent=active?'相變開始，低摩擦流動':warning?'即將相變':'等待下一次碰撞';}
   statusText.textContent=`${String(game.shots).padStart(2,'0')} 顆球留在場上 · ${active?'一起流動':maxDepth>1?`最深 ${maxDepth} 層連鎖`:'拖拉後放開'}`;
-  composer.render();canvas.dataset.ready='true';canvas.dataset.phase=game.phase;canvas.dataset.shots=String(game.shots);
+  try{composer.render();}catch{stopped=true;showFallback();return;}canvas.dataset.ready='true';canvas.dataset.phase=game.phase;canvas.dataset.shots=String(game.shots);
 }
 requestAnimationFrame(frame);
+}
+try{startScene();}catch{showFallback();}
