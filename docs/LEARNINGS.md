@@ -21,3 +21,16 @@ date: 2026-11-11
 - 三十秒怪物平均數以尚在遊戲內的實際 tick 加權，並列出存活局數；終局後不補零，避免把提早獲勝誤讀成後期更容易。
 
 證據：D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\motion\evidence.json、D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\balance-morning.json。
+
+## 3D 長幀與量測邊界
+
+status: draft
+promote: yes
+date: 2026-11-11
+
+- 將 callback 起訖、下一個 rAF 間隔、GL shader 呼叫及 trace 時鐘對齊，才能區別首次材質等待、同步 layout、事件幾何配置和排程空檔。事件共現本身不是唯一因果證據。
+- HUD 改 DOM 後逐個投影再讀 getBoundingClientRect 會強制同步 layout；同幀使用一次 rect，且文字只在變更時寫入，可保留畫面與規則並減少成本。
+- 材質預熱要經實際離屏 composer 管線，並保留代表材質以維持 program cache；compile 不能自動代表所有後續變體都不會再編譯。合成降級測試仍有 1 個 link，須如實列出。
+- 自然輸入的微小時序差異會改變相變時機與球數；同機三輪中位數是本機體驗比較，不能直接稱為固定負載的因果實驗。保留每輪與所有長幀，不刪異常輪次。
+
+證據：D:\Projects\Active\competitions\game-off-2026\g4-resonance\drafts\3d-web\PERFORMANCE.md；原始資料在 D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\3d-smooth。

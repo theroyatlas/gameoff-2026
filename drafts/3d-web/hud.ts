@@ -17,16 +17,17 @@ export function createHUD(game:Game,resetScene:()=>void) {
   start.addEventListener('click',()=>{sound.unlock();if(game.status==='won'||game.status==='lost'){reset();return;}
     if(!seed.reportValidity())return;game.reset(Number(seed.value));resetScene();game.start();overlay.hidden=true;shown='playing';get('scene').focus();});
   const mute=get('mute');mute.addEventListener('click',()=>{sound.unlock();sound.toggle();mute.textContent=sound.muted?'音效：關':'音效：開';mute.setAttribute('aria-pressed',String(sound.muted));});
+  function text(id:string,value:string){const node=get(id);if(node.textContent!==value)node.textContent=value;}
   function update(project:(x:number,y:number,height?:number)=>{x:number,y:number},width:number,height:number) {
-    const hp=get('boss-hp') as HTMLProgressElement;hp.max=game.boss.maxHp;hp.value=game.boss.hp;
-    get('boss-value').textContent=`${game.boss.hp} / ${game.boss.maxHp}`;
+    const hp=get('boss-hp') as HTMLProgressElement;if(hp.max!==game.boss.maxHp)hp.max=game.boss.maxHp;if(hp.value!==game.boss.hp)hp.value=game.boss.hp;
+    text('boss-value',`${game.boss.hp} / ${game.boss.maxHp}`);
     const remaining=Math.max(0,Math.ceil(C.difficulty.firstWaveSeconds+game.wave*C.difficulty.waveSeconds-game.tick*C.dt));
-    get('wave').textContent=`第 ${game.wave} 波 · ${remaining} 秒後下一波`;
-    get('monsters').textContent=`怪物 ${game.monsters.length} / ${C.monsters.loseAbove}`;
-    get('next').textContent=`下一球：${C.materials[game.nextMaterial].name}`;
+    text('wave',`第 ${game.wave} 波 · ${remaining} 秒後下一波`);
+    text('monsters',`怪物 ${game.monsters.length} / ${C.monsters.loseAbove}`);
+    text('next',`下一球：${C.materials[game.nextMaterial].name}`);
     get('wave-banner').hidden=game.wave===0||game.tick-game.waveAt>240;
-    get('wave-banner').textContent=game.upgraded?'壓力升級':`第 ${game.wave} 波`;
-    const phase=get('phase-banner');phase.hidden=game.phase==='idle';phase.textContent=game.phase==='active'?'SHIFT · 全場同頻，準備一起釋放':'正在同步 · 即將相變';
+    text('wave-banner',game.upgraded?'壓力升級':`第 ${game.wave} 波`);
+    const phase=get('phase-banner');phase.hidden=game.phase==='idle';text('phase-banner',game.phase==='active'?'SHIFT · 全場同頻，準備一起釋放':'正在同步 · 即將相變');
     const liveIds=new Set(game.monsters.map(m=>m.id));
     for(const [id,bar] of bars)if(!liveIds.has(id)){bar.remove();bars.delete(id);}
     for(const m of game.monsters){let bar=bars.get(m.id);if(!bar){bar=document.createElement('div');bar.className='target-bar';bar.innerHTML='<i></i>';layer.append(bar);bars.set(m.id,bar);}
@@ -35,7 +36,7 @@ export function createHUD(game:Game,resetScene:()=>void) {
     for(const [e,label] of damageLabels)if(!liveEffects.has(e)){label.remove();damageLabels.delete(e);}
     for(const e of liveEffects){let label=damageLabels.get(e);if(!label){label=document.createElement('span');label.className=e.kind==='damage'?'damage':'chain';layer.append(label);damageLabels.set(e,label);}
       const age=(game.tick-e.tick)*C.dt,p=project(e.x,e.y,.85),pos=damagePosition(p.x,p.y,width,height,age);
-      label.textContent=e.kind==='damage'?`−${e.value}`:`${e.value} 層`;label.style.transform=`translate(${pos.x}px,${pos.y}px) translate(-50%,-50%)`;label.style.opacity=String(Math.max(0,1-age/.6));}
+      const value=e.kind==='damage'?`−${e.value}`:`${e.value} 層`;if(label.textContent!==value)label.textContent=value;label.style.transform=`translate(${pos.x}px,${pos.y}px) translate(-50%,-50%)`;label.style.opacity=String(Math.max(0,1-age/.6));}
     const card=game.replays.at(-1);replay.hidden=!card||game.tick-card.tick>600;
     if(card&&card.tick!==lastReplay){lastReplay=card.tick;replayCount++;replay.replaceChildren();
       const title=document.createElement('strong');title.textContent=`${card.shift?'SHIFT 釋放':'連鎖回放'} · ${card.depth} 層`;

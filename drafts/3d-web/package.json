@@ -10,7 +10,9 @@
     "build:parity": "vite build --outDir dist-parity --emptyOutDir",
     "verify:parity": "node verify-parity.mjs",
     "build:polish": "vite build --outDir dist-polish --emptyOutDir",
-    "verify:polish": "node verify-polish.mjs"
+    "verify:polish": "node verify-polish.mjs",
+    "build:smooth": "vite build --outDir dist-smooth --emptyOutDir",
+    "verify:smooth": "node verify-smooth.mjs"
   },
   "dependencies": {
     "three": "0.180.0"

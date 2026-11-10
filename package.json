@@ -13,7 +13,9 @@
     "build:parity": "tsc --noEmit && npm --prefix drafts/3d-web run build:parity",
     "verify:parity": "npm --prefix drafts/3d-web run verify:parity",
     "build:polish": "tsc --noEmit && npm --prefix drafts/3d-web run build:polish",
-    "verify:polish": "npm --prefix drafts/3d-web run verify:polish"
+    "verify:polish": "npm --prefix drafts/3d-web run verify:polish",
+    "build:smooth": "tsc --noEmit && npm --prefix drafts/3d-web run build:smooth",
+    "verify:smooth": "npm --prefix drafts/3d-web run verify:smooth"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",
