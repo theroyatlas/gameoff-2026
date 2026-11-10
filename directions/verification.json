@@ -1,0 +1,3167 @@
+{
+  "browser": "157.0.4341.42",
+  "channel": "msedge",
+  "protocol": "file:",
+  "viewport": {
+    "width": 1440,
+    "height": 960
+  },
+  "samples": [
+    {
+      "folder": "a-chorus",
+      "consoleErrors": [],
+      "externalRequests": [],
+      "firstChainSeconds": 1.3687000000029803,
+      "phaseSeconds": 29.26239999999851,
+      "phaseSimulationSeconds": 24.00833333333261,
+      "launches": 15,
+      "balls": 15,
+      "hits": 203,
+      "chains": 68,
+      "accelerations": 190,
+      "notesPlayed": 328,
+      "audioState": "running",
+      "movingAfterWait": 0,
+      "hero": null,
+      "mobile": {
+        "width": 390,
+        "height": 844,
+        "launches": 5,
+        "overflow": false
+      },
+      "resetPassed": true,
+      "events": [
+        {
+          "type": "launch",
+          "t": 0,
+          "id": 1
+        },
+        {
+          "type": "launch",
+          "t": 1.0749999999999986,
+          "id": 2
+        },
+        {
+          "type": "burst",
+          "t": 1.3249999999999977,
+          "source": 1
+        },
+        {
+          "type": "chain",
+          "t": 1.3249999999999977,
+          "source": 1,
+          "targets": [
+            2
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 1.5333333333333303,
+          "source": 2
+        },
+        {
+          "type": "launch",
+          "t": 2.008333333333329,
+          "id": 3
+        },
+        {
+          "type": "burst",
+          "t": 2.6083333333333267,
+          "source": 1
+        },
+        {
+          "type": "burst",
+          "t": 2.7999999999999927,
+          "source": 3
+        },
+        {
+          "type": "launch",
+          "t": 2.8999999999999924,
+          "id": 4
+        },
+        {
+          "type": "burst",
+          "t": 2.9833333333333254,
+          "source": 2
+        },
+        {
+          "type": "burst",
+          "t": 3.4999999999999902,
+          "source": 4
+        },
+        {
+          "type": "chain",
+          "t": 3.4999999999999902,
+          "source": 4,
+          "targets": [
+            2,
+            1
+          ]
+        },
+        {
+          "type": "launch",
+          "t": 3.791666666666656,
+          "id": 5
+        },
+        {
+          "type": "burst",
+          "t": 4.241666666666667,
+          "source": 2
+        },
+        {
+          "type": "chain",
+          "t": 4.241666666666667,
+          "source": 2,
+          "targets": [
+            4,
+            3
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 4.308333333333337,
+          "source": 3
+        },
+        {
+          "type": "chain",
+          "t": 4.308333333333337,
+          "source": 3,
+          "targets": [
+            1,
+            2,
+            4
+          ]
+        },
+        {
+          "type": "chain-link",
+          "t": 4.308333333333337,
+          "source": 3,
+          "id": 1
+        },
+        {
+          "type": "launch",
+          "t": 4.616666666666686,
+          "id": 6
+        },
+        {
+          "type": "burst",
+          "t": 4.7583333333333595,
+          "source": 4
+        },
+        {
+          "type": "chain",
+          "t": 4.7583333333333595,
+          "source": 4,
+          "targets": [
+            1,
+            3,
+            5
+          ]
+        },
+        {
+          "type": "chain-link",
+          "t": 4.7583333333333595,
+          "source": 4,
+          "id": 5
+        },
+        {
+          "type": "launch",
+          "t": 5.383333333333391,
+          "id": 7
+        },
+        {
+          "type": "burst",
+          "t": 5.725000000000074,
+          "source": 6
+        },
+        {
+          "type": "chain",
+          "t": 5.725000000000074,
+          "source": 6,
+          "targets": [
+            1
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 6.05000000000009,
+          "source": 7
+        },
+        {
+          "type": "chain",
+          "t": 6.05000000000009,
+          "source": 7,
+          "targets": [
+            5,
+            1,
+            6
+          ]
+        },
+        {
+          "type": "chain-link",
+          "t": 6.05000000000009,
+          "source": 7,
+          "id": 1
+        },
+        {
+          "type": "burst",
+          "t": 6.066666666666758,
+          "source": 5
+        },
+        {
+          "type": "chain",
+          "t": 6.066666666666758,
+          "source": 5,
+          "targets": [
+            7,
+            6,
+            1
+          ]
+        },
+        {
+          "type": "launch",
+          "t": 6.191666666666764,
+          "id": 8
+        },
+        {
+          "type": "burst",
+          "t": 6.358333333333439,
+          "source": 2
+        },
+        {
+          "type": "chain",
+          "t": 6.358333333333439,
+          "source": 2,
+          "targets": [
+            8,
+            3,
+            5,
+            6,
+            4
+          ]
+        },
+        {
+          "type": "chain-link",
+          "t": 6.358333333333439,
+          "source": 2,
+          "id": 8
+        },
+        {
+          "type": "chain-link",
+          "t": 6.358333333333439,
+          "source": 2,
+          "id": 3
+        },
+        {
+          "type": "chain-link",
+          "t": 6.358333333333439,
+          "source": 2,
+          "id": 4
+        },
+        {
+          "type": "launch",
+          "t": 6.8083333333334615,
+          "id": 9
+        },
+        {
+          "type": "burst",
+          "t": 7.133333333333478,
+          "source": 6
+        },
+        {
+          "type": "burst",
+          "t": 7.308333333333486,
+          "source": 9
+        },
+        {
+          "type": "chain",
+          "t": 7.308333333333486,
+          "source": 9,
+          "targets": [
+            1,
+            5
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 7.31666666666682,
+          "source": 1
+        },
+        {
+          "type": "chain",
+          "t": 7.31666666666682,
+          "source": 1,
+          "targets": [
+            3,
+            8,
+            9,
+            5
+          ]
+        },
+        {
+          "type": "launch",
+          "t": 7.51666666666683,
+          "id": 10
+        },
+        {
+          "type": "burst",
+          "t": 7.575000000000166,
+          "source": 2
+        },
+        {
+          "type": "chain",
+          "t": 7.575000000000166,
+          "source": 2,
+          "targets": [
+            4,
+            8
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 7.575000000000166,
+          "source": 4
+        },
+        {
+          "type": "chain",
+          "t": 7.575000000000166,
+          "source": 4,
+          "targets": [
+            2
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 7.608333333333501,
+          "source": 5
+        },
+        {
+          "type": "burst",
+          "t": 7.641666666666836,
+          "source": 8
+        },
+        {
+          "type": "chain",
+          "t": 7.641666666666836,
+          "source": 8,
+          "targets": [
+            6
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 7.891666666666849,
+          "source": 7
+        },
+        {
+          "type": "chain",
+          "t": 7.891666666666849,
+          "source": 7,
+          "targets": [
+            9,
+            10,
+            3,
+            8,
+            5
+          ]
+        },
+        {
+          "type": "chain-link",
+          "t": 7.891666666666849,
+          "source": 7,
+          "id": 3
+        },
+        {
+          "type": "burst",
+          "t": 7.950000000000185,
+          "source": 10
+        },
+        {
+          "type": "chain",
+          "t": 7.950000000000185,
+          "source": 10,
+          "targets": [
+            9,
+            7
+          ]
+        },
+        {
+          "type": "launch",
+          "t": 8.208333333333508,
+          "id": 11
+        },
+        {
+          "type": "burst",
+          "t": 8.70833333333348,
+          "source": 1
+        },
+        {
+          "type": "chain",
+          "t": 8.70833333333348,
+          "source": 1,
+          "targets": [
+            7,
+            3,
+            9
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 8.850000000000138,
+          "source": 5
+        },
+        {
+          "type": "chain",
+          "t": 8.850000000000138,
+          "source": 5,
+          "targets": [
+            10
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 8.858333333333471,
+          "source": 9
+        },
+        {
+          "type": "chain",
+          "t": 8.858333333333471,
+          "source": 9,
+          "targets": [
+            2,
+            11
+          ]
+        },
+        {
+          "type": "chain-link",
+          "t": 8.858333333333471,
+          "source": 9,
+          "id": 11
+        },
+        {
+          "type": "launch",
+          "t": 8.916666666666801,
+          "id": 12
+        },
+        {
+          "type": "burst",
+          "t": 9.025000000000128,
+          "source": 2
+        },
+        {
+          "type": "chain",
+          "t": 9.025000000000128,
+          "source": 2,
+          "targets": [
+            11,
+            4,
+            1
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 9.075000000000125,
+          "source": 8
+        },
+        {
+          "type": "chain",
+          "t": 9.075000000000125,
+          "source": 8,
+          "targets": [
+            6
+          ]
+        },
+        {
+          "type": "chain-link",
+          "t": 9.075000000000125,
+          "source": 8,
+          "id": 6
+        },
+        {
+          "type": "burst",
+          "t": 9.258333333333448,
+          "source": 10
+        },
+        {
+          "type": "chain",
+          "t": 9.258333333333448,
+          "source": 10,
+          "targets": [
+            1,
+            3,
+            2,
+            12,
+            9
+          ]
+        },
+        {
+          "type": "chain-link",
+          "t": 9.258333333333448,
+          "source": 10,
+          "id": 12
+        },
+        {
+          "type": "burst",
+          "t": 9.40833333333344,
+          "source": 7
+        },
+        {
+          "type": "chain",
+          "t": 9.40833333333344,
+          "source": 7,
+          "targets": [
+            9
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 9.591666666666763,
+          "source": 3
+        },
+        {
+          "type": "chain",
+          "t": 9.591666666666763,
+          "source": 3,
+          "targets": [
+            12,
+            1,
+            11,
+            8,
+            6
+          ]
+        },
+        {
+          "type": "launch",
+          "t": 9.591666666666763,
+          "id": 13
+        },
+        {
+          "type": "burst",
+          "t": 10.1083333333334,
+          "source": 9
+        },
+        {
+          "type": "chain",
+          "t": 10.1083333333334,
+          "source": 9,
+          "targets": [
+            5,
+            7
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 10.191666666666729,
+          "source": 1
+        },
+        {
+          "type": "chain",
+          "t": 10.191666666666729,
+          "source": 1,
+          "targets": [
+            11,
+            12,
+            4,
+            13,
+            3
+          ]
+        },
+        {
+          "type": "chain-link",
+          "t": 10.191666666666729,
+          "source": 1,
+          "id": 4
+        },
+        {
+          "type": "chain-link",
+          "t": 10.191666666666729,
+          "source": 1,
+          "id": 13
+        },
+        {
+          "type": "burst",
+          "t": 10.191666666666729,
+          "source": 11
+        },
+        {
+          "type": "chain",
+          "t": 10.191666666666729,
+          "source": 11,
+          "targets": [
+            1,
+            12,
+            4,
+            13,
+            3
+          ]
+        },
+        {
+          "type": "launch",
+          "t": 10.258333333333391,
+          "id": 14
+        },
+        {
+          "type": "burst",
+          "t": 10.383333333333384,
+          "source": 2
+        },
+        {
+          "type": "chain",
+          "t": 10.383333333333384,
+          "source": 2,
+          "targets": [
+            8,
+            12
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 10.383333333333384,
+          "source": 8
+        },
+        {
+          "type": "chain",
+          "t": 10.383333333333384,
+          "source": 8,
+          "targets": [
+            2,
+            12
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 10.383333333333384,
+          "source": 5
+        },
+        {
+          "type": "chain",
+          "t": 10.383333333333384,
+          "source": 5,
+          "targets": [
+            10,
+            9
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 10.500000000000044,
+          "source": 10
+        },
+        {
+          "type": "chain",
+          "t": 10.500000000000044,
+          "source": 10,
+          "targets": [
+            5
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 10.641666666666703,
+          "source": 6
+        },
+        {
+          "type": "chain",
+          "t": 10.641666666666703,
+          "source": 6,
+          "targets": [
+            11,
+            3
+          ]
+        },
+        {
+          "type": "launch",
+          "t": 10.966666666666685,
+          "id": 15
+        },
+        {
+          "type": "burst",
+          "t": 11.33333333333333,
+          "source": 14
+        },
+        {
+          "type": "chain",
+          "t": 11.33333333333333,
+          "source": 14,
+          "targets": [
+            3,
+            6
+          ]
+        },
+        {
+          "type": "chain-link",
+          "t": 11.33333333333333,
+          "source": 14,
+          "id": 3
+        },
+        {
+          "type": "burst",
+          "t": 11.424999999999992,
+          "source": 11
+        },
+        {
+          "type": "chain",
+          "t": 11.424999999999992,
+          "source": 11,
+          "targets": [
+            6,
+            3,
+            13,
+            8,
+            1
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 11.574999999999983,
+          "source": 13
+        },
+        {
+          "type": "chain",
+          "t": 11.574999999999983,
+          "source": 13,
+          "targets": [
+            6,
+            3,
+            1,
+            11,
+            14
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 11.874999999999966,
+          "source": 12
+        },
+        {
+          "type": "chain",
+          "t": 11.874999999999966,
+          "source": 12,
+          "targets": [
+            15,
+            8,
+            4,
+            1
+          ]
+        },
+        {
+          "type": "chain-link",
+          "t": 11.874999999999966,
+          "source": 12,
+          "id": 15
+        },
+        {
+          "type": "chain-link",
+          "t": 11.874999999999966,
+          "source": 12,
+          "id": 4
+        },
+        {
+          "type": "chain-link",
+          "t": 11.874999999999966,
+          "source": 12,
+          "id": 1
+        },
+        {
+          "type": "burst",
+          "t": 11.949999999999962,
+          "source": 6
+        },
+        {
+          "type": "chain",
+          "t": 11.949999999999962,
+          "source": 6,
+          "targets": [
+            14,
+            13,
+            3,
+            11
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 13.066666666666565,
+          "source": 3
+        },
+        {
+          "type": "chain",
+          "t": 13.066666666666565,
+          "source": 3,
+          "targets": [
+            5,
+            9,
+            7,
+            2,
+            14
+          ]
+        },
+        {
+          "type": "chain-link",
+          "t": 13.066666666666565,
+          "source": 3,
+          "id": 5
+        },
+        {
+          "type": "chain-link",
+          "t": 13.066666666666565,
+          "source": 3,
+          "id": 9
+        },
+        {
+          "type": "chain-link",
+          "t": 13.066666666666565,
+          "source": 3,
+          "id": 7
+        },
+        {
+          "type": "chain-link",
+          "t": 13.066666666666565,
+          "source": 3,
+          "id": 2
+        },
+        {
+          "type": "chain-link",
+          "t": 13.066666666666565,
+          "source": 3,
+          "id": 14
+        },
+        {
+          "type": "burst",
+          "t": 13.74999999999986,
+          "source": 15
+        },
+        {
+          "type": "chain",
+          "t": 13.74999999999986,
+          "source": 15,
+          "targets": [
+            6,
+            13
+          ]
+        },
+        {
+          "type": "chain-link",
+          "t": 13.74999999999986,
+          "source": 15,
+          "id": 6
+        },
+        {
+          "type": "chain-link",
+          "t": 13.74999999999986,
+          "source": 15,
+          "id": 13
+        },
+        {
+          "type": "phase",
+          "t": 24.00833333333261,
+          "wall": 29.26239999999851
+        }
+      ]
+    },
+    {
+      "folder": "b-fireflies",
+      "consoleErrors": [],
+      "externalRequests": [],
+      "firstChainSeconds": 1.386,
+      "phaseSeconds": 29.633,
+      "phaseSimulationSeconds": 24.00833333333261,
+      "launches": 15,
+      "balls": 15,
+      "hits": 214,
+      "chains": 75,
+      "accelerations": 205,
+      "notesPlayed": 378,
+      "audioState": "running",
+      "movingAfterWait": 0,
+      "hero": null,
+      "mobile": {
+        "width": 390,
+        "height": 844,
+        "launches": 5,
+        "overflow": false
+      },
+      "resetPassed": true,
+      "events": [
+        {
+          "type": "launch",
+          "t": 0,
+          "id": 1
+        },
+        {
+          "type": "launch",
+          "t": 1.0666666666666653,
+          "id": 2
+        },
+        {
+          "type": "burst",
+          "t": 1.3416666666666643,
+          "source": 1
+        },
+        {
+          "type": "chain",
+          "t": 1.3416666666666643,
+          "source": 1,
+          "targets": [
+            2
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 1.549999999999997,
+          "source": 2
+        },
+        {
+          "type": "launch",
+          "t": 2.0249999999999955,
+          "id": 3
+        },
+        {
+          "type": "burst",
+          "t": 2.6583333333333266,
+          "source": 1
+        },
+        {
+          "type": "burst",
+          "t": 2.8249999999999926,
+          "source": 2
+        },
+        {
+          "type": "chain",
+          "t": 2.8249999999999926,
+          "source": 2,
+          "targets": [
+            3
+          ]
+        },
+        {
+          "type": "chain-link",
+          "t": 2.8249999999999926,
+          "source": 2,
+          "id": 3
+        },
+        {
+          "type": "launch",
+          "t": 2.8833333333333258,
+          "id": 4
+        },
+        {
+          "type": "launch",
+          "t": 3.7333333333333227,
+          "id": 5
+        },
+        {
+          "type": "burst",
+          "t": 3.8166666666666558,
+          "source": 4
+        },
+        {
+          "type": "burst",
+          "t": 4.099999999999993,
+          "source": 2
+        },
+        {
+          "type": "chain",
+          "t": 4.099999999999993,
+          "source": 2,
+          "targets": [
+            3
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 4.233333333333333,
+          "source": 3
+        },
+        {
+          "type": "chain",
+          "t": 4.233333333333333,
+          "source": 3,
+          "targets": [
+            2
+          ]
+        },
+        {
+          "type": "launch",
+          "t": 4.55833333333335,
+          "id": 6
+        },
+        {
+          "type": "burst",
+          "t": 4.675000000000022,
+          "source": 5
+        },
+        {
+          "type": "chain",
+          "t": 4.675000000000022,
+          "source": 5,
+          "targets": [
+            2
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 5.191666666666714,
+          "source": 4
+        },
+        {
+          "type": "chain",
+          "t": 5.191666666666714,
+          "source": 4,
+          "targets": [
+            2,
+            3,
+            5
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 5.191666666666714,
+          "source": 6
+        },
+        {
+          "type": "launch",
+          "t": 5.341666666666722,
+          "id": 7
+        },
+        {
+          "type": "burst",
+          "t": 5.500000000000063,
+          "source": 3
+        },
+        {
+          "type": "chain",
+          "t": 5.500000000000063,
+          "source": 3,
+          "targets": [
+            6,
+            2,
+            7,
+            5
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 5.633333333333403,
+          "source": 2
+        },
+        {
+          "type": "chain",
+          "t": 5.633333333333403,
+          "source": 2,
+          "targets": [
+            6,
+            7,
+            3,
+            4
+          ]
+        },
+        {
+          "type": "chain-link",
+          "t": 5.633333333333403,
+          "source": 2,
+          "id": 7
+        },
+        {
+          "type": "burst",
+          "t": 5.950000000000085,
+          "source": 5
+        },
+        {
+          "type": "launch",
+          "t": 6.108333333333427,
+          "id": 8
+        },
+        {
+          "type": "burst",
+          "t": 6.550000000000115,
+          "source": 6
+        },
+        {
+          "type": "chain",
+          "t": 6.550000000000115,
+          "source": 6,
+          "targets": [
+            2
+          ]
+        },
+        {
+          "type": "launch",
+          "t": 6.925000000000134,
+          "id": 9
+        },
+        {
+          "type": "burst",
+          "t": 7.100000000000143,
+          "source": 4
+        },
+        {
+          "type": "chain",
+          "t": 7.100000000000143,
+          "source": 4,
+          "targets": [
+            7,
+            2,
+            3,
+            8,
+            9
+          ]
+        },
+        {
+          "type": "chain-link",
+          "t": 7.100000000000143,
+          "source": 4,
+          "id": 3
+        },
+        {
+          "type": "chain-link",
+          "t": 7.100000000000143,
+          "source": 4,
+          "id": 8
+        },
+        {
+          "type": "burst",
+          "t": 7.100000000000143,
+          "source": 7
+        },
+        {
+          "type": "chain",
+          "t": 7.100000000000143,
+          "source": 7,
+          "targets": [
+            4,
+            2,
+            3,
+            8,
+            9
+          ]
+        },
+        {
+          "type": "chain-link",
+          "t": 7.100000000000143,
+          "source": 7,
+          "id": 9
+        },
+        {
+          "type": "burst",
+          "t": 7.333333333333488,
+          "source": 2
+        },
+        {
+          "type": "chain",
+          "t": 7.333333333333488,
+          "source": 2,
+          "targets": [
+            9,
+            4,
+            7,
+            8,
+            3
+          ]
+        },
+        {
+          "type": "launch",
+          "t": 7.616666666666835,
+          "id": 10
+        },
+        {
+          "type": "burst",
+          "t": 8.000000000000187,
+          "source": 6
+        },
+        {
+          "type": "chain",
+          "t": 8.000000000000187,
+          "source": 6,
+          "targets": [
+            2,
+            9,
+            5,
+            8
+          ]
+        },
+        {
+          "type": "chain-link",
+          "t": 8.000000000000187,
+          "source": 6,
+          "id": 5
+        },
+        {
+          "type": "launch",
+          "t": 8.316666666666835,
+          "id": 11
+        },
+        {
+          "type": "burst",
+          "t": 8.691666666666814,
+          "source": 8
+        },
+        {
+          "type": "chain",
+          "t": 8.691666666666814,
+          "source": 8,
+          "targets": [
+            5,
+            1,
+            4
+          ]
+        },
+        {
+          "type": "chain-link",
+          "t": 8.691666666666814,
+          "source": 8,
+          "id": 1
+        },
+        {
+          "type": "chain-link",
+          "t": 8.691666666666814,
+          "source": 8,
+          "id": 4
+        },
+        {
+          "type": "burst",
+          "t": 8.983333333333464,
+          "source": 10
+        },
+        {
+          "type": "chain",
+          "t": 8.983333333333464,
+          "source": 10,
+          "targets": [
+            6
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 9.208333333333451,
+          "source": 3
+        },
+        {
+          "type": "chain",
+          "t": 9.208333333333451,
+          "source": 3,
+          "targets": [
+            10,
+            6,
+            5
+          ]
+        },
+        {
+          "type": "launch",
+          "t": 9.208333333333451,
+          "id": 12
+        },
+        {
+          "type": "burst",
+          "t": 9.383333333333441,
+          "source": 9
+        },
+        {
+          "type": "chain",
+          "t": 9.383333333333441,
+          "source": 9,
+          "targets": [
+            1
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 9.425000000000106,
+          "source": 6
+        },
+        {
+          "type": "chain",
+          "t": 9.425000000000106,
+          "source": 6,
+          "targets": [
+            3,
+            5,
+            12,
+            8,
+            4
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 9.450000000000104,
+          "source": 11
+        },
+        {
+          "type": "chain",
+          "t": 9.450000000000104,
+          "source": 11,
+          "targets": [
+            7,
+            2
+          ]
+        },
+        {
+          "type": "chain-link",
+          "t": 9.450000000000104,
+          "source": 11,
+          "id": 7
+        },
+        {
+          "type": "chain-link",
+          "t": 9.450000000000104,
+          "source": 11,
+          "id": 2
+        },
+        {
+          "type": "burst",
+          "t": 9.541666666666766,
+          "source": 12
+        },
+        {
+          "type": "chain",
+          "t": 9.541666666666766,
+          "source": 12,
+          "targets": [
+            10,
+            3,
+            5,
+            8
+          ]
+        },
+        {
+          "type": "chain-link",
+          "t": 9.541666666666766,
+          "source": 12,
+          "id": 5
+        },
+        {
+          "type": "launch",
+          "t": 9.87500000000008,
+          "id": 13
+        },
+        {
+          "type": "burst",
+          "t": 9.99166666666674,
+          "source": 1
+        },
+        {
+          "type": "chain",
+          "t": 9.99166666666674,
+          "source": 1,
+          "targets": [
+            7,
+            12,
+            4,
+            11,
+            6
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 10.175000000000063,
+          "source": 4
+        },
+        {
+          "type": "chain",
+          "t": 10.175000000000063,
+          "source": 4,
+          "targets": [
+            10,
+            6,
+            7,
+            8,
+            12
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 10.408333333333383,
+          "source": 10
+        },
+        {
+          "type": "chain",
+          "t": 10.408333333333383,
+          "source": 10,
+          "targets": [
+            11,
+            7,
+            1,
+            9,
+            6
+          ]
+        },
+        {
+          "type": "launch",
+          "t": 10.625000000000037,
+          "id": 14
+        },
+        {
+          "type": "burst",
+          "t": 10.841666666666692,
+          "source": 12
+        },
+        {
+          "type": "chain",
+          "t": 10.841666666666692,
+          "source": 12,
+          "targets": [
+            5,
+            13,
+            14,
+            1
+          ]
+        },
+        {
+          "type": "chain-link",
+          "t": 10.841666666666692,
+          "source": 12,
+          "id": 13
+        },
+        {
+          "type": "burst",
+          "t": 10.883333333333356,
+          "source": 8
+        },
+        {
+          "type": "chain",
+          "t": 10.883333333333356,
+          "source": 8,
+          "targets": [
+            14,
+            13,
+            1,
+            6,
+            5
+          ]
+        },
+        {
+          "type": "chain-link",
+          "t": 10.883333333333356,
+          "source": 8,
+          "id": 14
+        },
+        {
+          "type": "burst",
+          "t": 10.891666666666689,
+          "source": 5
+        },
+        {
+          "type": "chain",
+          "t": 10.891666666666689,
+          "source": 5,
+          "targets": [
+            12,
+            13,
+            1,
+            14,
+            8
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 11.025000000000015,
+          "source": 11
+        },
+        {
+          "type": "chain",
+          "t": 11.025000000000015,
+          "source": 11,
+          "targets": [
+            9,
+            2,
+            4,
+            7
+          ]
+        },
+        {
+          "type": "chain-link",
+          "t": 11.025000000000015,
+          "source": 11,
+          "id": 9
+        },
+        {
+          "type": "chain-link",
+          "t": 11.025000000000015,
+          "source": 11,
+          "id": 2
+        },
+        {
+          "type": "chain-link",
+          "t": 11.025000000000015,
+          "source": 11,
+          "id": 7
+        },
+        {
+          "type": "launch",
+          "t": 11.324999999999998,
+          "id": 15
+        },
+        {
+          "type": "burst",
+          "t": 11.416666666666659,
+          "source": 4
+        },
+        {
+          "type": "chain",
+          "t": 11.416666666666659,
+          "source": 4,
+          "targets": [
+            13,
+            11,
+            12,
+            2,
+            10
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 11.499999999999988,
+          "source": 6
+        },
+        {
+          "type": "chain",
+          "t": 11.499999999999988,
+          "source": 6,
+          "targets": [
+            15,
+            14,
+            1,
+            10,
+            7
+          ]
+        },
+        {
+          "type": "chain-link",
+          "t": 11.499999999999988,
+          "source": 6,
+          "id": 1
+        },
+        {
+          "type": "burst",
+          "t": 11.499999999999988,
+          "source": 15
+        },
+        {
+          "type": "chain",
+          "t": 11.499999999999988,
+          "source": 15,
+          "targets": [
+            6,
+            14,
+            1,
+            10,
+            7
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 12.083333333333288,
+          "source": 13
+        },
+        {
+          "type": "chain",
+          "t": 12.083333333333288,
+          "source": 13,
+          "targets": [
+            8,
+            1,
+            2,
+            10,
+            14
+          ]
+        },
+        {
+          "type": "chain-link",
+          "t": 12.083333333333288,
+          "source": 13,
+          "id": 10
+        },
+        {
+          "type": "burst",
+          "t": 12.124999999999952,
+          "source": 8
+        },
+        {
+          "type": "chain",
+          "t": 12.124999999999952,
+          "source": 8,
+          "targets": [
+            13,
+            1,
+            10,
+            14,
+            2
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 12.23333333333328,
+          "source": 14
+        },
+        {
+          "type": "chain",
+          "t": 12.23333333333328,
+          "source": 14,
+          "targets": [
+            13,
+            2,
+            10,
+            1,
+            8
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 12.824999999999912,
+          "source": 12
+        },
+        {
+          "type": "burst",
+          "t": 12.899999999999908,
+          "source": 15
+        },
+        {
+          "type": "chain",
+          "t": 12.899999999999908,
+          "source": 15,
+          "targets": [
+            2,
+            8,
+            10
+          ]
+        },
+        {
+          "type": "chain-link",
+          "t": 12.899999999999908,
+          "source": 15,
+          "id": 2
+        },
+        {
+          "type": "burst",
+          "t": 12.93333333333324,
+          "source": 5
+        },
+        {
+          "type": "chain",
+          "t": 12.93333333333324,
+          "source": 5,
+          "targets": [
+            14,
+            3,
+            13,
+            8
+          ]
+        },
+        {
+          "type": "chain-link",
+          "t": 12.93333333333324,
+          "source": 5,
+          "id": 3
+        },
+        {
+          "type": "burst",
+          "t": 13.324999999999884,
+          "source": 7
+        },
+        {
+          "type": "chain",
+          "t": 13.324999999999884,
+          "source": 7,
+          "targets": [
+            15,
+            4,
+            11,
+            6,
+            10
+          ]
+        },
+        {
+          "type": "chain-link",
+          "t": 13.324999999999884,
+          "source": 7,
+          "id": 4
+        },
+        {
+          "type": "chain-link",
+          "t": 13.324999999999884,
+          "source": 7,
+          "id": 11
+        },
+        {
+          "type": "chain-link",
+          "t": 13.324999999999884,
+          "source": 7,
+          "id": 6
+        },
+        {
+          "type": "burst",
+          "t": 13.333333333333217,
+          "source": 13
+        },
+        {
+          "type": "chain",
+          "t": 13.333333333333217,
+          "source": 13,
+          "targets": [
+            14,
+            1,
+            3,
+            10,
+            11
+          ]
+        },
+        {
+          "type": "chain-link",
+          "t": 13.333333333333217,
+          "source": 13,
+          "id": 1
+        },
+        {
+          "type": "burst",
+          "t": 13.441666666666544,
+          "source": 10
+        },
+        {
+          "type": "chain",
+          "t": 13.441666666666544,
+          "source": 10,
+          "targets": [
+            4,
+            14,
+            2,
+            8,
+            1
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 13.991666666666513,
+          "source": 14
+        },
+        {
+          "type": "chain",
+          "t": 13.991666666666513,
+          "source": 14,
+          "targets": [
+            15,
+            11,
+            10,
+            1,
+            6
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 14.258333333333164,
+          "source": 15
+        },
+        {
+          "type": "chain",
+          "t": 14.258333333333164,
+          "source": 15,
+          "targets": [
+            10,
+            11
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 14.258333333333164,
+          "source": 2
+        },
+        {
+          "type": "chain",
+          "t": 14.258333333333164,
+          "source": 2,
+          "targets": [
+            6,
+            8
+          ]
+        },
+        {
+          "type": "chain-link",
+          "t": 14.258333333333164,
+          "source": 2,
+          "id": 8
+        },
+        {
+          "type": "burst",
+          "t": 14.774999999999801,
+          "source": 11
+        },
+        {
+          "type": "chain",
+          "t": 14.774999999999801,
+          "source": 11,
+          "targets": [
+            13,
+            3,
+            10,
+            4,
+            1
+          ]
+        },
+        {
+          "type": "chain-link",
+          "t": 14.774999999999801,
+          "source": 11,
+          "id": 3
+        },
+        {
+          "type": "burst",
+          "t": 14.774999999999801,
+          "source": 13
+        },
+        {
+          "type": "chain",
+          "t": 14.774999999999801,
+          "source": 13,
+          "targets": [
+            11,
+            3,
+            10,
+            4,
+            1
+          ]
+        },
+        {
+          "type": "phase",
+          "t": 24.00833333333261,
+          "wall": 29.633
+        }
+      ]
+    },
+    {
+      "folder": "c-crew",
+      "consoleErrors": [],
+      "externalRequests": [],
+      "firstChainSeconds": 2.528,
+      "phaseSeconds": 31.68670000000298,
+      "phaseSimulationSeconds": 24.00833333333261,
+      "launches": 15,
+      "balls": 15,
+      "hits": 381,
+      "chains": 107,
+      "accelerations": 370,
+      "notesPlayed": 556,
+      "audioState": "running",
+      "movingAfterWait": 0,
+      "hero": {
+        "id": 1,
+        "name": "小圓",
+        "hits": 41,
+        "lit": 13
+      },
+      "mobile": {
+        "width": 390,
+        "height": 844,
+        "launches": 5,
+        "overflow": false
+      },
+      "resetPassed": true,
+      "events": [
+        {
+          "type": "launch",
+          "t": 0,
+          "id": 1
+        },
+        {
+          "type": "burst",
+          "t": 0.9416666666666658,
+          "source": 1
+        },
+        {
+          "type": "launch",
+          "t": 1.0249999999999988,
+          "id": 2
+        },
+        {
+          "type": "launch",
+          "t": 1.9166666666666623,
+          "id": 3
+        },
+        {
+          "type": "burst",
+          "t": 1.991666666666662,
+          "source": 2
+        },
+        {
+          "type": "burst",
+          "t": 2.1666666666666616,
+          "source": 1
+        },
+        {
+          "type": "chain",
+          "t": 2.1666666666666616,
+          "source": 1,
+          "targets": [
+            2,
+            3
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 2.4333333333333274,
+          "source": 3
+        },
+        {
+          "type": "launch",
+          "t": 2.7333333333333263,
+          "id": 4
+        },
+        {
+          "type": "burst",
+          "t": 3.299999999999991,
+          "source": 4
+        },
+        {
+          "type": "chain",
+          "t": 3.299999999999991,
+          "source": 4,
+          "targets": [
+            3
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 3.408333333333324,
+          "source": 2
+        },
+        {
+          "type": "chain",
+          "t": 3.408333333333324,
+          "source": 2,
+          "targets": [
+            3
+          ]
+        },
+        {
+          "type": "launch",
+          "t": 3.4749999999999903,
+          "id": 5
+        },
+        {
+          "type": "burst",
+          "t": 3.6666666666666563,
+          "source": 3
+        },
+        {
+          "type": "burst",
+          "t": 3.849999999999989,
+          "source": 1
+        },
+        {
+          "type": "chain",
+          "t": 3.849999999999989,
+          "source": 1,
+          "targets": [
+            5,
+            2
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 3.849999999999989,
+          "source": 5
+        },
+        {
+          "type": "chain",
+          "t": 3.849999999999989,
+          "source": 5,
+          "targets": [
+            1,
+            2
+          ]
+        },
+        {
+          "type": "launch",
+          "t": 4.266666666666668,
+          "id": 6
+        },
+        {
+          "type": "burst",
+          "t": 4.516666666666681,
+          "source": 4
+        },
+        {
+          "type": "burst",
+          "t": 4.733333333333358,
+          "source": 6
+        },
+        {
+          "type": "chain",
+          "t": 4.733333333333358,
+          "source": 6,
+          "targets": [
+            1,
+            2,
+            5,
+            4
+          ]
+        },
+        {
+          "type": "launch",
+          "t": 5.050000000000041,
+          "id": 7
+        },
+        {
+          "type": "burst",
+          "t": 5.333333333333388,
+          "source": 5
+        },
+        {
+          "type": "chain",
+          "t": 5.333333333333388,
+          "source": 5,
+          "targets": [
+            7
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 5.491666666666729,
+          "source": 7
+        },
+        {
+          "type": "chain",
+          "t": 5.491666666666729,
+          "source": 7,
+          "targets": [
+            5
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 5.541666666666732,
+          "source": 1
+        },
+        {
+          "type": "chain",
+          "t": 5.541666666666732,
+          "source": 1,
+          "targets": [
+            4,
+            2,
+            5,
+            6
+          ]
+        },
+        {
+          "type": "chain-link",
+          "t": 5.541666666666732,
+          "source": 1,
+          "id": 2
+        },
+        {
+          "type": "launch",
+          "t": 5.700000000000073,
+          "id": 8
+        },
+        {
+          "type": "burst",
+          "t": 5.841666666666747,
+          "source": 4
+        },
+        {
+          "type": "chain",
+          "t": 5.841666666666747,
+          "source": 4,
+          "targets": [
+            1
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 6.233333333333433,
+          "source": 6
+        },
+        {
+          "type": "chain",
+          "t": 6.233333333333433,
+          "source": 6,
+          "targets": [
+            8
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 6.233333333333433,
+          "source": 8
+        },
+        {
+          "type": "chain",
+          "t": 6.233333333333433,
+          "source": 8,
+          "targets": [
+            6
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 6.233333333333433,
+          "source": 3
+        },
+        {
+          "type": "chain",
+          "t": 6.233333333333433,
+          "source": 3,
+          "targets": [
+            7
+          ]
+        },
+        {
+          "type": "launch",
+          "t": 6.500000000000113,
+          "id": 9
+        },
+        {
+          "type": "burst",
+          "t": 6.825000000000129,
+          "source": 7
+        },
+        {
+          "type": "chain",
+          "t": 6.825000000000129,
+          "source": 7,
+          "targets": [
+            9,
+            6,
+            1,
+            4
+          ]
+        },
+        {
+          "type": "chain-link",
+          "t": 6.825000000000129,
+          "source": 7,
+          "id": 9
+        },
+        {
+          "type": "burst",
+          "t": 7.100000000000143,
+          "source": 1
+        },
+        {
+          "type": "chain",
+          "t": 7.100000000000143,
+          "source": 1,
+          "targets": [
+            7,
+            4,
+            9,
+            2,
+            5
+          ]
+        },
+        {
+          "type": "chain-link",
+          "t": 7.100000000000143,
+          "source": 1,
+          "id": 2
+        },
+        {
+          "type": "chain-link",
+          "t": 7.100000000000143,
+          "source": 1,
+          "id": 5
+        },
+        {
+          "type": "burst",
+          "t": 7.11666666666681,
+          "source": 4
+        },
+        {
+          "type": "chain",
+          "t": 7.11666666666681,
+          "source": 4,
+          "targets": [
+            7,
+            9,
+            1
+          ]
+        },
+        {
+          "type": "launch",
+          "t": 7.208333333333481,
+          "id": 10
+        },
+        {
+          "type": "burst",
+          "t": 7.508333333333496,
+          "source": 3
+        },
+        {
+          "type": "chain",
+          "t": 7.508333333333496,
+          "source": 3,
+          "targets": [
+            7,
+            6
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 7.541666666666831,
+          "source": 6
+        },
+        {
+          "type": "chain",
+          "t": 7.541666666666831,
+          "source": 6,
+          "targets": [
+            3,
+            7,
+            8
+          ]
+        },
+        {
+          "type": "launch",
+          "t": 7.8000000000001775,
+          "id": 11
+        },
+        {
+          "type": "burst",
+          "t": 7.85000000000018,
+          "source": 8
+        },
+        {
+          "type": "chain",
+          "t": 7.85000000000018,
+          "source": 8,
+          "targets": [
+            11,
+            6,
+            7
+          ]
+        },
+        {
+          "type": "chain-link",
+          "t": 7.85000000000018,
+          "source": 8,
+          "id": 11
+        },
+        {
+          "type": "burst",
+          "t": 7.900000000000182,
+          "source": 10
+        },
+        {
+          "type": "chain",
+          "t": 7.900000000000182,
+          "source": 10,
+          "targets": [
+            5,
+            2
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 8.266666666666838,
+          "source": 9
+        },
+        {
+          "type": "chain",
+          "t": 8.266666666666838,
+          "source": 9,
+          "targets": [
+            10,
+            5
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 8.27500000000017,
+          "source": 7
+        },
+        {
+          "type": "launch",
+          "t": 8.316666666666835,
+          "id": 12
+        },
+        {
+          "type": "burst",
+          "t": 9.00000000000013,
+          "source": 3
+        },
+        {
+          "type": "chain",
+          "t": 9.00000000000013,
+          "source": 3,
+          "targets": [
+            4,
+            11,
+            6,
+            9
+          ]
+        },
+        {
+          "type": "chain-link",
+          "t": 9.00000000000013,
+          "source": 3,
+          "id": 4
+        },
+        {
+          "type": "launch",
+          "t": 9.033333333333461,
+          "id": 13
+        },
+        {
+          "type": "burst",
+          "t": 9.141666666666788,
+          "source": 11
+        },
+        {
+          "type": "chain",
+          "t": 9.141666666666788,
+          "source": 11,
+          "targets": [
+            4,
+            3
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 9.358333333333443,
+          "source": 10
+        },
+        {
+          "type": "chain",
+          "t": 9.358333333333443,
+          "source": 10,
+          "targets": [
+            12,
+            3,
+            9,
+            11,
+            8
+          ]
+        },
+        {
+          "type": "chain-link",
+          "t": 9.358333333333443,
+          "source": 10,
+          "id": 12
+        },
+        {
+          "type": "chain-link",
+          "t": 9.358333333333443,
+          "source": 10,
+          "id": 8
+        },
+        {
+          "type": "burst",
+          "t": 9.541666666666766,
+          "source": 7
+        },
+        {
+          "type": "chain",
+          "t": 9.541666666666766,
+          "source": 7,
+          "targets": [
+            11,
+            9,
+            12,
+            10
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 9.600000000000096,
+          "source": 1
+        },
+        {
+          "type": "chain",
+          "t": 9.600000000000096,
+          "source": 1,
+          "targets": [
+            13,
+            6,
+            5,
+            2
+          ]
+        },
+        {
+          "type": "chain-link",
+          "t": 9.600000000000096,
+          "source": 1,
+          "id": 13
+        },
+        {
+          "type": "chain-link",
+          "t": 9.600000000000096,
+          "source": 1,
+          "id": 6
+        },
+        {
+          "type": "chain-link",
+          "t": 9.600000000000096,
+          "source": 1,
+          "id": 5
+        },
+        {
+          "type": "chain-link",
+          "t": 9.600000000000096,
+          "source": 1,
+          "id": 2
+        },
+        {
+          "type": "burst",
+          "t": 9.666666666666758,
+          "source": 9
+        },
+        {
+          "type": "chain",
+          "t": 9.666666666666758,
+          "source": 9,
+          "targets": [
+            7,
+            12,
+            11,
+            10,
+            3
+          ]
+        },
+        {
+          "type": "launch",
+          "t": 9.725000000000088,
+          "id": 14
+        },
+        {
+          "type": "burst",
+          "t": 10.1083333333334,
+          "source": 14
+        },
+        {
+          "type": "chain",
+          "t": 10.1083333333334,
+          "source": 14,
+          "targets": [
+            3,
+            11,
+            12
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 10.233333333333393,
+          "source": 3
+        },
+        {
+          "type": "chain",
+          "t": 10.233333333333393,
+          "source": 3,
+          "targets": [
+            11,
+            4
+          ]
+        },
+        {
+          "type": "launch",
+          "t": 10.34166666666672,
+          "id": 15
+        },
+        {
+          "type": "burst",
+          "t": 10.508333333333377,
+          "source": 11
+        },
+        {
+          "type": "chain",
+          "t": 10.508333333333377,
+          "source": 11,
+          "targets": [
+            4,
+            3
+          ]
+        },
+        {
+          "type": "chain-link",
+          "t": 10.508333333333377,
+          "source": 11,
+          "id": 4
+        },
+        {
+          "type": "burst",
+          "t": 10.591666666666706,
+          "source": 10
+        },
+        {
+          "type": "chain",
+          "t": 10.591666666666706,
+          "source": 10,
+          "targets": [
+            5,
+            8,
+            2,
+            7
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 10.900000000000022,
+          "source": 13
+        },
+        {
+          "type": "chain",
+          "t": 10.900000000000022,
+          "source": 13,
+          "targets": [
+            5
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 10.908333333333355,
+          "source": 6
+        },
+        {
+          "type": "chain",
+          "t": 10.908333333333355,
+          "source": 6,
+          "targets": [
+            1,
+            9,
+            4,
+            7
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 10.916666666666687,
+          "source": 7
+        },
+        {
+          "type": "chain",
+          "t": 10.916666666666687,
+          "source": 7,
+          "targets": [
+            14,
+            1,
+            3,
+            9,
+            15
+          ]
+        },
+        {
+          "type": "chain-link",
+          "t": 10.916666666666687,
+          "source": 7,
+          "id": 15
+        },
+        {
+          "type": "burst",
+          "t": 11.033333333333347,
+          "source": 9
+        },
+        {
+          "type": "chain",
+          "t": 11.033333333333347,
+          "source": 9,
+          "targets": [
+            14,
+            1,
+            13,
+            6,
+            5
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 11.308333333333332,
+          "source": 1
+        },
+        {
+          "type": "chain",
+          "t": 11.308333333333332,
+          "source": 1,
+          "targets": [
+            9,
+            13,
+            10,
+            3,
+            6
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 11.383333333333328,
+          "source": 12
+        },
+        {
+          "type": "chain",
+          "t": 11.383333333333328,
+          "source": 12,
+          "targets": [
+            7,
+            3,
+            11
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 11.408333333333326,
+          "source": 14
+        },
+        {
+          "type": "chain",
+          "t": 11.408333333333326,
+          "source": 14,
+          "targets": [
+            8,
+            2,
+            13,
+            9,
+            5
+          ]
+        },
+        {
+          "type": "chain-link",
+          "t": 11.408333333333326,
+          "source": 14,
+          "id": 8
+        },
+        {
+          "type": "chain-link",
+          "t": 11.408333333333326,
+          "source": 14,
+          "id": 2
+        },
+        {
+          "type": "chain-link",
+          "t": 11.408333333333326,
+          "source": 14,
+          "id": 5
+        },
+        {
+          "type": "burst",
+          "t": 11.499999999999988,
+          "source": 3
+        },
+        {
+          "type": "chain",
+          "t": 11.499999999999988,
+          "source": 3,
+          "targets": [
+            7,
+            12,
+            1,
+            15,
+            11
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 12.374999999999938,
+          "source": 10
+        },
+        {
+          "type": "chain",
+          "t": 12.374999999999938,
+          "source": 10,
+          "targets": [
+            14,
+            1,
+            12
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 12.38333333333327,
+          "source": 15
+        },
+        {
+          "type": "chain",
+          "t": 12.38333333333327,
+          "source": 15,
+          "targets": [
+            6,
+            4,
+            11,
+            3,
+            13
+          ]
+        },
+        {
+          "type": "chain-link",
+          "t": 12.38333333333327,
+          "source": 15,
+          "id": 4
+        },
+        {
+          "type": "chain-link",
+          "t": 12.38333333333327,
+          "source": 15,
+          "id": 11
+        },
+        {
+          "type": "burst",
+          "t": 12.516666666666596,
+          "source": 1
+        },
+        {
+          "type": "chain",
+          "t": 12.516666666666596,
+          "source": 1,
+          "targets": [
+            10,
+            12,
+            14,
+            3,
+            4
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 12.724999999999918,
+          "source": 6
+        },
+        {
+          "type": "chain",
+          "t": 12.724999999999918,
+          "source": 6,
+          "targets": [
+            1,
+            13,
+            11,
+            3,
+            7
+          ]
+        },
+        {
+          "type": "chain-link",
+          "t": 12.724999999999918,
+          "source": 6,
+          "id": 13
+        },
+        {
+          "type": "chain-link",
+          "t": 12.724999999999918,
+          "source": 6,
+          "id": 7
+        },
+        {
+          "type": "burst",
+          "t": 12.766666666666582,
+          "source": 2
+        },
+        {
+          "type": "chain",
+          "t": 12.766666666666582,
+          "source": 2,
+          "targets": [
+            9,
+            5
+          ]
+        },
+        {
+          "type": "chain-link",
+          "t": 12.766666666666582,
+          "source": 2,
+          "id": 9
+        },
+        {
+          "type": "burst",
+          "t": 13.0499999999999,
+          "source": 12
+        },
+        {
+          "type": "chain",
+          "t": 13.0499999999999,
+          "source": 12,
+          "targets": [
+            10,
+            3,
+            14,
+            4,
+            11
+          ]
+        },
+        {
+          "type": "chain-link",
+          "t": 13.0499999999999,
+          "source": 12,
+          "id": 3
+        },
+        {
+          "type": "chain-link",
+          "t": 13.0499999999999,
+          "source": 12,
+          "id": 14
+        },
+        {
+          "type": "burst",
+          "t": 13.649999999999865,
+          "source": 11
+        },
+        {
+          "type": "chain",
+          "t": 13.649999999999865,
+          "source": 11,
+          "targets": [
+            12,
+            15,
+            6,
+            4,
+            14
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 13.74999999999986,
+          "source": 4
+        },
+        {
+          "type": "chain",
+          "t": 13.74999999999986,
+          "source": 4,
+          "targets": [
+            6,
+            12,
+            3,
+            11,
+            15
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 13.799999999999857,
+          "source": 15
+        },
+        {
+          "type": "chain",
+          "t": 13.799999999999857,
+          "source": 15,
+          "targets": [
+            11,
+            14,
+            4,
+            12,
+            6
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 14.491666666666484,
+          "source": 3
+        },
+        {
+          "type": "chain",
+          "t": 14.491666666666484,
+          "source": 3,
+          "targets": [
+            11,
+            4,
+            13,
+            10,
+            7
+          ]
+        },
+        {
+          "type": "chain-link",
+          "t": 14.491666666666484,
+          "source": 3,
+          "id": 13
+        },
+        {
+          "type": "chain-link",
+          "t": 14.491666666666484,
+          "source": 3,
+          "id": 10
+        },
+        {
+          "type": "chain-link",
+          "t": 14.491666666666484,
+          "source": 3,
+          "id": 7
+        },
+        {
+          "type": "phase",
+          "t": 24.00833333333261,
+          "wall": 31.68670000000298
+        },
+        {
+          "type": "burst",
+          "t": 24.041666666665943,
+          "source": 3
+        },
+        {
+          "type": "chain",
+          "t": 24.041666666665943,
+          "source": 3,
+          "targets": [
+            11,
+            13,
+            4,
+            7,
+            10
+          ]
+        },
+        {
+          "type": "chain-link",
+          "t": 24.041666666665943,
+          "source": 3,
+          "id": 11
+        },
+        {
+          "type": "chain-link",
+          "t": 24.041666666665943,
+          "source": 3,
+          "id": 13
+        },
+        {
+          "type": "chain-link",
+          "t": 24.041666666665943,
+          "source": 3,
+          "id": 4
+        },
+        {
+          "type": "chain-link",
+          "t": 24.041666666665943,
+          "source": 3,
+          "id": 7
+        },
+        {
+          "type": "chain-link",
+          "t": 24.041666666665943,
+          "source": 3,
+          "id": 10
+        },
+        {
+          "type": "burst",
+          "t": 24.099999999999273,
+          "source": 1
+        },
+        {
+          "type": "chain",
+          "t": 24.099999999999273,
+          "source": 1,
+          "targets": [
+            13,
+            7,
+            5,
+            8,
+            10
+          ]
+        },
+        {
+          "type": "chain-link",
+          "t": 24.099999999999273,
+          "source": 1,
+          "id": 5
+        },
+        {
+          "type": "chain-link",
+          "t": 24.099999999999273,
+          "source": 1,
+          "id": 8
+        },
+        {
+          "type": "burst",
+          "t": 24.14999999999927,
+          "source": 14
+        },
+        {
+          "type": "chain",
+          "t": 24.14999999999927,
+          "source": 14,
+          "targets": [
+            15,
+            6,
+            11,
+            7,
+            12
+          ]
+        },
+        {
+          "type": "chain-link",
+          "t": 24.14999999999927,
+          "source": 14,
+          "id": 15
+        },
+        {
+          "type": "chain-link",
+          "t": 24.14999999999927,
+          "source": 14,
+          "id": 6
+        },
+        {
+          "type": "chain-link",
+          "t": 24.14999999999927,
+          "source": 14,
+          "id": 12
+        },
+        {
+          "type": "burst",
+          "t": 24.40833333333259,
+          "source": 9
+        },
+        {
+          "type": "chain",
+          "t": 24.40833333333259,
+          "source": 9,
+          "targets": [
+            5,
+            1,
+            8
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 25.333333333332536,
+          "source": 3
+        },
+        {
+          "type": "chain",
+          "t": 25.333333333332536,
+          "source": 3,
+          "targets": [
+            12,
+            7
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 25.34166666666587,
+          "source": 4
+        },
+        {
+          "type": "chain",
+          "t": 25.34166666666587,
+          "source": 4,
+          "targets": [
+            9,
+            11,
+            5,
+            8,
+            14
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 25.366666666665868,
+          "source": 1
+        },
+        {
+          "type": "chain",
+          "t": 25.366666666665868,
+          "source": 1,
+          "targets": [
+            13,
+            2,
+            5,
+            14,
+            15
+          ]
+        },
+        {
+          "type": "chain-link",
+          "t": 25.366666666665868,
+          "source": 1,
+          "id": 2
+        },
+        {
+          "type": "burst",
+          "t": 25.408333333332532,
+          "source": 6
+        },
+        {
+          "type": "chain",
+          "t": 25.408333333332532,
+          "source": 6,
+          "targets": [
+            15,
+            12,
+            13,
+            5,
+            11
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 25.408333333332532,
+          "source": 15
+        },
+        {
+          "type": "chain",
+          "t": 25.408333333332532,
+          "source": 15,
+          "targets": [
+            6,
+            12,
+            13,
+            5,
+            1
+          ]
+        },
+        {
+          "type": "hero",
+          "t": 25.416666666665865,
+          "id": 1,
+          "name": "小圓",
+          "hits": 41,
+          "lit": 13
+        },
+        {
+          "type": "burst",
+          "t": 25.80833333333251,
+          "source": 7
+        },
+        {
+          "type": "chain",
+          "t": 25.80833333333251,
+          "source": 7,
+          "targets": [
+            3
+          ]
+        },
+        {
+          "type": "burst",
+          "t": 26.024999999999164,
+          "source": 8
+        },
+        {
+          "type": "chain",
+          "t": 26.024999999999164,
+          "source": 8,
+          "targets": [
+            4,
+            15,
+            11,
+            5,
+            9
+          ]
+        },
+        {
+          "type": "chain-link",
+          "t": 26.024999999999164,
+          "source": 8,
+          "id": 11
+        },
+        {
+          "type": "chain-link",
+          "t": 26.024999999999164,
+          "source": 8,
+          "id": 5
+        },
+        {
+          "type": "chain-link",
+          "t": 26.024999999999164,
+          "source": 8,
+          "id": 9
+        }
+      ]
+    }
+  ],
+  "selection": {
+    "imagesLoaded": true
+  },
+  "sourceSha256": {
+    "index.html": "3af2784854d58e9d7d5c1d5baa2b3b55282f94ee4e1fb8f0d404bf4d85f33105",
+    "a-chorus\\index.html": "8dbd1a74c27c27576e26b02f4a276749ecc5ed7d2a04853497ae520a60c33abb",
+    "b-fireflies\\index.html": "67253d08d550ce526ae0534b75e8b93612d9daa45810207bf12dbe6da3d3f8f1",
+    "c-crew\\index.html": "472b83527e9737068d2a9ef60e60f877f091eb61e129e137e3e1ac7f7ddcb787"
+  },
+  "visualReview": {
+    "all15ScreenshotsInspected": true,
+    "desktop": "1440x960",
+    "mobile": "390x844",
+    "rounds": 2,
+    "critique": "已檢視三種方向、相變、平靜、手機與選擇頁；修正滑鼠焦點外框與隊員名字呈現。",
+    "detectorFirstPassFindings": 0,
+    "humanAudioAudition": false
+  }
+}
