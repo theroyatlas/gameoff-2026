@@ -8,7 +8,9 @@
     "bundle": "vite build",
     "verify": "node verify.mjs",
     "build:parity": "vite build --outDir dist-parity --emptyOutDir",
-    "verify:parity": "node verify-parity.mjs"
+    "verify:parity": "node verify-parity.mjs",
+    "build:polish": "vite build --outDir dist-polish --emptyOutDir",
+    "verify:polish": "node verify-polish.mjs"
   },
   "dependencies": {
     "three": "0.180.0"

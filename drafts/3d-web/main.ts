@@ -1,5 +1,7 @@
 import './style.css';
 import * as THREE from 'three';
+import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
+import { selectBadges, trailStyle, type BadgeCandidate } from './polish';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
@@ -15,6 +17,7 @@ const canvas = document.querySelector<HTMLCanvasElement>('#scene')!;
 const stage = document.querySelector<HTMLElement>('#stage')!;
 const phaseText = document.querySelector<HTMLElement>('#phase')!;
 const statusText = document.querySelector<HTMLElement>('#status')!;
+const trailsRequested = new URLSearchParams(location.search).get('trail') === '1';
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const game = new Study();
 const palette = { brass:0xc49a50, edge:0xe4be72, dark:0x24180e, cyan:0x45f5e4, glass:0xb1e6de, steel:0xbfc8cd };
@@ -103,6 +106,21 @@ const orbit2=ring(.34,.008,edge,0,.46,0);orbit2.rotation.x=-.6;orbit2.rotation.z
 for(let i=0;i<4;i++){const a=i*Math.PI/2;rod(new THREE.Vector3(Math.cos(a)*.52,.2,Math.sin(a)*.52),new THREE.Vector3(Math.cos(a)*.45,.47,Math.sin(a)*.45),.035,brass);}
 cylinder(.05,.06,edge,0,.8,0);
 
+// 將不會移動的同材質零件合批；核心與軌道保持獨立動畫。
+scene.updateMatrixWorld(true);
+const staticBatches=new Map<THREE.Material,THREE.BufferGeometry[]>();
+for(const object of [...scene.children]){
+  if(!(object instanceof THREE.Mesh)||[dome,crystal,orbit1,orbit2].includes(object))continue;
+  const geometry=(object.geometry.index?object.geometry.toNonIndexed():object.geometry.clone()).applyMatrix4(object.matrixWorld);
+  const material=object.material as THREE.Material;
+  const batch=staticBatches.get(material)??[];batch.push(geometry);staticBatches.set(material,batch);
+  scene.remove(object);object.geometry.dispose();
+}
+for(const [material,geometries] of staticBatches){
+  const geometry=mergeGeometries(geometries);if(!geometry)throw new Error('Static geometry merge failed');
+  mesh(geometry,material);geometries.forEach(g=>g.dispose());
+}
+
 const cages=new Map<number,{group:THREE.Group,crystal:THREE.Mesh,born:number}>();
 const cageGeometries=[new THREE.TetrahedronGeometry(.25),new THREE.IcosahedronGeometry(.24),new THREE.BoxGeometry(.34,.34,.34),new THREE.OctahedronGeometry(.26)];
 function addCage(target:typeof game.monsters[number]){
@@ -136,6 +154,32 @@ function addBall(b:typeof game.balls[number]) {
   const label=new THREE.Sprite(new THREE.SpriteMaterial({map:badge(b.id),depthTest:false,transparent:true,toneMapped:false}));label.scale.set(.21,.21,1);label.position.set(0,.39,0);label.renderOrder=20;group.add(label);
   ballVisuals.set(b.id,{group,sphere,halo,outer,mat,label,lastX:b.x,lastY:b.y});
 }
+// 單一批次的漸細速度帶，不為每顆球建立額外 draw call。
+const trailGeo=new THREE.BufferGeometry();let trailCapacity=64;
+let trailPositions=new Float32Array(trailCapacity*18),trailEnergy=new Float32Array(trailCapacity*6);
+function allocateTrails(){trailGeo.setAttribute('position',new THREE.BufferAttribute(trailPositions,3));trailGeo.setAttribute('energy',new THREE.BufferAttribute(trailEnergy,1));}
+allocateTrails();
+const trailMat=new THREE.ShaderMaterial({transparent:true,depthWrite:false,side:THREE.DoubleSide,blending:THREE.AdditiveBlending,
+  vertexShader:'attribute float energy;varying float light;void main(){light=energy;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
+  fragmentShader:'varying float light;void main(){gl_FragColor=vec4(.32,1.,.88,light);}' });
+const trailMesh=new THREE.Mesh(trailGeo,trailMat);trailMesh.frustumCulled=false;scene.add(trailMesh);
+let trailCount=0,visibleBadgeCount=0;const lastImpact=new Map<number,number>();
+let badgeEvidence:BadgeCandidate[]=[];
+function updateTrails(){
+  trailCount=0;
+  if(!trailsRequested||reduced||quality.level>=3){trailGeo.setDrawRange(0,0);trailMesh.visible=false;return;}
+  if(game.balls.length>trailCapacity){trailCapacity=game.balls.length*2;trailGeo.dispose();trailPositions=new Float32Array(trailCapacity*18);trailEnergy=new Float32Array(trailCapacity*6);allocateTrails();}
+  for(const b of game.balls){
+    const speed=Math.hypot(b.vx,b.vy),style=trailStyle(speed,!trailsRequested||reduced||quality.level>=3);
+    if(style.length===0)continue;
+    const dx=b.vx/speed,dz=b.vy/speed,x=(b.x-400)*.01-dx*.12,z=(b.y-340)*.01-dz*.12;
+    const tx=Math.max(-3.96,Math.min(3.96,x-dx*style.length)),tz=Math.max(-3.36,Math.min(3.36,z-dz*style.length)),w=.055;
+    trailPositions.set([tx,.12,tz,x-dz*w,.12,z+dx*w,x+dz*w,.12,z-dx*w,tx,.12,tz,x+dz*w,.12,z-dx*w,tx,.12,tz],trailCount*18);
+    trailEnergy.set([0,style.opacity,style.opacity,0,style.opacity,0],trailCount*6);trailCount++;
+  }
+  trailGeo.setDrawRange(0,trailCount*6);trailGeo.attributes.position.needsUpdate=true;trailGeo.attributes.energy.needsUpdate=true;
+  trailMesh.visible=trailCount>0;
+}
 const effectGroup=new THREE.Group();scene.add(effectGroup);
 type VisualEffect={kind:string,born:number,duration:number,mesh:THREE.Object3D,radius:number};
 const effects:VisualEffect[]=[];let seen=new WeakSet<object>();
@@ -154,7 +198,7 @@ const baseCamera=new THREE.Vector3();
 function scatter(e:typeof game.effects[number],count:number,power:number){if(reduced)return;const cap=quality.level>=3?150:600;
   for(let i=0;i<count&&particles.length<cap;i++){const a=i*2.399+e.tick*.31;particles.push({x:(e.x-400)*.01,y:.15,z:(e.y-340)*.01,vx:Math.cos(a)*power,vy:.5+i%4*.3,vz:Math.sin(a)*power,life:.3+i%5*.075});}}
 function ingest(){for(const e of game.effects){if(seen.has(e))continue;seen.add(e);eventCounts[e.kind]=(eventCounts[e.kind]??0)+1;hud.sound.play(e,game.phase==='active');
-  if(e.kind==='impact'){const power=Math.min(1,e.value/1300);if(visualTime>=nextFreezeAt){freeze=.009+power*.024;nextFreezeAt=visualTime+.09;}shake=Math.max(shake,.012+power*.035);scatter(e,7,.8+power*2.2);}
+  if(e.kind==='impact'){for(const b of game.balls)if(Math.hypot(b.x-e.x,b.y-e.y)<C.ball.radius*2.5)lastImpact.set(b.id,game.tick);const power=Math.min(1,e.value/1300);if(visualTime>=nextFreezeAt){freeze=.009+power*.024;nextFreezeAt=visualTime+.09;}shake=Math.max(shake,.012+power*.035);scatter(e,7,.8+power*2.2);}
   if(e.kind==='launch'){recoil=.22;shake=.05;scatter(e,24,4);}
   if(e.kind==='burst'||e.kind==='death'){scatter(e,e.kind==='death'?32:22,3.6);shake=Math.max(shake,.05);}
   if(e.kind==='shift'||e.kind==='release'){freeze=.065;nextFreezeAt=visualTime+.15;shake=.09;}
@@ -190,13 +234,13 @@ function screenPoint(x:number,y:number,height=0){const p=new THREE.Vector3((x-40
 function removeVisual(group:THREE.Object3D){group.traverse(o=>{const m=o as THREE.Mesh;
   if(m.geometry&&m.geometry!==ballGeo)m.geometry.dispose();const mats=m.material?(Array.isArray(m.material)?m.material:[m.material]):[];
   for(const mat of mats)if(![brass,edge,dark,glow,glass].includes(mat as THREE.MeshStandardMaterial)){const map=(mat as THREE.SpriteMaterial).map;map?.dispose();mat.dispose();}});scene.remove(group);}
-function resetScene(){for(const v of ballVisuals.values())removeVisual(v.group);ballVisuals.clear();for(const v of cages.values())removeVisual(v.group);cages.clear();
+function resetScene(){lastImpact.clear();badgeEvidence=[];trailCount=visibleBadgeCount=0;trailGeo.setDrawRange(0,0);trailMesh.visible=false;for(const v of ballVisuals.values())removeVisual(v.group);ballVisuals.clear();for(const v of cages.values())removeVisual(v.group);cages.clear();
   for(const e of effects)disposeEffect(e);effects.length=0;particles=[];particleGeo.setDrawRange(0,0);seen=new WeakSet();
   for(const key of Object.keys(eventCounts))delete eventCounts[key];maxDepth=0;freeze=shake=recoil=0;nextFreezeAt=0;visualTime=0;drag=null;angle=-Math.PI/2;accumulator=0;previous=performance.now();currentPhase='';network.visible=false;camera.position.copy(baseCamera);
 }
 const hud=createHUD(game,resetScene);
 // 唯讀驗收資訊；不提供強制相變、植入球或改變時鐘的控制。
-Object.assign(window,{studyEvidence:{timing:()=>({seconds:game.tick*C.dt,phase:game.phase,shots:game.shots,qualityLevel:quality.level}),snapshot:()=>({game:game.snapshot(),hud:hud.evidence(),visuals:{balls:ballVisuals.size,cages:cages.size,particles:particles.length},tick:game.tick,seconds:game.tick*C.dt,shots:game.shots,phase:game.phase,shifts:game.shifts,events:game.events,inputs:game.inputs,balls:game.balls.map(b=>({...b})),counts:{...eventCounts},maxDepth,frameCount,meanFrameMs:frameCount?frameTotal/frameCount:0,friction:game.phase==='active'?C.shift.friction:C.ball.friction,quality:{level:quality.level,fps:quality.fps,history:qualityHistory,shadows:renderer.shadowMap.enabled,pixelRatio:renderer.getPixelRatio(),composerPixelRatio:composer.readBuffer.width/stage.clientWidth,antialias:renderer.getContext().getContextAttributes()?.antialias,shadowMapSize:key.shadow.mapSize.x,effects:effects.length,effectLimit:effectLimit()},drawCalls:renderer.info.render.calls,triangles:renderer.info.render.triangles}),project:screenPoint}});
+Object.assign(window,{studyEvidence:{timing:()=>({seconds:game.tick*C.dt,phase:game.phase,shots:game.shots,qualityLevel:quality.level}),snapshot:()=>({game:game.snapshot(),hud:hud.evidence(),visuals:{balls:ballVisuals.size,cages:cages.size,particles:particles.length,trails:trailCount,visibleBadges:visibleBadgeCount,badges:badgeEvidence},tick:game.tick,seconds:game.tick*C.dt,shots:game.shots,phase:game.phase,shifts:game.shifts,events:game.events,inputs:game.inputs,balls:game.balls.map(b=>({...b})),counts:{...eventCounts},maxDepth,frameCount,meanFrameMs:frameCount?frameTotal/frameCount:0,friction:game.phase==='active'?C.shift.friction:C.ball.friction,quality:{level:quality.level,fps:quality.fps,history:qualityHistory,shadows:renderer.shadowMap.enabled,pixelRatio:renderer.getPixelRatio(),composerPixelRatio:composer.readBuffer.width/stage.clientWidth,antialias:renderer.getContext().getContextAttributes()?.antialias,shadowMapSize:key.shadow.mapSize.x,effects:effects.length,effectLimit:effectLimit(),trailsRequested,trailsEnabled:trailsRequested&&!reduced&&quality.level<3},drawCalls:renderer.info.render.calls,triangles:renderer.info.render.triangles}),project:screenPoint}});
 function frame(now:number){if(stopped)return;requestAnimationFrame(frame);if(document.hidden){previous=now;return;}const elapsed=Math.max(0,(now-previous)/1000);previous=now;
   if(quality.sample(elapsed*1000))applyQuality();
   if(!document.hidden){accumulator+=Math.min(elapsed,.25);while(accumulator>=C.dt){game.step();accumulator-=C.dt;ingest();}}
@@ -208,14 +252,21 @@ function frame(now:number){if(stopped)return;requestAnimationFrame(frame);if(doc
   particles.forEach((p,i)=>{particlePositions.set([p.x,Math.max(.025,p.y),p.z],i*3);});particleGeo.attributes.position.needsUpdate=true;particleGeo.setDrawRange(0,particles.length);
   if(freeze>0&&!reduced&&game.status==='playing'){freeze-=elapsed;return;}
 const t=game.tick*C.dt,active=game.phase==='active',warning=game.phase==='warning';
+  const badgeCandidates:BadgeCandidate[]=[];
   for(const b of game.balls){if(!ballVisuals.has(b.id))addBall(b);const v=ballVisuals.get(b.id)!;
     const dx=(b.x-v.lastX)*.01,dz=(b.y-v.lastY)*.01;v.sphere.rotation.z-=dx/.14;v.sphere.rotation.x+=dz/.14;v.lastX=b.x;v.lastY=b.y;
     v.group.position.set((b.x-400)*.01,0,(b.y-340)*.01);
     const state=resonanceStyle(b);v.mat.emissiveIntensity=state.emission;v.outer.visible=state.doubleRing;
-    const distance=camera.position.distanceTo(v.group.position);const labelSize=26*2*Math.tan(THREE.MathUtils.degToRad(camera.fov/2))*distance/stage.clientHeight;v.label.scale.set(labelSize,labelSize,1);
+    const labelWorld=new THREE.Vector3(v.group.position.x,.39,v.group.position.z).applyMatrix4(camera.matrixWorldInverse);
+    const labelSize=26*2*Math.tan(THREE.MathUtils.degToRad(camera.fov/2))*(-labelWorld.z)/rect.height;v.label.scale.set(labelSize,labelSize,1);
+    const p=screenPoint(b.x,b.y,.39);badgeCandidates.push({id:b.id,x:p.x-rect.left,y:p.y-rect.top,priority:(b.resonant?100000:0)+(game.tick-(lastImpact.get(b.id)??-1000)<120?10000+(lastImpact.get(b.id)??0):0)});
     (v.halo.material as THREE.MeshBasicMaterial).opacity=state.opacity;(v.halo.material as THREE.MeshBasicMaterial).color.setHex(b.resonant?palette.cyan:palette.edge);
     v.halo.scale.setScalar(b.resonant&&!reduced?1.1+Math.sin(t*5+b.id)*.12:1);
   }
+  const visibleIds=selectBadges(badgeCandidates,rect.width,rect.height);visibleBadgeCount=visibleIds.size;
+  badgeEvidence=badgeCandidates.filter(b=>visibleIds.has(b.id));
+  for(const [id,v] of ballVisuals)v.label.visible=visibleIds.has(id);
+  updateTrails();
   const points:number[]=[];if(active){for(let i=0;i<game.balls.length;i++){const a=game.balls[i];for(let j=i+1;j<game.balls.length;j++){const b=game.balls[j];if(Math.hypot(a.x-b.x,a.y-b.y)<340)points.push((a.x-400)*.01,.16,(a.y-340)*.01,(b.x-400)*.01,.16,(b.y-340)*.01);}}}
   networkGeo.dispose();networkGeo.setAttribute('position',new THREE.Float32BufferAttribute(points,3));networkGeo.computeBoundingSphere();network.visible=active;
   fieldMat.uniforms.time.value=reduced?0:t;fieldMat.uniforms.strength.value=active?1:warning?.2:0;

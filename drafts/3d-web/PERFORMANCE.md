@@ -1,90 +1,66 @@
-# 3D 效能與 WebGL 退回驗證
+# 共振桌：CPU 瓶頸剖析與修正
 
-## 已查證
+## 已查證：範圍與順序
 
-- 從 b0a57ec 建立獨立分支；src 與展示轉接器均未修改。
-- 沿用工具索引 T-CREATIVE-20 的 three.js 路線與既有木頭／黃銅方向；沒有新增依賴或工具選型。
-- 暖機兩秒後，每三秒計算實際幀間隔平均；持續低於 45 FPS 時每窗下降一級：關陰影 → renderer 與 composer pixel ratio 同步乘 0.75（底限 0.5）→ 碰撞擴散環只保留四分之一、同時特效上限由 96 減至 24。原型沒有點狀粒子發射器，因此減量對象是既有擴散環與點燃線；球、身份標籤、相變網與玩法都保留。
-- 不自動升級，避免震盪。頁面隱藏時不採樣，回到頁面重新暖機。
-- `?quality=low` 使用 pixel ratio 1、關閉抗鋸齒、512×512 陰影與 low-power 提示；正常入口保留原本初始化畫質。
-- 無 WebGL、renderer 建立例外及 WebGL context 遺失均顯示說明與 2D 連結，停止顯示失效 Canvas 與操作指示。
-- 相對連結由 `D:\Projects\Active\competitions\game-off-2026\g4-resonance\drafts\3d-web\settings.ts` 的 TWO_D_URL 設定，目前為 ../../../dist/index.html。兩版合併封裝時依檔案配置修改此常數。
-- 唯一 3D 建置輸出：`D:\Projects\Active\competitions\game-off-2026\g4-resonance\drafts\3d-web\dist-perf\`。
-- npm test：4 檔、51/51 通過，包含暖機、短暫卡頓、45 FPS 邊界、依序降級與隱藏重設。根目錄 TypeScript noEmit 通過；3D 由 Vite 7.2.2 打包通過。
+2026-11-11。自適應畫質與 WebGL fallback 已存在於 `d21994a`；其父 commit 為 `3b572ad`，本批沒有重複併入、改寫歷史或改動既有三個量測 JSON。
 
-## 本機實測效能
+依 `artifacts\3d-parity\REPORT.md` 第 117 行建議，先撤回無 profiler 支持的試作最佳化，再對凍結 `dist-parity` 做 4× CPU 剖析，確認繪圖提交負擔後，才重新套用靜態幾何合批。HUD、相變幾何、後處理與自適應降級策略維持不變。拖尾預設關閉，僅 `?trail=1` 開啟實驗選項；本文件全部量測使用預設關閉狀態。
 
-Playwright channel msedge；Edge 157.0.4341.42；1280×950；deviceScaleFactor=1。GPU 實際回報 NVIDIA GeForce RTX 5060 Ti / ANGLE D3D11。CDP Emulation.setCPUThrottlingRate 分別設 4、6；頁面使用 quality=low，讓降畫質照常運作。
+## 已查證：Profiler 方法與瓶頸
 
-兩組皆以相同方向序列約每 0.8 遊戲秒做一次真實滑鼠拖拉，共 32 次；物理時間與相變均由正式 Game 執行，沒有植入球或強制相變。實際輸入 tick 仍受系統負載影響，兩次球軌跡並不完全相同。
+Edge 157.0.4341.42、1280×950、deviceScaleFactor=1、CDP CPU throttle 4、入口 `?quality=low`。沿用真實滑鼠輸入 32 發，方向 −π/2 + sin(i) × 0.6，約每 0.8 遊戲秒一發；最後一發後等 18 遊戲秒，再擷取約 10 秒平靜段。
 
-| CPU 節流 | 段落 | 平均 FPS | 1% low FPS | 幀間隔數 | 採樣秒數 |
-|---|---|---:|---:|---:|---:|
-| 4× | 平靜 | 51.79 | 18.20 | 517 | 9.982 |
-| 4× | 相變 | 37.85 | 2.13 | 226 | 5.971 |
-| 6× | 平靜 | 70.04 | 15.07 | 700 | 9.995 |
-| 6× | 相變 | 75.31 | 21.20 | 373 | 4.953 |
+使用 CDP `Profiler` 的 1ms CPU sampling、`Tracing` devtools.timeline，並包裝 WebGL2 draw／buffer 呼叫做每幀計數。計數涵蓋 composer 全部 pass；單看預設 `renderer.info.render.calls` 會被最後的後處理 pass 重設，無法代表整幀。Profiler 與 instrumentation 有額外成本，這組不當作驗收 FPS。
 
+| 平靜段 profiler | 修正前 | 修正後 |
+|---|---:|---:|
+| 捕獲 idle callback 數 | 533 | 619 |
+| drawElements + drawArrays / callback | 446.85 | 239.94 |
+| 平均 callback ms | 16.38 | 13.38 |
+| 繪圖呼叫鏈含子呼叫 CPU sample ms | 7744.58 | 6667.48 |
+| 繪圖呼叫鏈佔全部 sample | 74.26% | 61.75% |
+| 物理 step 呼叫鏈 sample ms | 39.48 | 32.22 |
+| Layout trace ms | 364.30 | 433.89 |
+| Minor + Major GC trace ms | 32.38 | 30.08 |
 
-平靜段：最後一發後等待 18 遊戲秒，接著取約 10 秒 idle 幀（4× 為 44.25–54.25 遊戲秒；6× 為 44.05–54.05）。結束快照均為 32 顆球留場。相變段取所有 active 的連續幀間隔，跨段幀不計。平均 FPS = 幀間隔數 / 總秒數；1% low = 1000 / 最慢 ceil(N×1%) 個幀間隔的平均毫秒數。沒有刪除長幀。截圖在採樣結束後擷取。
+修正前主要成本在 Three.js 繪圖提交：`renderBufferDirect` self time 合計 695.79ms，`uniformMatrix4fv` 479.36ms，`bindVertexArray` 329.31ms；物理鏈只佔約 0.38%。沒有證據支持把平靜瓶頸歸因於物理或大量 GC。
 
-4× 相變跨過畫質級別 0、1、2，包含降級轉換；6× 在相變前已到第 3 級。因此這是自動降畫質啟用時的兩次執行紀錄，不能用來斷言更強 CPU 節流更快。每段只有一次採樣，1% 尾段為 3–7 個幀間隔，數字不穩定性較高。
+修正僅將靜態木桌、邊框、螺絲等依材質合併並保留世界座標；核心、軌道、球、怪物保持獨立。整幀 draw call 減少約 46.3%，callback 平均縮短約 18.4%，支持針對性修正確實降低 CPU 提交成本。
 
-首次 15 發試跑沒有自然相變，因此未列入正式表格。第一輪僅保留錯誤輸出；補存原始資料的重跑保存在 `D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\perf-3d\pilot-no-shift.json`，完整揭露，不算通過。
+修正後 profile 在遊戲 46.425 秒降為第 1 級，其 `getProgramInfoLog` self time 約 1030ms，顯示畫質轉換伴隨同步 shader 編譯／驗證停頓。此成本沒有在本批進一步修正。兩次 profile 的畫質路徑不同（前：第 2 級、ratio 0.75；後：第 1 級、ratio 1），不是固定畫質 microbenchmark，也未做 GPU timer 判定 GPU 執行時間。
 
-完整原始幀、輸入、GPU 設定、降級紀錄與樣本：
-- `D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\perf-3d\cpu-4x.json`
-- `D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\perf-3d\cpu-6x.json`
-- `D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\perf-3d\performance.json`
+## 已查證：未開 profiler 的 FPS
 
-兩組正常呈現皆無 console error、page error 或外部網路請求。降級整合測試另外用實際 40ms 排程延遲，確認級別 1→2→3、陰影關閉、renderer/composer ratio 都是 0.75、特效上限 24，以及十二次鍵盤發射；這是人為負載測試，數字未混入效能表。
+獨立執行，沒有同時錄影、截圖或跑其他遊戲驗證。GPU 回報 NVIDIA GeForce RTX 5060 Ti / ANGLE D3D11。兩次都使用正式 Game、自然相變與上述 32 發策略，沒有植入球或改時鐘。最後一發後等待 18 遊戲秒，取 10 秒 idle；相變取所有連續 active 幀，跨段不計。
 
-## WebGL 退回實測
+平均 FPS = 幀間隔數 / 總秒數；1% low = 1000 / 最慢 ceil(N × 1%) 個幀間隔的平均毫秒。不刪長幀。沿用 rAF callback 採樣；撞擊停格可能跳過繪圖，所以活躍段 FPS 不等同每秒 GPU 畫面提交數。
 
-| 情境 | 方法 | 結果 |
-|---|---|---|
-| WebGL 禁用 | --disable-gpu --disable-webgl --disable-webgl2 | 說明與連結可見，沒有白畫面 |
-| renderer 建立失敗 | 測試端讓 WebGL getContext 丟例外 | 同上 |
-| context 遺失 | WEBGL_lose_context.loseContext() | 同上，停止繪圖 |
+| CPU 4× | 歷史基準平均 / 1% low | 本輪修正前平均 / 1% low | 修正後平均 / 1% low |
+|---|---:|---:|---:|
+| 平靜 | 35.77 / 12.83 | 67.18 / 19.82 | 80.08 / 14.93 |
+| 相變 | 69.88 / 15.82 | 65.86 / 16.58 | 54.19 / 12.74 |
 
-三者的 1280px 與 390×844 截圖均已開啟檢視，說明與按鈕可讀，沒有橫向溢出；每個案例都用鍵盤啟動相對連結，成功開啟凍結的 2D 成品、開始並發射一球。page error 全為零；禁用 WebGL 與注入例外時 three.js 會輸出預期的 renderer 診斷 console error，未宣稱這兩例 console 全乾淨。
+本輪平靜採樣前：671 幀間隔／9.9882 秒；後：798／9.9646 秒。相變前：327／4.9648 秒；後：270／4.9823 秒。
 
-證據目錄：`D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\perf-3d\`。
+**平靜平均達到 ≥45 FPS；相較本輪重測，1% low 與相變 FPS 沒有改善，不宣稱全部效能目標通過。** 修正前最後為第 3 級、ratio 0.75；修正後保持第 0 級、ratio 1、陰影開。這是自適應啟用的體驗比較，非鎖定相同畫質的差值。歷史 35.77 與本輪 67.18 的差異也顯示單次樣本受環境／時序影響，不能將全部差距歸給修正。
 
-fallback-disabled-desktop.png、fallback-disabled-mobile.png；fallback-renderer-failure-desktop.png、fallback-renderer-failure-mobile.png；fallback-context-lost-desktop.png、fallback-context-lost-mobile.png。細節見 fallback.json。
+## 證據與重現
 
-## impeccable audit（實作者自查）
+所有新 JSON、cpuprofile、trace 均僅在 `D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\3d-polish`，不提交。
 
-實作一致性通過。所有正常場景與退回桌面／手機截圖均已檢視；維持場景外觀，降級後影像較粗、無陰影是預期取捨。
+- `profile-before.json`、`profile-after.json`、`profile-summary.json`：完整畫質、每幀 GL 計數、時間與 CPU 摘要。
+- `cpu-before.cpuprofile`、`cpu-after.cpuprofile`：可匯入 DevTools JavaScript profiler。
+- `trace-before.json`、`trace-after.json`：可匯入 DevTools Performance。
+- `fps-before-4x.json`、`fps-after-4x.json`：完整 rAF、輸入 tick、GPU 屬性與快照；`performance-before.json`、`performance-after.json` 為摘要。
+- 歷史基準只讀 `D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\3d-parity\performance.json`。
+- `provisional` 中的中途資料不屬於本批正式成果；其中的拖尾開啟影像已移除。
 
-| 維度 | 分數 /4 | 結論 |
-|---|---:|---|
-| 無障礙 | 2 | 退回說明與鍵盤連結可用；Canvas 非視覺遊戲替代仍不足 |
-| 效能 | 2 | 自動降級實測有效；4× 相變仍有長幀 |
-| 響應式 | 3 | 390px 無溢出，退回按鈕至少 44px；3D 球號仍小 |
-| 主題 | 3 | 退回沿用現有色票；字級文件未全列入結構化 ramp |
-| 實作一致性 | 4 | 遊戲模擬未變更，退回可實際到達 2D |
-| 合計 | 14/20 | 功能完成，效能與手機仍有邊界 |
-
-P1：4× 相變 1% low 2.13 FPS，玩家會感到停頓；位置 main.ts 的畫質轉換與呈現流程。後續應另做 GPU/CPU profiler，定位長幀後再針對 shader 編譯或幾何負載改善，不能僅靠平均 FPS 宣稱順暢。P2：手機球號小（既有 3D 標籤），可另案調整手機 sprite 尺寸。P2：Canvas 缺完整非視覺替代，建議加入語意事件摘要。
-
-機械偵測的字級警告屬稀疏 ramp 文件與既有尺寸（29/17/13px 已在設計正文），退回標題 20–28px 為此次狀態說明；黑色 h1 警告來自靜態 HTML 未載入模組 CSS，實際截圖為米色標題，屬誤報。無新阻擋項目，停止視覺擴張。
+在 `D:\Projects\Active\competitions\game-off-2026\g4-resonance` 執行 `npm run build:polish`；再於 `D:\Projects\Active\competitions\game-off-2026\g4-resonance\drafts\3d-web` 依序且獨立執行 `node profile-polish.mjs dist-parity before`、`node verify-polish-perf.mjs dist-parity before`、`node verify-polish-perf.mjs dist-polish after`、`node profile-polish.mjs dist-polish after`。只讀凍結入口，只建置 dist-polish。
 
 ## 推論
 
-關陰影與降低解析度能減少 GPU 負載；降級轉換時的 shader 編譯及兩輪不同負載時序可能影響尾端幀時間，但未用 GPU profiler 定位因果。6× 的較高數字不能當成硬體效能改善證明。
+靜態多零件造成的 CPU 繪圖提交是已量到的主要負擔；合批的 call 數和 callback 成本下降支持修正方向。shader 轉換停頓可能影響 1% low，但 profiler run 與 FPS run 不同，不能把兩者的單一長幀直接當成同一事件。
 
-## 不確定與未做
+## 不確定／未達成
 
-- 沒有真實低階 GPU／實體手機。CDP 是 CPU 節流，pixel ratio／抗鋸齒／陰影只改繪圖預算，並非等效 GPU 節流。
-- 沒有多輪統計、長時間大量球數壓力、跨瀏覽器或 itch 部署驗收。
-- 未達成穩定 45 FPS 保證，仍保留上述長幀風險；需求中的低 FPS 自動依序降級已完成。
-- 未合併、未上傳、未新增 remote 或依賴。
-
-## 安全重現
-
-切至 perf/3d-fallback；工作目錄 `D:\Projects\Active\competitions\game-off-2026\g4-resonance\drafts\3d-web\`。
-
-依序執行 `npx --no-install vite build --outDir dist-perf --emptyOutDir`、`node verify-perf.mjs`、`node verify-fallback.mjs`、`node verify-quality.mjs`。效能量測時不要同時跑其他測試或瀏覽器。
-
-不可使用預設 bundle/build，亦不可重建兩個凍結輸出。
+未證明 1% low 的穩定改善；相變尾端仍需追查。沒有 GPU timer、實體手機、低階 GPU、多輪統計、跨瀏覽器或長時間熱降頻驗收。4× CPU 不等於低階 GPU。下一步應針對 shader variant 預熱／畫質轉換 trace 設計受控實驗，不用平均 FPS 掩蓋卡頓。

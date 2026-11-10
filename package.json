@@ -11,7 +11,9 @@
     "smoke": "node scripts/smoke.mjs",
     "sim": "node scripts/run-balance.mjs",
     "build:parity": "tsc --noEmit && npm --prefix drafts/3d-web run build:parity",
-    "verify:parity": "npm --prefix drafts/3d-web run verify:parity"
+    "verify:parity": "npm --prefix drafts/3d-web run verify:parity",
+    "build:polish": "tsc --noEmit && npm --prefix drafts/3d-web run build:polish",
+    "verify:polish": "npm --prefix drafts/3d-web run verify:polish"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",
