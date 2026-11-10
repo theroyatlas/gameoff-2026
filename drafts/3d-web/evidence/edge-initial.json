@@ -1,0 +1,931 @@
+{
+  "browser": "157.0.4341.42",
+  "channel": "msedge",
+  "url": "file:///D:/Projects/Active/competitions/game-off-2026/g4-resonance/drafts/3d-web/dist/index.html",
+  "renderer": {
+    "vendor": "Google Inc. (NVIDIA)",
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5060 Ti (0x00002D04) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+  },
+  "consoleErrors": [],
+  "pageErrors": [],
+  "externalRequests": [],
+  "screenshots": {
+    "calm": {
+      "seconds": 8.475,
+      "phase": "idle",
+      "shots": 5
+    },
+    "shift": {
+      "seconds": 18.166666666666668,
+      "shots": 10,
+      "friction": 0.055
+    }
+  },
+  "desktop": {
+    "overflow": false,
+    "canvas": {
+      "x": 38,
+      "y": 109.4375,
+      "width": 1364,
+      "height": 700,
+      "top": 109.4375,
+      "right": 1402,
+      "bottom": 809.4375,
+      "left": 38
+    }
+  },
+  "tick": 4826,
+  "seconds": 40.21666666666667,
+  "shots": 15,
+  "phase": "idle",
+  "shifts": [
+    {
+      "tick": 2091,
+      "kind": "warning"
+    },
+    {
+      "tick": 2175,
+      "kind": "active"
+    },
+    {
+      "tick": 2775,
+      "kind": "release"
+    }
+  ],
+  "events": [
+    {
+      "id": 1,
+      "tick": 342,
+      "chainId": 1,
+      "depth": 1,
+      "ballId": 1,
+      "kind": "burst",
+      "radius": 238,
+      "ignitedBallIds": [],
+      "targetDamage": [
+        {
+          "targetId": -4,
+          "amount": 20,
+          "killed": false
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "tick": 561,
+      "chainId": 2,
+      "depth": 1,
+      "ballId": 2,
+      "kind": "burst",
+      "radius": 238,
+      "ignitedBallIds": [],
+      "targetDamage": [
+        {
+          "targetId": -3,
+          "amount": 20,
+          "killed": false
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "tick": 895,
+      "chainId": 3,
+      "depth": 1,
+      "ballId": 4,
+      "kind": "burst",
+      "radius": 238,
+      "ignitedBallIds": [],
+      "targetDamage": [
+        {
+          "targetId": 0,
+          "amount": 20,
+          "killed": false
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "tick": 936,
+      "chainId": 4,
+      "depth": 1,
+      "ballId": 3,
+      "kind": "burst",
+      "radius": 238,
+      "ignitedBallIds": [],
+      "targetDamage": [
+        {
+          "targetId": -3,
+          "amount": 20,
+          "killed": false
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "tick": 1070,
+      "chainId": 5,
+      "depth": 1,
+      "ballId": 5,
+      "kind": "burst",
+      "radius": 238,
+      "ignitedBallIds": [],
+      "targetDamage": [
+        {
+          "targetId": 0,
+          "amount": 20,
+          "killed": false
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "tick": 1597,
+      "chainId": 6,
+      "depth": 1,
+      "ballId": 6,
+      "kind": "burst",
+      "radius": 238,
+      "ignitedBallIds": [
+        7
+      ],
+      "targetDamage": [
+        {
+          "targetId": -3,
+          "amount": 20,
+          "killed": false
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "tick": 1775,
+      "chainId": 7,
+      "depth": 1,
+      "ballId": 8,
+      "kind": "burst",
+      "radius": 238,
+      "ignitedBallIds": [],
+      "targetDamage": [
+        {
+          "targetId": -4,
+          "amount": 20,
+          "killed": false
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "tick": 2775,
+      "chainId": 8,
+      "depth": 1,
+      "ballId": 1,
+      "kind": "amplified",
+      "radius": 476,
+      "ignitedBallIds": [],
+      "targetDamage": [
+        {
+          "targetId": 0,
+          "amount": 40,
+          "killed": false
+        },
+        {
+          "targetId": -2,
+          "amount": 40,
+          "killed": false
+        },
+        {
+          "targetId": -4,
+          "amount": 40,
+          "killed": false
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "tick": 2775,
+      "chainId": 8,
+      "depth": 1,
+      "ballId": 2,
+      "kind": "amplified",
+      "radius": 476,
+      "ignitedBallIds": [],
+      "targetDamage": [
+        {
+          "targetId": 0,
+          "amount": 40,
+          "killed": false
+        },
+        {
+          "targetId": -1,
+          "amount": 40,
+          "killed": false
+        },
+        {
+          "targetId": -3,
+          "amount": 40,
+          "killed": false
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "tick": 2775,
+      "chainId": 8,
+      "depth": 1,
+      "ballId": 3,
+      "kind": "amplified",
+      "radius": 476,
+      "ignitedBallIds": [],
+      "targetDamage": [
+        {
+          "targetId": 0,
+          "amount": 40,
+          "killed": false
+        },
+        {
+          "targetId": -1,
+          "amount": 40,
+          "killed": false
+        },
+        {
+          "targetId": -3,
+          "amount": 40,
+          "killed": false
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "tick": 2775,
+      "chainId": 8,
+      "depth": 1,
+      "ballId": 4,
+      "kind": "amplified",
+      "radius": 476,
+      "ignitedBallIds": [],
+      "targetDamage": [
+        {
+          "targetId": 0,
+          "amount": 40,
+          "killed": false
+        },
+        {
+          "targetId": -2,
+          "amount": 40,
+          "killed": false
+        },
+        {
+          "targetId": -3,
+          "amount": 40,
+          "killed": false
+        },
+        {
+          "targetId": -4,
+          "amount": 40,
+          "killed": false
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "tick": 2775,
+      "chainId": 8,
+      "depth": 1,
+      "ballId": 5,
+      "kind": "amplified",
+      "radius": 476,
+      "ignitedBallIds": [],
+      "targetDamage": [
+        {
+          "targetId": 0,
+          "amount": 40,
+          "killed": false
+        },
+        {
+          "targetId": -2,
+          "amount": 40,
+          "killed": false
+        },
+        {
+          "targetId": -4,
+          "amount": 40,
+          "killed": false
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "tick": 2775,
+      "chainId": 8,
+      "depth": 1,
+      "ballId": 6,
+      "kind": "amplified",
+      "radius": 476,
+      "ignitedBallIds": [],
+      "targetDamage": [
+        {
+          "targetId": 0,
+          "amount": 40,
+          "killed": false
+        },
+        {
+          "targetId": -1,
+          "amount": 40,
+          "killed": false
+        },
+        {
+          "targetId": -3,
+          "amount": 40,
+          "killed": false
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "tick": 2775,
+      "chainId": 8,
+      "depth": 2,
+      "ballId": 7,
+      "kind": "amplified",
+      "radius": 476,
+      "ignitedBallIds": [],
+      "targetDamage": [
+        {
+          "targetId": 0,
+          "amount": 40,
+          "killed": false
+        },
+        {
+          "targetId": -2,
+          "amount": 40,
+          "killed": false
+        },
+        {
+          "targetId": -4,
+          "amount": 40,
+          "killed": false
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "tick": 2775,
+      "chainId": 8,
+      "depth": 1,
+      "ballId": 8,
+      "kind": "amplified",
+      "radius": 476,
+      "ignitedBallIds": [],
+      "targetDamage": [
+        {
+          "targetId": 0,
+          "amount": 40,
+          "killed": false
+        },
+        {
+          "targetId": -4,
+          "amount": 40,
+          "killed": false
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "tick": 2775,
+      "chainId": 8,
+      "depth": 1,
+      "ballId": 9,
+      "kind": "amplified",
+      "radius": 476,
+      "ignitedBallIds": [],
+      "targetDamage": [
+        {
+          "targetId": 0,
+          "amount": 40,
+          "killed": false
+        },
+        {
+          "targetId": -1,
+          "amount": 40,
+          "killed": false
+        },
+        {
+          "targetId": -3,
+          "amount": 40,
+          "killed": false
+        }
+      ]
+    },
+    {
+      "id": 17,
+      "tick": 2775,
+      "chainId": 8,
+      "depth": 1,
+      "ballId": 10,
+      "kind": "amplified",
+      "radius": 476,
+      "ignitedBallIds": [],
+      "targetDamage": [
+        {
+          "targetId": 0,
+          "amount": 40,
+          "killed": false
+        },
+        {
+          "targetId": -3,
+          "amount": 40,
+          "killed": false
+        },
+        {
+          "targetId": -4,
+          "amount": 40,
+          "killed": false
+        }
+      ]
+    },
+    {
+      "id": 18,
+      "tick": 2775,
+      "chainId": 8,
+      "depth": 1,
+      "ballId": 11,
+      "kind": "amplified",
+      "radius": 476,
+      "ignitedBallIds": [],
+      "targetDamage": [
+        {
+          "targetId": 0,
+          "amount": 40,
+          "killed": false
+        },
+        {
+          "targetId": -2,
+          "amount": 40,
+          "killed": false
+        },
+        {
+          "targetId": -4,
+          "amount": 40,
+          "killed": false
+        }
+      ]
+    },
+    {
+      "id": 19,
+      "tick": 2775,
+      "chainId": 8,
+      "depth": 1,
+      "ballId": 12,
+      "kind": "amplified",
+      "radius": 476,
+      "ignitedBallIds": [],
+      "targetDamage": [
+        {
+          "targetId": 0,
+          "amount": 40,
+          "killed": false
+        },
+        {
+          "targetId": -3,
+          "amount": 40,
+          "killed": false
+        },
+        {
+          "targetId": -4,
+          "amount": 40,
+          "killed": false
+        }
+      ]
+    },
+    {
+      "id": 20,
+      "tick": 2775,
+      "chainId": 8,
+      "depth": 1,
+      "ballId": 13,
+      "kind": "amplified",
+      "radius": 476,
+      "ignitedBallIds": [],
+      "targetDamage": [
+        {
+          "targetId": 0,
+          "amount": 40,
+          "killed": false
+        },
+        {
+          "targetId": -2,
+          "amount": 40,
+          "killed": false
+        },
+        {
+          "targetId": -4,
+          "amount": 40,
+          "killed": false
+        }
+      ]
+    },
+    {
+      "id": 21,
+      "tick": 3154,
+      "chainId": 9,
+      "depth": 1,
+      "ballId": 14,
+      "kind": "burst",
+      "radius": 238,
+      "ignitedBallIds": [],
+      "targetDamage": [
+        {
+          "targetId": -2,
+          "amount": 20,
+          "killed": false
+        }
+      ]
+    },
+    {
+      "id": 22,
+      "tick": 3172,
+      "chainId": 10,
+      "depth": 1,
+      "ballId": 15,
+      "kind": "burst",
+      "radius": 238,
+      "ignitedBallIds": [],
+      "targetDamage": [
+        {
+          "targetId": 0,
+          "amount": 20,
+          "killed": false
+        },
+        {
+          "targetId": -1,
+          "amount": 20,
+          "killed": false
+        }
+      ]
+    }
+  ],
+  "inputs": [
+    {
+      "tick": 132,
+      "angle": -1.2499998491473994,
+      "actualAngle": -1.2601135791943752,
+      "material": 0
+    },
+    {
+      "tick": 351,
+      "angle": -1.900000059012161,
+      "actualAngle": -1.9262940005597966,
+      "material": 1
+    },
+    {
+      "tick": 543,
+      "angle": -0.9199997110572204,
+      "actualAngle": -0.8053538410380803,
+      "material": 2
+    },
+    {
+      "tick": 746,
+      "angle": -2.1999999544926454,
+      "actualAngle": -2.2863974109514027,
+      "material": 0
+    },
+    {
+      "tick": 960,
+      "angle": -1.500000205405639,
+      "actualAngle": -1.5640242955162644,
+      "material": 1
+    },
+    {
+      "tick": 1168,
+      "angle": -0.599999921383076,
+      "actualAngle": -0.7736607359993486,
+      "material": 2
+    },
+    {
+      "tick": 1401,
+      "angle": -2.5000001398896403,
+      "actualAngle": -2.6424018982556063,
+      "material": 0
+    },
+    {
+      "tick": 1562,
+      "angle": -1.149999858236369,
+      "actualAngle": -1.3399762524544023,
+      "material": 1
+    },
+    {
+      "tick": 1775,
+      "angle": -2.0000001837956445,
+      "actualAngle": -1.825018757529072,
+      "material": 2
+    },
+    {
+      "tick": 1990,
+      "angle": -0.7999999466454626,
+      "actualAngle": -0.8319853316767545,
+      "material": 0
+    },
+    {
+      "tick": 2205,
+      "angle": -2.300000168088765,
+      "actualAngle": -2.273324494648083,
+      "material": 1
+    },
+    {
+      "tick": 2378,
+      "angle": -1.6999998520087514,
+      "actualAngle": -1.5902590493666893,
+      "material": 2
+    },
+    {
+      "tick": 2579,
+      "angle": -1.0500000658257973,
+      "actualAngle": -1.247543693076508,
+      "material": 0
+    },
+    {
+      "tick": 2937,
+      "angle": -2.649999804993505,
+      "actualAngle": -2.6637087249774294,
+      "material": 1
+    },
+    {
+      "tick": 3019,
+      "angle": -1.450000159631594,
+      "actualAngle": -1.5929034497150356,
+      "material": 2
+    }
+  ],
+  "balls": [
+    {
+      "id": 1,
+      "x": 304.49268715190226,
+      "y": 359.407046913106,
+      "vx": 0,
+      "vy": 0,
+      "material": 0,
+      "oscillation": 0,
+      "resonant": false,
+      "cooldown": 5175,
+      "delayedUntil": 0,
+      "igniteUntil": 0,
+      "chainId": null,
+      "depth": 0
+    },
+    {
+      "id": 2,
+      "x": 720.2978849672919,
+      "y": 125.79540572167174,
+      "vx": 0,
+      "vy": 0,
+      "material": 1,
+      "oscillation": 0,
+      "resonant": false,
+      "cooldown": 5175,
+      "delayedUntil": 0,
+      "igniteUntil": 0,
+      "chainId": null,
+      "depth": 0
+    },
+    {
+      "id": 3,
+      "x": 451.3873820201748,
+      "y": 168.45539718654274,
+      "vx": 0,
+      "vy": 0,
+      "material": 2,
+      "oscillation": 0,
+      "resonant": false,
+      "cooldown": 5175,
+      "delayedUntil": 0,
+      "igniteUntil": 0,
+      "chainId": null,
+      "depth": 0
+    },
+    {
+      "id": 4,
+      "x": 61.9491716418079,
+      "y": 391.02636987666665,
+      "vx": 0,
+      "vy": 0,
+      "material": 0,
+      "oscillation": 0,
+      "resonant": false,
+      "cooldown": 5175,
+      "delayedUntil": 0,
+      "igniteUntil": 0,
+      "chainId": null,
+      "depth": 0
+    },
+    {
+      "id": 5,
+      "x": 490.32569048796086,
+      "y": 610.7759250863298,
+      "vx": 0,
+      "vy": 0,
+      "material": 1,
+      "oscillation": 0,
+      "resonant": false,
+      "cooldown": 5175,
+      "delayedUntil": 0,
+      "igniteUntil": 0,
+      "chainId": null,
+      "depth": 0
+    },
+    {
+      "id": 6,
+      "x": 745.5392447385549,
+      "y": 167.2321507498974,
+      "vx": 0,
+      "vy": 0,
+      "material": 2,
+      "oscillation": 0,
+      "resonant": false,
+      "cooldown": 5175,
+      "delayedUntil": 0,
+      "igniteUntil": 0,
+      "chainId": null,
+      "depth": 0
+    },
+    {
+      "id": 7,
+      "x": 21.67154060601012,
+      "y": 41.603391217221,
+      "vx": 0,
+      "vy": 0,
+      "material": 0,
+      "oscillation": 0,
+      "resonant": false,
+      "cooldown": 5175,
+      "delayedUntil": 0,
+      "igniteUntil": 1627,
+      "chainId": null,
+      "depth": 0
+    },
+    {
+      "id": 8,
+      "x": 366.08936849373595,
+      "y": 639.8799613104727,
+      "vx": 0,
+      "vy": 0,
+      "material": 1,
+      "oscillation": 0,
+      "resonant": false,
+      "cooldown": 5175,
+      "delayedUntil": 0,
+      "igniteUntil": 0,
+      "chainId": null,
+      "depth": 0
+    },
+    {
+      "id": 9,
+      "x": 328.22288561074026,
+      "y": 336.3571016443799,
+      "vx": 0,
+      "vy": 0,
+      "material": 2,
+      "oscillation": 0,
+      "resonant": false,
+      "cooldown": 5175,
+      "delayedUntil": 0,
+      "igniteUntil": 0,
+      "chainId": null,
+      "depth": 0
+    },
+    {
+      "id": 10,
+      "x": 362.8780173230441,
+      "y": 173.04456870722356,
+      "vx": 0,
+      "vy": 0,
+      "material": 0,
+      "oscillation": 0,
+      "resonant": false,
+      "cooldown": 5175,
+      "delayedUntil": 0,
+      "igniteUntil": 0,
+      "chainId": null,
+      "depth": 0
+    },
+    {
+      "id": 11,
+      "x": 238.7896180206329,
+      "y": 610.0418955282208,
+      "vx": 0,
+      "vy": 0,
+      "material": 1,
+      "oscillation": 0,
+      "resonant": false,
+      "cooldown": 5175,
+      "delayedUntil": 0,
+      "igniteUntil": 0,
+      "chainId": null,
+      "depth": 0
+    },
+    {
+      "id": 12,
+      "x": 453.75623911044676,
+      "y": 411.58467105617495,
+      "vx": 0,
+      "vy": 0,
+      "material": 2,
+      "oscillation": 0,
+      "resonant": false,
+      "cooldown": 5175,
+      "delayedUntil": 0,
+      "igniteUntil": 0,
+      "chainId": null,
+      "depth": 0
+    },
+    {
+      "id": 13,
+      "x": 121.38137985418456,
+      "y": 38.500620654638055,
+      "vx": 0,
+      "vy": 0,
+      "material": 0,
+      "oscillation": 0,
+      "resonant": false,
+      "cooldown": 5175,
+      "delayedUntil": 0,
+      "igniteUntil": 0,
+      "chainId": null,
+      "depth": 0
+    },
+    {
+      "id": 14,
+      "x": 704.051055496914,
+      "y": 17.707318574809793,
+      "vx": 0,
+      "vy": 0,
+      "material": 1,
+      "oscillation": 0,
+      "resonant": false,
+      "cooldown": 5554,
+      "delayedUntil": 0,
+      "igniteUntil": 0,
+      "chainId": null,
+      "depth": 0
+    },
+    {
+      "id": 15,
+      "x": 621.7172941185906,
+      "y": 89.54071478558535,
+      "vx": 0,
+      "vy": 0,
+      "material": 2,
+      "oscillation": 0,
+      "resonant": false,
+      "cooldown": 5572,
+      "delayedUntil": 0,
+      "igniteUntil": 0,
+      "chainId": null,
+      "depth": 0
+    }
+  ],
+  "counts": {
+    "launch": 15,
+    "impact": 482,
+    "resonate": 12,
+    "damage": 76,
+    "burst": 22,
+    "ignite": 1,
+    "interference": 1,
+    "warning": 1,
+    "shift": 1,
+    "release": 1
+  },
+  "maxDepth": 2,
+  "frameCount": 5755,
+  "meanFrameMs": 7.490112945264987,
+  "friction": 0.65,
+  "drawCalls": 1,
+  "triangles": 1,
+  "mobile": {
+    "width": 390,
+    "overflow": false,
+    "shots": 1,
+    "method": "Edge CDP synthesized touch, no physical device"
+  },
+  "video": {
+    "format": {
+      "duration": "30.000000"
+    }
+  },
+  "checks": {
+    "shots15": true,
+    "retained15": true,
+    "consoleClean": true,
+    "pageClean": true,
+    "noNetwork": true,
+    "phaseObserved": true,
+    "release": true,
+    "chain": true,
+    "stopped": true,
+    "touch": true,
+    "noOverflow": true,
+    "sameTickRelease": true,
+    "duration30": true
+  }
+}

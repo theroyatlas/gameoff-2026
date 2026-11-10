@@ -1,0 +1,32 @@
+[
+  {
+    "path": "D:\\Projects\\Active\\competitions\\game-off-2026\\g4-resonance\\drafts\\3d-web\\dist\\index.html",
+    "sha256": "2b6bc04b03331c77c919acd9de9f8229a01d204ab58aea3fbe723b2f386f008b",
+    "bytes": 583922
+  },
+  {
+    "path": "D:\\Projects\\Active\\competitions\\game-off-2026\\g4-resonance\\drafts\\3d-web\\shots\\calm.png",
+    "sha256": "a7f4a5fc94d8423dcb352626fce59495665e9eb54af1a12620f0cfb866b61bac",
+    "bytes": 795836
+  },
+  {
+    "path": "D:\\Projects\\Active\\competitions\\game-off-2026\\g4-resonance\\drafts\\3d-web\\shots\\shift.png",
+    "sha256": "2e9d9980c2b673f34a5b8fdc4e4b730b3e7fbc5be0d823d01d0c495e91ca5342",
+    "bytes": 859027
+  },
+  {
+    "path": "D:\\Projects\\Active\\competitions\\game-off-2026\\g4-resonance\\drafts\\3d-web\\shots\\mobile.png",
+    "sha256": "23709b5e3dd2bd4de162c05b4dcccf3137cbd7c578a6e1121cce41206d4ab139",
+    "bytes": 150367
+  },
+  {
+    "path": "D:\\Projects\\Active\\competitions\\game-off-2026\\g4-resonance\\drafts\\3d-web\\shots\\sheet.png",
+    "sha256": "367fbd2a863fa99c44b25d6fd5263821b4355dcdda9a4fb4c51f108ca5ad5077",
+    "bytes": 1238908
+  },
+  {
+    "path": "D:\\Projects\\Active\\competitions\\game-off-2026\\g4-resonance\\drafts\\3d-web\\shots\\demo-30s.webm",
+    "sha256": "26b5813aa898373ec17120c255aa07ef69d9c90da3ba47379fb1718386f05704",
+    "bytes": 3010999
+  }
+]

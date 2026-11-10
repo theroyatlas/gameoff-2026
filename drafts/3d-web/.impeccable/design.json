@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-11T01:37:43.0269045+08:00",
+  "title": "共振桌原型",
+  "extensions": {
+    "breakpoints": [
+      {
+        "name": "compact",
+        "value": "650px"
+      }
+    ],
+    "motion": [
+      {
+        "name": "reduced-motion",
+        "value": "prefers-reduced-motion: reduce",
+        "purpose": "停用裝飾自轉與光環脈動，保留規則狀態。"
+      }
+    ]
+  },
+  "components": [],
+  "narrative": {
+    "northStar": "木頭與黃銅的共振桌",
+    "overview": "固定斜俯視的微縮場地，球群與核心是第一畫面的主體。",
+    "keyCharacteristics": [
+      "暖色材質",
+      "具身份的球",
+      "青色相變網"
+    ],
+    "rules": [
+      {
+        "name": "狀態對應",
+        "body": "共振網只在 Game active 相位顯示。",
+        "section": "colors"
+      }
+    ],
+    "dos": [
+      "保持場地與發射座完整可見。"
+    ],
+    "donts": [
+      "不以靜態概念圖冒充可操作場景。"
+    ]
+  }
+}

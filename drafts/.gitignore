@@ -1,0 +1,9 @@
+3d-web/node_modules/
+3d-web/.npm-cache/
+3d-web/*.webm
+3d-web/*.mp4
+3d-web/shots/*.webm
+3d-web/shots/*.mp4
+3d-web/evidence/*.webm
+!3d-web/dist/
+!3d-web/dist/**
