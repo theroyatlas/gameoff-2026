@@ -1,137 +1,144 @@
-# 第一週灰盒交付
+# 共振灰盒：平衡調參與回饋驗證
 
-驗證日期：2026-11-10。唯一功能規格：D:\Projects\Active\competitions\game-off-2026\g4-resonance\SPEC.md。
+驗證日期：2026-11-10。唯一規格：D:\Projects\Active\competitions\game-off-2026\g4-resonance\SPEC.md。
+本輪基準 commit：badd584。只做本機修改與 commit，無 remote、無 push、無上傳。沒有新增執行時依賴，未刪除 node_modules 或 .npm-cache。
 
-## 已查證：安裝、執行、建置、測試
+## 已查證：本輪結論
 
-本機驗證環境：Node.js 24.22.1、npm 11.19.1、Vite 7.3.8、Vitest 3.2.7、已安裝的 Microsoft Edge。需要 Node.js 22.12 以上。
+目前採用的參數達成「哇出現率」「隨機策略敗率」「平均時長」三項數字目標，**瞄準 Boss 的勝率優勢未達標**。這是本輪已測候選中採用的折衷，不宣稱全域最佳，也不代表真人爽感已驗收。
 
-未完成的交付清理：第三方套件與 npm 暫存有 215 個檔案含 email 格式，非遊戲作者資料。嘗試移除 D:\Projects\Active\competitions\game-off-2026\g4-resonance\node_modules 與 D:\Projects\Active\competitions\game-off-2026\g4-resonance\.npm-cache，兩次均被自動審核以 `blocked by policy` 拒絕，未提供具體理由，因此目錄仍在本機，不能宣稱「整個資料夾任何檔案都不含 email」。兩者已被 gitignore 排除，不進 commit 或 dist；交付原始碼、文件、截圖與 dist 的 email 格式掃描為 0。直接玩成品不需套件；乾淨環境重跑需先安裝。
+每種策略各用相同 40 個種子：20261110–20261149。第一發在 tick 0，之後每 240 ticks（2 秒）一發；固定步長 1/120 秒。操作 RNG 與遊戲 RNG 分離，保留遊戲本身的扇形隨機偏移。
 
-首次安裝與開發，於 PowerShell 執行：
+- 隨機上方（random-up）：方向為正上方 ±60°，均勻取樣。
+- 瞄準 Boss 附近（boss-near）：目標 y 固定為 Boss 中心，x 在 Boss 中心左右一個半徑內均勻取樣。策略不讀未來、不找精確落點。
+- 最長模擬 600 秒；逾時獨立列出且仍計入平均，不當作敗局。本輪前後均無逾時。
+- 「哇」按既有 chainId 聚合爆發事件：Boss 實扣傷害 ≥ 最大 HP 的 25%、同鏈擊殺 ≥3 個不同怪物、最大深度 ≥8。一般接觸傷害不灌入爆發連鎖。
+- 最終 Boss HP 為 3000，因此大傷害門檻是 **750**，沒有偷用固定 25 傷害放寬驗收。
+- 任一「哇」是三條件聯集；同一局可同時列在多個欄位。
 
-```powershell
+| 策略／階段 | 勝／敗／逾時 | 勝率 | 平均發數 | 平均秒數 | 任一哇 | Boss ≥25% | 三殺 | ≥8 層 |
+|---|---|---:|---:|---:|---:|---:|---:|---:|
+| 隨機上方／調參前 | 40／0／0 | 100% | 22.475 | 43.784 | 4／40 | 1／40 | 0／40 | 3／40 |
+| 隨機上方／調參後 | 32／8／0 | 80% | 65.975 | 130.823 | 40／40 | 22／40 | 19／40 | 40／40 |
+| 瞄準 Boss／調參前 | 40／0／0 | 100% | 21.475 | 41.900 | 2／40 | 1／40 | 0／40 | 1／40 |
+| 瞄準 Boss／調參後 | 28／12／0 | 70% | 64.175 | 127.032 | 40／40 | 10／40 | 18／40 | 40／40 |
+
+調參後：任一哇皆為 100%，且三種都有出現；隨機敗率 20%；兩種策略平均皆在 2–5 分鐘內。瞄準勝率反而低 10 個百分點，不能以平均快 3.79 秒代替勝率驗收。
+
+機器證據：
+- D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\balance-before.json
+- D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\balance-after.json
+- D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\balance-validation-m900.json：選定候選的完整 40 種子驗證，與寫入 config 後重跑的摘要一致。
+- D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\balance-validation-m1000.json：較高怪物 HP 候選，隨機敗率 45%，超出上限，未採用。
+- 各 JSON 的 games 記錄每局勝負、發數、秒數、最大連鎖深度、最大同鏈傷害／擊殺。after 另列短時間連鎖例子的跨度與最長事件間隔。
+- 其他 balance-search1、pressure、choice、rebound、contact、finalists、deadline 檔為 8 或 12 種子的探索資料，**不能當作 40 局驗收**。部分探索批次提前停止，只將實際產生的檔案視為完成。
+
+## 已查證：調整的參數與規則邊界
+
+設定檔：D:\Projects\Active\competitions\game-off-2026\g4-resonance\src\config.ts。
+
+| 參數 | 調參前 | 調參後 | 目的 |
+|---|---:|---:|---|
+| ball.friction | 0.075 | 0.12 | 減少長時間漂移，理論無碰撞停止約 76.5 → 47.8 秒 |
+| resonance.radiusInBalls | 2（28 px） | 6（84 px） | 增加球群能接上點燃的機率；同頻範圍仍倍增 |
+| boss.hp | 100 | 3000 | 延長建立球群的時間，對應調高接觸傷害 |
+| monsters.hp | 3 | 900 | 讓場邊怪物能累積成實際失敗壓力 |
+| damage.normal | 1 | 10 | 提高直接碰到目標的貢獻 |
+| damage.resonant | 5 | 25 | 保留共振接觸較強的差異 |
+| damage.burstExtra | 10 | 10 | 爆發額外傷害不變，靠連鎖累加 |
+| feedback.damageMergeTicks | 無 | 24（0.2 秒） | 合併同一位置連續傷害浮字 |
+
+HP 與傷害的絕對值變動較大，是純參數折衷；怪物目前需要多次接觸／爆發才會死亡。是否讓玩家感覺目標太硬，仍需真人試玩，不以數字達標代替感受。
+
+沒有改變碰撞震盪規則，因此不新增牆壁開關。SPEC 第 3 節的「發生碰撞時」及共振後「不論撞到什麼」均保留，牆壁仍可累積並觸發爆發。閾值 5、點燃 +2、三種材質、反彈係數、每五發一隻怪物、超過十隻失敗均保留。
+扇形仍無軌跡或落點預測、爆發自動、球永久留場、震盪數字不顯示。R3／R5 不執行，其介面保留。SPEC 未修改。
+
+## 模擬與重跑指令
+
+需 Node.js 22.12 以上；本輪使用 Node.js 24.22.1、npm 11.19.1、既有 Vite／Vitest／Playwright。
+
+~~~powershell
 Set-Location 'D:\Projects\Active\competitions\game-off-2026\g4-resonance'
-$env:npm_config_cache = "$PWD\.npm-cache"
-$env:PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD = '1'
-npm ci --ignore-scripts --no-audit --no-fund
-npm run dev
-```
-
-開啟終端顯示的本機網址；停止伺服器按 Ctrl+C。另一個 PowerShell 視窗可執行：
-
-```powershell
-Set-Location 'D:\Projects\Active\competitions\game-off-2026\g4-resonance'
+npm run sim
+npm run sim -- --label after
+npm run sim -- --label reproduce-before --cases artifacts/tuning-before.json
+npm run sim -- --label validation --cases artifacts/tuning-validation.json
 npm test
 npm run build
 npm run smoke
-```
+~~~
 
-冒煙程式自行啟動並關閉本機 Vite，優先使用 `channel: msedge`，未安裝時嘗試 `chrome`；兩者均無則失敗，不下載瀏覽器。
+一般 sim 輸出 D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\balance-current.json。label 決定檔名；案例 JSON 只在模擬程序內覆寫設定，不寫回遊戲 config。探索可加 --count 8 或 --count 12，正式驗收省略此參數，固定跑全部 40 種子。
+入口 D:\Projects\Active\competitions\game-off-2026\g4-resonance\scripts\run-balance.mjs 使用已安裝 Vite 載入 TypeScript，未監聽 HTTP／WebSocket；直接呼叫實際 Game.fire／Game.step，沒有另外複製物理實作。
 
-成品：D:\Projects\Active\competitions\game-off-2026\g4-resonance\dist\index.html。
+開發與試玩：
+~~~powershell
+Set-Location 'D:\Projects\Active\competitions\game-off-2026\g4-resonance'
+npm run dev
+~~~
+或直接以瀏覽器開啟 D:\Projects\Active\competitions\game-off-2026\g4-resonance\dist\index.html。此檔是內嵌 JS／CSS 的靜態成品，無 CDN。乾淨環境才需 npm ci；既有依賴與快取完整保留。
 
-`base: './'`，建置後 CSS 和 JavaScript 內嵌，無 CDN、字型或其他外部請求；已實測 Edge 以 file URL 直接開啟並開始遊戲。若要製作上傳包，把 dist 內容放在 ZIP 根目錄，使 index.html 位於最外層。本次沒有上傳或建立遠端服務。
+## 已查證：必要驗證
 
-## 怎麼玩
-
-1. 按「開始」，在下方發射圈按住滑鼠，朝想射的方向拖拉後放開。
-2. 外圈越亮越接近共振，雙圈球下次碰撞會爆發；同材質放大、異材質干擾，球永遠留在場上。
-3. Boss HP 歸零就贏，怪物超過 10 隻就輸；按「重來」回到開始畫面，整局歸零。
-
-## 已查證：功能與測試結果
-
-| 驗證 | 實際結果 |
+| 指令／檢查 | 實際結果 |
 |---|---|
-| `npm test` | **25 passed / 25，1 個測試檔通過，0 failed** |
-| `npm run build` | **exit 0**，TypeScript 檢查與 Vite 建置成功；HTML 約 16.39 kB，gzip 約 6.59 kB |
-| `npm run smoke` | **exit 0 / passed: true**，實際使用 `msedge` |
-| 滑鼠冒煙 | 10 次拖拉全部成功、10 顆球保留、實際發射角均在扇形內 |
-| 最後一次冒煙快照 | 7 次爆發，Boss HP 96；此數據只代表該次輸入時序，不是爽感通過證據 |
-| 瀏覽器錯誤／外部請求 | console error 0、page error 0、外部資源請求 0 |
-| 窄畫面 | 390 × 844 視窗無水平溢出，已存圖並檢視 |
-| 重來 | 瀏覽器確認球、怪物、事件、接觸紀錄、發射數清空，Boss HP 回到 100 |
-| 直接開檔 | dist/index.html 以 file URL 開啟、按開始、進入 playing 通過 |
+| npm test | exit 0；2 檔案、28／28 passed；原 25 個規則案例保留，只更新相關數值／範圍邊界與殘血測試值 |
+| 模擬計分測試 | 另加 3 個案例：chainId 隔離與 25% 比例、三個不同怪物／八層、逾時不隱藏 |
+| npm run build | exit 0；TypeScript 檢查與 Vite 建置成功；HTML 17.04 kB，gzip 6.90 kB |
+| npm run smoke | exit 0；passed: true；本機 msedge |
+| 瀏覽器冒煙 | 10 次實際滑鼠拖拉、10 顆球永久保留、偏移在扇形內、重來重置與 file URL 開啟通過 |
+| 錯誤／外部請求 | console error 0、page error 0、外部請求 0 |
+| 連鎖畫面 | 另以測試頁 RAF 時鐘加速及實際滑鼠事件，捕捉 20261110、tick 6300、26 發、8 層；不屬固定策略的平衡統計 |
+| 手機尺寸 | 390 × 844，無水平溢出；不是實體手機／觸控驗收 |
 
-單元測試涵蓋：零值初始狀態、閾值與下一次碰撞爆發、冷卻、半徑邊界點燃、連鎖 ID／層數、實際固定步牆壁連鎖、同頻倍增、異頻動量與延後、一般／共振／範圍傷害、怪物每五發生成與場邊位置、勝敗優先序、終局凍結、貼合不重複計數、角度偏移與材質輪替、無效輸入、種子零、動量傳遞、重疊分離、牆壁反彈、摩擦、球不刪除、同種子同輸入的完整快照一致、三種狀態的完全重置。
+最後一次一般冒煙為 6 次爆發、Boss 2950 HP，僅描述那次滑鼠時序，不是平衡驗收。
+證據目錄 D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts：
+smoke-result.json、smoke-desktop.png、smoke-mobile.png、aim-desktop.png、feedback-desktop.png、feedback-mobile.png。
 
-實作範圍：M1、S1、R1、R2 層 A／B、E1、E2、R4、開始與勝敗／重來畫面。R3 與 R5 不執行；`simultaneousResonanceCount`、`inputs`、`events` 已預留。
+## 已查證：浮字處理與 impeccable audit
 
-## 已查證：截圖與證據路徑
+沿用 D:\Projects\Active\competitions\game-off-2026\g4-resonance\DESIGN.md 的灰盒限制，未建立新美術方向。
 
-- 冒煙桌面：D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\smoke-desktop.png
-- 冒煙窄畫面：D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\smoke-mobile.png
-- 拖拉扇形：D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\aim-desktop.png
-- 機器結果：D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\smoke-result.json
+- 同目標位置、0.2 秒內的連續傷害合併成一個浮字；事件仍記各次實際傷害。
+- 所有文字在特效圓之後繪製；八層以上連鎖、傷害、其他文字依序優先。
+- 以實際文字寬高檢查重疊，向上錯開；最多嘗試八格，無空間時省略低優先文字，特效圓仍保留。位置限制在畫布內。
+- 已一起檢視桌面／390px 的八層連鎖截圖，標示有分開。這是有限次自查，不是所有密度均保證可讀。
 
-這些圖片是實際 Edge 遊戲畫面，不是示意圖。截圖不含個人資料；交付文字與成品的 email 格式掃描為 0。Git 使用使用者允許的本機佔位身份，無 remote。
-
-## 調參位置與主要參數
-
-全部遊戲參數集中於 D:\Projects\Active\competitions\game-off-2026\g4-resonance\src\config.ts。
-
-| 參數 | 預設值與用途 |
-|---|---|
-| `seed` / `dt` | 20261110；1/120 秒固定步長 |
-| `ball` | 半徑 14、速度 620、反彈係數 0.96、摩擦 0.075、停止速度 2 |
-| `launcher` | 固定位置 (400,622)、扇形半角 12 度、最短拖拉 12、發射間隔 28 ticks |
-| `resonance.threshold` | 5 次震盪進入共振 |
-| `resonance.radiusInBalls` / `ignite` | 半徑 2 倍球半徑＝28；點燃 +2 |
-| `resonance.cooldownTicks` | 爆發後 18 ticks＝0.15 秒，不累積震盪 |
-| `sameFrequencyMultiplier` | 2：點燃範圍、點燃量、爆發傷害都倍增 |
-| `interferenceMomentum` / `interferenceTicks` | 速度保留 45%；48 ticks＝0.4 秒後，下一次碰撞才能爆發 |
-| `materials` | 實心、環紋、雙紋，三種頻率，依發射順序輪替 |
-| `boss` | 幾何中心 (400,340)，HP 100、半徑 48 |
-| `monsters` | 每 5 發生成、HP 3、半徑 21、超過 10 隻失敗 |
-| `damage` | 普通接觸 1、共振接觸 5、範圍爆發額外 10 |
-| `feedback` | 傷害浮字／爆發／點燃／目標閃光時長 |
-
-調整後需重新建置。亂數種子也可在開始畫面直接設定。
-
-## 規格未定細節的實作決定
-
-以下是推論補足，不宣稱是 SPEC 原文：
-
-- 球為等質量剛體，靜止靶不動；只在「新的接觸」計數，避免貼合每一幀扣血。
-- 異頻共振球減速、保留共振，延後 0.4 秒後需再次碰撞才釋放，不以計時器自動爆發。
-- 同頻兩球各釋放一次雙倍爆發，共用連鎖 ID；兩球先進入冷卻，避免同一釋放互相重新點燃。
-- 點燃半徑採球心距離；目標只要圓形與爆發範圍相交就受傷。傷害不得低於 0 HP，浮字與事件記錄實際扣除量。
-- 同一步同時滿足勝敗時，Boss 死亡優先判勝。
-- 發射速度固定，拖拉只控制方向；短間隔防止重疊輸入。初始場地沒有球；怪物與球共用唯一 ID，所以球號可能跳號。
-- 同種子重現必須配合同一組「固定步時間＋發射方向」。滑鼠自動化使用真實時間，因此兩次冒煙的傷害或爆發數可能不同；確定性由固定步單元測試核對。
-- 事件紀錄包含爆發對目標的傷害；沒有實作回放播放、事件匯出 UI 或相變觸發。
-
-沒有替換物理引擎、改動 SPEC 的明定數值或增加規格外玩法。灰盒設計文件僅整理本次已指定的外觀限制，未決定正式美術。
-
-## 已查證：impeccable audit 與一次修正
-
-檢查方式：本機程式與 CSS、Edge 桌面／390px 截圖、一次機械 detector。非獨立評審。
-
-| 面向 | 分數 | 證據／限制 |
+| audit 面向 | 分數 | 結論 |
 |---|---:|---|
-| 無障礙 | 2/4 | 原生按鈕、標籤、焦點框、終局 status；遊戲核心仍依賴視覺及指標操作 |
-| 效能 | 3/4 | 小型獨立 HTML、固定步長、短期特效清理；未做大量球效能壓測 |
-| 響應式 | 2/4 | 窄畫面無溢出，但球號及場上文字偏小；未測實機觸控 |
-| 外觀一致性 | 3/4 | 遵循固定灰階灰盒；不提供主題切換 |
-| 實作完整性 | 3/4 | 扇形、球身份、HP、爆發、點燃與傷害可見；密集浮字會重疊 |
-| 合計 | **13/20** | 灰盒可用，正式視覺與完整無障礙尚未驗收 |
+| 無障礙 | 2/4 | 保留原生按鈕、焦點及 reduced-motion；核心仍依賴視覺與指標 |
+| 效能 | 3/4 | 無新套件；浮字合併，新增文字避讓的兩兩比較未做極端壓測 |
+| 響應式 | 2/4 | 無溢出；Canvas 等比縮小後手機文字仍偏小 |
+| 外觀一致性 | 3/4 | 保留既定灰盒、系統字型與灰階 |
+| 實作完整性 | 3/4 | 本次畫面中的浮字／連鎖分開，極密集時會省略低優先文字 |
+| 合計 | 13/20 | 局部修正完成，非完整無障礙或正式美術驗收 |
 
-機械 detector 回傳 1 個 `flat-type-hierarchy` warning，命令 exit 1。它把標題和內文都判為 16px；實際 CSS 的 h1 為 24px、h2 為 22–32px，並已在畫面確認，故列為未解析匯入 CSS 的誤報，沒有宣稱 detector 零警告。
+機械 detector 對 index.html 回報一個 flat-type-hierarchy warning，exit 1；把 h1／h2 都讀成 16px。實際 CSS 為 h1 24px、h2 22–32px，且截圖可見，判為未解析外部 CSS 的誤報。此結果與上方三個 npm 指令均成功分開列示。
 
-一次修正：補上終局種子欄位的 hidden 樣式、明確標示點燃、Boss 置於幾何中心；之後重建並重跑單元與冒煙、桌面／手機截圖確認。
+## 第 3 天建議試玩種子
 
-## 已知問題與不確定
+1. **20261113**：隨機上方策略 138.642 秒獲勝；同鏈最大 Boss 傷害 1195（39.83%）、擊殺 5 隻、最大 75 層。其中有一段 2.95 秒內達 11 層的連鎖例子。
+2. **20261124**：瞄準 Boss 策略 126.392 秒獲勝；同鏈最大 Boss 傷害 1040（34.67%）、擊殺 3 隻、最大 88 層。
 
-- **P2，窄畫面閱讀**：D:\Projects\Active\competitions\game-off-2026\g4-resonance\src\main.ts 的場內字體隨 Canvas 縮小，390px 視窗球號約 5px，手機閱讀不佳；本週主要驗收是滑鼠桌面。建議之後做獨立手機字級與操作尺度。
-- **P2，回饋重疊**：同檔案的浮字與連鎖標示在密集碰撞時會互相遮擋。建議真人試玩後再決定排序／合併方式，不在本週加新系統。
-- **P2，無障礙範圍**：沒有鍵盤發射或非視覺替代玩法，不能宣稱 WCAG 完整通過。已保留 reduced-motion 下的靜態外圈，停用顫動與脈動。
-- **未驗證**：實體手機、實體觸控、Chrome 獨立執行、不同 JS 引擎的位元級一致性、itch.io 實際託管環境。
-- **未驗證**：真人完整勝敗體驗、三殺／Boss 單鏈 25%／八層連鎖的出現機率，以及 SPEC 的「哇」成功標準。勝敗規則與重置已由單元測試核對；瀏覽器冒煙沒有刻意跑到終局。
-- **實作限制**：圓碰撞採固定步離散求解，兩兩檢查為 O(n²)，未驗證極密集堆球與極端調參速度；不宣稱為高精度通用物理引擎。
-- R3 相變、R5 回放面板、音效、旁白與正式美術依本週範圍不製作。
+上列三種最大值可能來自不同鏈，不宣稱同一瞬間同時達成。
+開始畫面在「亂數種子」輸入框全選原數字，輸入建議種子，按「開始」。已開局時先按右上角「重來」，回到開始畫面再填。
+種子只重現亂數序列，**必須相同發射時刻與方向才會重現模擬結果**；真人不同操作不保證出現相同連鎖。建議約每兩秒一發，分別試上方分散發射與 Boss 附近發射。
+請記下連鎖能否被看懂、單次清場是否明顯、HP 上升後是否太拖；真人爽感由試玩者決定。
 
-## 第 3 天試玩請注意三件事
+## 推論：未達標的原因與下一步
 
-1. 不看數字，只看亮度和外圈，能否快速指出「哪一顆快共振」及「哪一顆已共振」？材質內圈是否與共振外圈混淆？
-2. 連鎖發生時，能否分清爆發、點燃、同頻放大與異頻干擾，並看懂傷害落在 Boss 還是怪物？
-3. 一局有沒有自然出現讓你說「哇」的時刻？記下是三殺、Boss 大幅掉血或多層連鎖，以及此前自己選的發射方向。
+瞄準 Boss 比隨機分散更少照顧場邊怪物；當怪物耐久提高，失敗壓力會抵消其較快擊中 Boss 的優勢。高摩擦／低反彈的探索也出現瞄準較慢，推測碰撞後球群堆在 Boss 下方，後續球先撞球群。這些是由模擬差異與規則推導，未做獨立因果實驗，不能當成已證明原因。
+本輪不增加引力、怪物 AI、手動爆發等系統來湊策略優勢。若下一輪仍要求該優勢，應先討論目標配置與策略定義是否符合「下注」設計紀律，再做有限參數試驗。
+
+## 不確定與已知限制
+
+- 連鎖依現有 chainId 記錄，可隔一段時間繼續；大傷害／三殺統計可能跨數十秒，**不是保證瞬間完成**。after 的 wowExamples 附跨度與最大間隔，供檢查。8 層雖有實際畫面證據，真人是否說「哇」仍未知。
+- 全部固定種子也用於候選篩選，沒有獨立 holdout；40 局比例不是普遍勝率保證，亦不宣稱統計顯著。
+- P2：手機場內字級仍小；沒有鍵盤發射、實機觸控或非視覺替代玩法。
+- P2：極端密集特效與大量球的效能尚未驗收；物理兩兩碰撞為 O(n²)，採固定步離散碰撞。
+- 未驗證 Chrome 獨立執行、跨 JS 引擎位元級一致性、實際託管平台與真人完整勝敗體驗。
+- R3 相變、R5 回放面板、音效、旁白與正式美術維持未實作。
+
+## 工作流紀錄
+
+開工依本機 ENTRY → 情境索引 → W-TASK-001 v0.1（draft／trial）讀取，適用本次明確範圍的派工與驗收；以現有任務取代額外工作單。重要分岔依實測候選保留證據，未更換模型或再派工。收尾核對 SPEC、規則測試、實際截圖、模擬 JSON 與本機 git 差異；尚未達標的策略優勢維持明列。

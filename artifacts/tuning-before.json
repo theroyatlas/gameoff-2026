@@ -1,0 +1,1 @@
+[{"name":"before","overrides":{"ball":{"friction":0.075},"resonance":{"radiusInBalls":2},"boss":{"hp":100},"monsters":{"hp":3},"damage":{"normal":1,"resonant":5}}}]

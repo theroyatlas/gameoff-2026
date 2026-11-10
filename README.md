@@ -20,6 +20,7 @@ npm run dev
 npm test
 npm run build
 npm run smoke
+npm run sim
 ```
 
 `dist/index.html` 是自含的靜態遊戲，可直接用瀏覽器開啟。也可把 dist 內容打包成 ZIP，讓 index.html 位於 ZIP 根目錄；本專案不執行上傳。
@@ -37,6 +38,7 @@ Boss HP 歸零獲勝，怪物超過 10 隻失敗，按「重來」清空整局�
 - `src/main.ts`：Canvas 繪製、滑鼠操作與畫面狀態。
 - `tests/game.test.ts`：Vitest 規則與確定性測試。
 - `scripts/smoke.mjs`：Playwright，依序使用本機 msedge／chrome，不下載瀏覽器。
+- `scripts/balance-sim.ts`：直接使用遊戲模擬，固定 40 種子、兩種每兩秒發射策略；結果輸出 artifacts/balance-current.json，調參前後與限制見 REPORT.md。
 
 相同種子必須配合相同固定步時間的發射角度，才會得到相同一局。`inputs` 記錄固定步時間、意圖角度、實際角度與材質；`events` 記錄連鎖 ID、層數、球號、點燃球號及爆發傷害。`simultaneousResonanceCount` 提供未來相變的查詢介面。本週不含相變與回放面板。
 

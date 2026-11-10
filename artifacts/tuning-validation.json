@@ -1,0 +1,1 @@
+[{"name":"m900","overrides":{"ball":{"friction":0.12},"resonance":{"radiusInBalls":6},"boss":{"hp":3000},"monsters":{"hp":900,"everyShots":5},"damage":{"normal":10,"resonant":25}}},{"name":"m1000","overrides":{"ball":{"friction":0.12},"resonance":{"radiusInBalls":6},"boss":{"hp":3000},"monsters":{"hp":1000,"everyShots":5},"damage":{"normal":10,"resonant":25}}}]

@@ -51,13 +51,52 @@ try {
   await page.getByRole('button',{name:'重來',exact:true}).click();
   await page.waitForFunction(()=>document.querySelector('#game').dataset.status==='ready');
   const reset=await page.evaluate(()=>window.resonanceDebug.snapshot());
-  assert.equal(reset.shots,0); assert.equal(reset.balls.length,0); assert.equal(reset.boss.hp,100);
+  assert.equal(reset.shots,0); assert.equal(reset.balls.length,0); assert.equal(reset.boss.hp,snapshot.boss.maxHp);
   assert.equal(reset.events.length,0); assert.equal(reset.contacts.length,0); assert.equal(reset.monsters.length,0);
   result.checks.push('畫面重來完全重置');
   await page.goto(pathToFileURL(resolve(root,'dist/index.html')).href);
   await page.getByRole('button',{name:'開始',exact:true}).click();
   await page.waitForFunction(()=>document.querySelector('#game').dataset.status==='playing');
   result.checks.push('dist/index.html 直接以 file URL 開啟並開始');
+  // 以實際繪圖程式捕捉密集連鎖。只加速測試頁的 RAF 時鐘，不改遊戲狀態。
+  const feedbackPage = await browser.newPage({viewport:{width:1100,height:1000}});
+  feedbackPage.on('console',msg=>{if(msg.type()==='error')errors.push(msg.text());});
+  feedbackPage.on('pageerror',error=>errors.push(String(error)));
+  await feedbackPage.addInitScript(() => {
+    const realRAF = window.requestAnimationFrame.bind(window);
+    let time = performance.now();
+    window.requestAnimationFrame = callback => realRAF(() => {
+      if (window.feedbackCaptured) return;
+      time+=250; callback(time);
+      const after=window.resonanceDebug?.snapshot();
+      if(after?.effects.some(e=>e.kind==='burst'&&e.value>=8&&after.tick-e.tick<30)) {
+        window.feedbackCaptured={seed:after.seed,tick:after.tick,shots:after.shots,
+          activeEffects:after.effects.length,maxDepth:Math.max(...after.events.map(e=>e.depth))};
+      }
+    });
+  });
+  await feedbackPage.goto(server.resolvedUrls.local[0]);
+  await feedbackPage.getByRole('button',{name:'開始',exact:true}).click();
+  const feedbackBox=await feedbackPage.locator('#game').boundingBox();
+  const fx=feedbackBox.x+400/800*feedbackBox.width,fy=feedbackBox.y+622/680*feedbackBox.height;
+  let aimState=(20261110^0x9e3779b9)>>>0;
+  for(let i=0;i<100;i++) {
+    await feedbackPage.waitForFunction(t=>window.feedbackCaptured||window.resonanceDebug.snapshot().tick>=t,i*240);
+    if(await feedbackPage.evaluate(()=>Boolean(window.feedbackCaptured)))break;
+    aimState=(Math.imul(aimState,1664525)+1013904223)>>>0;
+    const angle=-Math.PI/2+(aimState/4294967296*2-1)*Math.PI/3;
+    await feedbackPage.mouse.move(fx,fy); await feedbackPage.mouse.down();
+    await feedbackPage.mouse.move(fx+Math.cos(angle)*150/800*feedbackBox.width,fy+Math.sin(angle)*150/680*feedbackBox.height);
+    await feedbackPage.mouse.up();
+  }
+  assert(await feedbackPage.evaluate(()=>Boolean(window.feedbackCaptured)),'未捕捉到八層連鎖');
+  result.feedback=await feedbackPage.evaluate(()=>window.feedbackCaptured);
+  await feedbackPage.screenshot({path:resolve(artifacts,'feedback-desktop.png'),fullPage:true});
+  await feedbackPage.setViewportSize({width:390,height:844});
+  await feedbackPage.screenshot({path:resolve(artifacts,'feedback-mobile.png'),fullPage:true});
+  assert(await feedbackPage.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+  result.checks.push('實際八層連鎖回饋：桌面與 390px 截圖，RAF 時鐘加速，非真人試玩');
+  await feedbackPage.close();
   assert.deepEqual(errors,[]); assert.deepEqual(externalRequests,[]);
   result.checks.push('console error = 0、page error = 0、外部資源請求 = 0'); result.passed=true;
 } finally {

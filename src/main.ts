@@ -95,31 +95,48 @@ function draw() {
     if (b.material >= 2) { circle(x,y,C.ball.radius-5); ctx.stroke(); }
     ctx.fillStyle = '#111'; ctx.font = 'bold 11px system-ui'; ctx.fillText(String(b.id),x,y+4);
   }
+  const labels: { text: string; x: number; y: number; size: number; alpha: number; priority: number }[] = [];
   for (const e of game.effects) {
     const age = game.tick-e.tick;
     const duration = e.kind === 'burst' ? C.feedback.burstTicks : C.feedback.lifetimeTicks;
     if (age >= duration) continue;
     const p = age/duration; ctx.globalAlpha = 1-p;
     if (e.kind === 'damage') {
-      ctx.font = 'bold 22px system-ui'; ctx.fillStyle = '#fff'; ctx.strokeStyle = '#111'; ctx.lineWidth = 4;
       const y = e.y-(reducedMotion.matches ? 12 : p*35);
-      ctx.strokeText(`−${e.value}`,e.x,y); ctx.fillText(`−${e.value}`,e.x,y);
+      labels.push({ text: `−${e.value}`, x: e.x, y, size: 22, alpha: 1-p, priority: 1000 });
     } else {
       ctx.strokeStyle = '#fff'; ctx.lineWidth = e.kind === 'burst' ? (e.amplified ? 6 : 3) : 2;
       ctx.setLineDash(e.kind === 'interference' ? [5,5] : []);
       circle(e.x,e.y,e.radius*(reducedMotion.matches ? 1 : 0.6+p*0.4)); ctx.stroke();
       if (e.kind === 'burst') {
         ctx.fillStyle = '#ffffff'; ctx.globalAlpha = (1-p)*0.15; ctx.fill(); ctx.globalAlpha = 1-p;
-        ctx.font = 'bold 14px system-ui'; ctx.fillText(`${e.amplified ? '同頻放大' : '爆發'} · ${e.value} 層`, e.x,e.y-e.radius-8);
+        labels.push({ text: `${e.amplified ? '同頻放大' : '爆發'} · ${e.value} 層`, x: e.x, y: e.y-24,
+          size: 14, alpha: 1-p, priority: e.value >= 8 ? 2000 + e.value : e.value });
       } else if (e.kind === 'interference') {
-        ctx.font = '13px system-ui'; ctx.fillStyle = '#ddd'; ctx.fillText('干擾',e.x,e.y-24);
+        labels.push({ text: '干擾', x: e.x, y: e.y-24, size: 13, alpha: 1-p, priority: 0 });
       } else if (e.kind === 'ignite') {
-        ctx.font = '13px system-ui'; ctx.fillStyle = '#fff'; ctx.fillText('點燃',e.x,e.y-24);
+        labels.push({ text: '點燃', x: e.x, y: e.y-24, size: 13, alpha: 1-p, priority: 0 });
       }
       ctx.setLineDash([]);
     }
     ctx.globalAlpha = 1;
   }
+  // 文字最後畫，避免被下一個爆發覆蓋；重要連鎖與傷害優先往上錯開。
+  const occupied: { x: number; y: number; width: number; height: number }[] = [];
+  for (const label of labels.sort((a,b) => b.priority-a.priority)) {
+    ctx.font = `bold ${label.size}px system-ui`;
+    const width = ctx.measureText(label.text).width + 8, height = label.size + 8;
+    const x = Math.max(width/2+4, Math.min(C.width-width/2-4, label.x));
+    let y = Math.max(height+4, Math.min(C.height-8, label.y));
+    const overlaps = () => occupied.some(r => Math.abs(r.x-x) < (r.width+width)/2 && y > r.y-r.height && y-height < r.y);
+    for (let lane = 0; lane < 8 && overlaps(); lane++) y -= height;
+    // 沒有空間時省略較低優先度的重複文字，圓形回饋仍完整保留。
+    if (y < height || overlaps()) continue;
+    occupied.push({ x, y, width, height });
+    ctx.globalAlpha = label.alpha; ctx.strokeStyle = '#111'; ctx.lineWidth = 4; ctx.fillStyle = '#fff';
+    ctx.strokeText(label.text,x,y); ctx.fillText(label.text,x,y);
+  }
+  ctx.globalAlpha = 1;
   ctx.strokeStyle = game.tick-game.lastShotTick >= C.launcher.intervalTicks ? '#eee' : '#666';
   ctx.lineWidth = 2; circle(C.launcher.x,C.launcher.y,24); ctx.stroke();
   ctx.font = '14px system-ui'; ctx.fillStyle = '#ddd'; ctx.fillText('從這裡拖拉', C.launcher.x, C.launcher.y+42);

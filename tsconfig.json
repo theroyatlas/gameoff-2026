@@ -4,5 +4,5 @@
     "lib": ["ES2022", "DOM"], "strict": true, "skipLibCheck": true,
     "noEmit": true, "types": ["node"]
   },
-  "include": ["src", "tests", "vite.config.ts"]
+  "include": ["src", "tests", "scripts/balance-sim.ts", "vite.config.ts"]
 }

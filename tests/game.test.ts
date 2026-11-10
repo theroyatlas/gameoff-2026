@@ -23,7 +23,7 @@ describe('共振與連鎖', () => {
     expect(b.resonant).toBe(true);
   });
   it('點燃僅影響半徑內其他球並記錄球號與下一層', () => {
-    const g = active(), a = ball(g), b = ball(g,188), c = ball(g,189);
+    const g = active(), a = ball(g), b = ball(g,244), c = ball(g,245);
     g.charge(a,5); g.charge(b,3); g.collide(a);
     expect(b.resonant).toBe(true); expect(c.oscillation).toBe(0);
     expect(g.events[0].ignitedBallIds).toEqual([b.id]);
@@ -31,12 +31,12 @@ describe('共振與連鎖', () => {
     expect(g.events[1].chainId).toBe(g.events[0].chainId);
   });
   it('同頻雙球放大範圍、點燃量與傷害，兩球都歸零', () => {
-    const g = active(), a = ball(g,320,C.boss.y), b = ball(g,320,C.boss.y+28), c = ball(g,270,C.boss.y);
+    const g = active(), a = ball(g,320,C.boss.y), b = ball(g,320,C.boss.y+28), c = ball(g,153,C.boss.y);
     g.charge(a,5); g.charge(b,5); g.collide(a,b);
-    expect(g.events).toHaveLength(2); expect(g.events[0].radius).toBe(56);
+    expect(g.events).toHaveLength(2); expect(g.events[0].radius).toBe(168);
     expect(g.events[0].kind).toBe('amplified'); expect(c.oscillation).toBe(4);
     expect(a.oscillation).toBe(0); expect(b.oscillation).toBe(0);
-    expect(g.boss.hp).toBe(60); expect(g.events[0].chainId).toBe(g.events[1].chainId);
+    expect(g.boss.hp).toBe(2960); expect(g.events[0].chainId).toBe(g.events[1].chainId);
   });
   it('異頻減少動量且延後爆發，延後時間過後碰牆仍能爆發', () => {
     const g = active(), a = ball(g), b = ball(g,188,160,1);
@@ -58,19 +58,19 @@ describe('共振與連鎖', () => {
 });
 
 describe('傷害、靜止靶與勝負', () => {
-  it('普通碰撞造成 1 傷害並反彈', () => {
+  it('普通碰撞造成 10 傷害並反彈', () => {
     const g = active(), b = ball(g,400,C.boss.y-C.boss.radius-C.ball.radius+1); b.vy=100; g.step();
-    expect(g.boss.hp).toBe(99); expect(b.vy).toBeLessThan(0); expect(b.oscillation).toBe(1);
+    expect(g.boss.hp).toBe(2990); expect(b.vy).toBeLessThan(0); expect(b.oscillation).toBe(1);
   });
-  it('共振接觸 5 加爆發 10，共 15 傷害', () => {
+  it('共振接觸 25 加爆發 10，共 35 傷害', () => {
     const g = active(), b = ball(g,400,C.boss.y-C.boss.radius-C.ball.radius+1); b.vy=100; g.charge(b,5); g.step();
-    expect(g.boss.hp).toBe(85); expect(g.events[0].targetDamage[0].amount).toBe(10);
+    expect(g.boss.hp).toBe(2965); expect(g.events[0].targetDamage[0].amount).toBe(10);
   });
   it('爆發傷害命中範圍內所有靶，範圍外不扣血', () => {
     const g = active(), b = ball(g,335,C.boss.y); g.spawnMonster(); g.spawnMonster();
-    Object.assign(g.monsters[0],{x:320,y:C.boss.y}); Object.assign(g.monsters[1],{x:100,y:100});
+    Object.assign(g.monsters[0],{x:320,y:C.boss.y,hp:10}); Object.assign(g.monsters[1],{x:100,y:100});
     g.charge(b,5); g.collide(b); g.checkOutcome();
-    expect(g.boss.hp).toBe(90); expect(g.monsters).toHaveLength(1);
+    expect(g.boss.hp).toBe(2990); expect(g.monsters).toHaveLength(1);
     expect(g.events[0].targetDamage.some(t=>t.killed)).toBe(true);
   });
   it('每五發生成一隻且不移動，種子可重現位置', () => {
@@ -79,7 +79,7 @@ describe('傷害、靜止靶與勝負', () => {
     expect(g.shots).toBe(10); expect(g.monsters).toHaveLength(2);
     const positions = g.monsters.map(m=>[m.x,m.y]); advance(g,30);
     expect(g.monsters.map(m=>[m.x,m.y])).toEqual(positions);
-    expect(g.monsters.every(m=>m.hp===3)).toBe(true);
+    expect(g.monsters.every(m=>m.hp===900)).toBe(true);
   });
   it('場邊生成不重疊、不堵住發射點', () => {
     const g = active(); for(let i=0;i<11;i++)g.spawnMonster();
@@ -95,7 +95,7 @@ describe('傷害、靜止靶與勝負', () => {
     expect(g.status).toBe('lost'); expect(g.monsters).toHaveLength(11);
   });
   it('Boss 歸零勝利，終局不能發射或繼續模擬', () => {
-    const g = active(); g.damage(g.boss,100); g.checkOutcome(); expect(g.status).toBe('won');
+    const g = active(); g.damage(g.boss,3000); g.checkOutcome(); expect(g.status).toBe('won');
     const before = g.snapshot(); expect(g.fire(-1)).toBe(false); g.step(); expect(g.snapshot()).toEqual(before);
   });
   it('同一步 Boss 死亡和怪物超量時勝利優先', () => {
@@ -103,7 +103,7 @@ describe('傷害、靜止靶與勝負', () => {
   });
   it('長時間貼著目標只計一次接觸', () => {
     const g = active(), b = ball(g,400,C.boss.y-C.boss.radius-C.ball.radius); advance(g,100);
-    expect(g.boss.hp).toBe(99); expect(b.oscillation).toBe(1);
+    expect(g.boss.hp).toBe(2990); expect(b.oscillation).toBe(1);
   });
 });
 

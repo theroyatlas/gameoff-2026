@@ -1,0 +1,3846 @@
+{
+  "label": "after",
+  "config": {
+    "width": 800,
+    "height": 680,
+    "dt": 0.008333333333333333,
+    "seed": 20261110,
+    "ball": {
+      "radius": 14,
+      "speed": 620,
+      "restitution": 0.96,
+      "friction": 0.12,
+      "stopSpeed": 2
+    },
+    "launcher": {
+      "x": 400,
+      "y": 622,
+      "coneHalfAngle": 0.20943951023931953,
+      "minDrag": 12,
+      "intervalTicks": 28
+    },
+    "resonance": {
+      "threshold": 5,
+      "radiusInBalls": 6,
+      "ignite": 2,
+      "cooldownTicks": 18,
+      "sameFrequencyMultiplier": 2,
+      "interferenceMomentum": 0.45,
+      "interferenceTicks": 48
+    },
+    "materials": [
+      {
+        "name": "實心",
+        "frequency": 1,
+        "shade": 110
+      },
+      {
+        "name": "環紋",
+        "frequency": 2,
+        "shade": 145
+      },
+      {
+        "name": "雙紋",
+        "frequency": 3,
+        "shade": 175
+      }
+    ],
+    "boss": {
+      "x": 400,
+      "y": 340,
+      "radius": 48,
+      "hp": 3000
+    },
+    "monsters": {
+      "everyShots": 5,
+      "hp": 900,
+      "radius": 21,
+      "loseAbove": 10,
+      "edgeInset": 42
+    },
+    "damage": {
+      "normal": 10,
+      "resonant": 25,
+      "burstExtra": 10
+    },
+    "feedback": {
+      "lifetimeTicks": 72,
+      "burstTicks": 40,
+      "igniteTicks": 30,
+      "targetFlashTicks": 18,
+      "damageMergeTicks": 24
+    }
+  },
+  "seeds": [
+    20261110,
+    20261111,
+    20261112,
+    20261113,
+    20261114,
+    20261115,
+    20261116,
+    20261117,
+    20261118,
+    20261119,
+    20261120,
+    20261121,
+    20261122,
+    20261123,
+    20261124,
+    20261125,
+    20261126,
+    20261127,
+    20261128,
+    20261129,
+    20261130,
+    20261131,
+    20261132,
+    20261133,
+    20261134,
+    20261135,
+    20261136,
+    20261137,
+    20261138,
+    20261139,
+    20261140,
+    20261141,
+    20261142,
+    20261143,
+    20261144,
+    20261145,
+    20261146,
+    20261147,
+    20261148,
+    20261149
+  ],
+  "protocol": {
+    "intervalSeconds": 2,
+    "timeoutSeconds": 600,
+    "firstShotTick": 0,
+    "randomUpHalfAngleDegrees": 60,
+    "bossNear": "每發在 Boss 中心左右一個半徑內取水平瞄準點；保留遊戲扇形隨機偏移",
+    "chainMetric": "依現有 chainId 聚合爆發 targetDamage；不計一般接觸傷害、不限制連鎖延遲，並非真人爽感證據"
+  },
+  "results": [
+    {
+      "strategy": "random-up",
+      "summary": {
+        "games": 40,
+        "wins": 32,
+        "losses": 8,
+        "timeouts": 0,
+        "winRate": 0.8,
+        "averageShots": 65.975,
+        "averageSeconds": 130.8225,
+        "wow": {
+          "any": 40,
+          "boss": 22,
+          "kills": 19,
+          "depth": 40
+        }
+      },
+      "games": [
+        {
+          "seed": 20261110,
+          "status": "won",
+          "shots": 71,
+          "seconds": 141.85833333333332,
+          "bossHp": 0,
+          "monsters": 4,
+          "maxBossDamage": 490,
+          "maxKills": 1,
+          "maxDepth": 72,
+          "wow": {
+            "boss": false,
+            "kills": false,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 39,
+              "bossDamage": 10,
+              "kills": 0,
+              "depth": 9,
+              "startSeconds": 57.75833333333333,
+              "spanSeconds": 5.008333333333333,
+              "maxGapSeconds": 1.4583333333333333
+            },
+            {
+              "chainId": 64,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 11,
+              "startSeconds": 101.44166666666666,
+              "spanSeconds": 6.716666666666667,
+              "maxGapSeconds": 2.341666666666667
+            },
+            {
+              "chainId": 56,
+              "bossDamage": 40,
+              "kills": 0,
+              "depth": 15,
+              "startSeconds": 87.10833333333333,
+              "spanSeconds": 12.225,
+              "maxGapSeconds": 2.2916666666666665
+            }
+          ]
+        },
+        {
+          "seed": 20261111,
+          "status": "won",
+          "shots": 73,
+          "seconds": 144.74166666666667,
+          "bossHp": 0,
+          "monsters": 3,
+          "maxBossDamage": 630,
+          "maxKills": 3,
+          "maxDepth": 107,
+          "wow": {
+            "boss": false,
+            "kills": true,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 62,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 15,
+              "startSeconds": 77.54166666666667,
+              "spanSeconds": 12.941666666666666,
+              "maxGapSeconds": 2.0666666666666664
+            },
+            {
+              "chainId": 79,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 12,
+              "startSeconds": 105.225,
+              "spanSeconds": 14.558333333333334,
+              "maxGapSeconds": 5.841666666666667
+            },
+            {
+              "chainId": 81,
+              "bossDamage": 320,
+              "kills": 2,
+              "depth": 70,
+              "startSeconds": 109.46666666666667,
+              "spanSeconds": 34.94166666666666,
+              "maxGapSeconds": 3.2916666666666665
+            }
+          ]
+        },
+        {
+          "seed": 20261112,
+          "status": "lost",
+          "shots": 55,
+          "seconds": 108,
+          "bossHp": 1280,
+          "monsters": 11,
+          "maxBossDamage": 290,
+          "maxKills": 0,
+          "maxDepth": 31,
+          "wow": {
+            "boss": false,
+            "kills": false,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 54,
+              "bossDamage": 10,
+              "kills": 0,
+              "depth": 12,
+              "startSeconds": 70.94166666666666,
+              "spanSeconds": 13.683333333333334,
+              "maxGapSeconds": 2.9166666666666665
+            },
+            {
+              "chainId": 69,
+              "bossDamage": 10,
+              "kills": 0,
+              "depth": 12,
+              "startSeconds": 92.91666666666667,
+              "spanSeconds": 14.075,
+              "maxGapSeconds": 3.525
+            },
+            {
+              "chainId": 47,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 9,
+              "startSeconds": 61,
+              "spanSeconds": 15.683333333333334,
+              "maxGapSeconds": 5.158333333333333
+            }
+          ]
+        },
+        {
+          "seed": 20261113,
+          "status": "won",
+          "shots": 70,
+          "seconds": 138.64166666666665,
+          "bossHp": 0,
+          "monsters": 5,
+          "maxBossDamage": 1195,
+          "maxKills": 5,
+          "maxDepth": 75,
+          "wow": {
+            "boss": true,
+            "kills": true,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 78,
+              "bossDamage": 20,
+              "kills": 0,
+              "depth": 11,
+              "startSeconds": 92.375,
+              "spanSeconds": 2.95,
+              "maxGapSeconds": 1.0916666666666666
+            },
+            {
+              "chainId": 49,
+              "bossDamage": 10,
+              "kills": 0,
+              "depth": 8,
+              "startSeconds": 63.641666666666666,
+              "spanSeconds": 10.558333333333334,
+              "maxGapSeconds": 3.35
+            },
+            {
+              "chainId": 82,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 8,
+              "startSeconds": 95.66666666666667,
+              "spanSeconds": 11.25,
+              "maxGapSeconds": 2.0166666666666666
+            }
+          ]
+        },
+        {
+          "seed": 20261114,
+          "status": "won",
+          "shots": 66,
+          "seconds": 131.375,
+          "bossHp": 0,
+          "monsters": 5,
+          "maxBossDamage": 480,
+          "maxKills": 4,
+          "maxDepth": 46,
+          "wow": {
+            "boss": false,
+            "kills": true,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 67,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 8,
+              "startSeconds": 81.56666666666666,
+              "spanSeconds": 5.266666666666667,
+              "maxGapSeconds": 1.675
+            },
+            {
+              "chainId": 62,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 8,
+              "startSeconds": 76.35833333333333,
+              "spanSeconds": 6.725,
+              "maxGapSeconds": 1.9749999999999999
+            },
+            {
+              "chainId": 80,
+              "bossDamage": 0,
+              "kills": 1,
+              "depth": 12,
+              "startSeconds": 110.09166666666667,
+              "spanSeconds": 10.333333333333334,
+              "maxGapSeconds": 3.308333333333333
+            }
+          ]
+        },
+        {
+          "seed": 20261115,
+          "status": "won",
+          "shots": 68,
+          "seconds": 134.01666666666665,
+          "bossHp": 0,
+          "monsters": 5,
+          "maxBossDamage": 1140,
+          "maxKills": 4,
+          "maxDepth": 60,
+          "wow": {
+            "boss": true,
+            "kills": true,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 47,
+              "bossDamage": 30,
+              "kills": 0,
+              "depth": 10,
+              "startSeconds": 58.80833333333333,
+              "spanSeconds": 8.775,
+              "maxGapSeconds": 2.8
+            },
+            {
+              "chainId": 63,
+              "bossDamage": 30,
+              "kills": 0,
+              "depth": 9,
+              "startSeconds": 72.675,
+              "spanSeconds": 10.283333333333333,
+              "maxGapSeconds": 1.275
+            },
+            {
+              "chainId": 29,
+              "bossDamage": 10,
+              "kills": 0,
+              "depth": 8,
+              "startSeconds": 42.891666666666666,
+              "spanSeconds": 11.616666666666667,
+              "maxGapSeconds": 5.058333333333334
+            }
+          ]
+        },
+        {
+          "seed": 20261116,
+          "status": "won",
+          "shots": 70,
+          "seconds": 139.14166666666665,
+          "bossHp": 0,
+          "monsters": 8,
+          "maxBossDamage": 530,
+          "maxKills": 2,
+          "maxDepth": 73,
+          "wow": {
+            "boss": false,
+            "kills": false,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 27,
+              "bossDamage": 10,
+              "kills": 0,
+              "depth": 9,
+              "startSeconds": 45.025,
+              "spanSeconds": 5.591666666666667,
+              "maxGapSeconds": 2.558333333333333
+            },
+            {
+              "chainId": 69,
+              "bossDamage": 190,
+              "kills": 0,
+              "depth": 34,
+              "startSeconds": 122.59166666666667,
+              "spanSeconds": 16.391666666666666,
+              "maxGapSeconds": 1.2916666666666667
+            },
+            {
+              "chainId": 21,
+              "bossDamage": 40,
+              "kills": 0,
+              "depth": 12,
+              "startSeconds": 33.725,
+              "spanSeconds": 18.266666666666666,
+              "maxGapSeconds": 2.7083333333333335
+            }
+          ]
+        },
+        {
+          "seed": 20261117,
+          "status": "lost",
+          "shots": 55,
+          "seconds": 108,
+          "bossHp": 810,
+          "monsters": 11,
+          "maxBossDamage": 370,
+          "maxKills": 0,
+          "maxDepth": 48,
+          "wow": {
+            "boss": false,
+            "kills": false,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 74,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 9,
+              "startSeconds": 101.15833333333333,
+              "spanSeconds": 4.441666666666666,
+              "maxGapSeconds": 2.308333333333333
+            },
+            {
+              "chainId": 51,
+              "bossDamage": 80,
+              "kills": 0,
+              "depth": 12,
+              "startSeconds": 67.18333333333334,
+              "spanSeconds": 7.841666666666667,
+              "maxGapSeconds": 4.883333333333333
+            },
+            {
+              "chainId": 37,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 8,
+              "startSeconds": 47.78333333333333,
+              "spanSeconds": 12.483333333333333,
+              "maxGapSeconds": 4
+            }
+          ]
+        },
+        {
+          "seed": 20261118,
+          "status": "lost",
+          "shots": 65,
+          "seconds": 128,
+          "bossHp": 25,
+          "monsters": 11,
+          "maxBossDamage": 580,
+          "maxKills": 1,
+          "maxDepth": 86,
+          "wow": {
+            "boss": false,
+            "kills": false,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 67,
+              "bossDamage": 60,
+              "kills": 0,
+              "depth": 69,
+              "startSeconds": 118.24166666666666,
+              "spanSeconds": 8.95,
+              "maxGapSeconds": 2.45
+            },
+            {
+              "chainId": 57,
+              "bossDamage": 40,
+              "kills": 0,
+              "depth": 10,
+              "startSeconds": 97.89166666666667,
+              "spanSeconds": 9.7,
+              "maxGapSeconds": 2.1666666666666665
+            },
+            {
+              "chainId": 13,
+              "bossDamage": 20,
+              "kills": 0,
+              "depth": 9,
+              "startSeconds": 26.05,
+              "spanSeconds": 16.008333333333333,
+              "maxGapSeconds": 4.2
+            }
+          ]
+        },
+        {
+          "seed": 20261119,
+          "status": "won",
+          "shots": 71,
+          "seconds": 140.925,
+          "bossHp": 0,
+          "monsters": 5,
+          "maxBossDamage": 290,
+          "maxKills": 2,
+          "maxDepth": 48,
+          "wow": {
+            "boss": false,
+            "kills": false,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 80,
+              "bossDamage": 30,
+              "kills": 0,
+              "depth": 19,
+              "startSeconds": 102.80833333333334,
+              "spanSeconds": 7.225,
+              "maxGapSeconds": 1.6833333333333333
+            },
+            {
+              "chainId": 84,
+              "bossDamage": 0,
+              "kills": 1,
+              "depth": 24,
+              "startSeconds": 106.63333333333333,
+              "spanSeconds": 8.9,
+              "maxGapSeconds": 2.4583333333333335
+            },
+            {
+              "chainId": 45,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 12,
+              "startSeconds": 56.641666666666666,
+              "spanSeconds": 15.816666666666666,
+              "maxGapSeconds": 3.0416666666666665
+            }
+          ]
+        },
+        {
+          "seed": 20261120,
+          "status": "won",
+          "shots": 68,
+          "seconds": 134.35,
+          "bossHp": 0,
+          "monsters": 8,
+          "maxBossDamage": 760,
+          "maxKills": 2,
+          "maxDepth": 106,
+          "wow": {
+            "boss": true,
+            "kills": false,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 65,
+              "bossDamage": 10,
+              "kills": 0,
+              "depth": 8,
+              "startSeconds": 100.04166666666667,
+              "spanSeconds": 2.4416666666666664,
+              "maxGapSeconds": 1.2916666666666667
+            },
+            {
+              "chainId": 63,
+              "bossDamage": 40,
+              "kills": 1,
+              "depth": 42,
+              "startSeconds": 96.375,
+              "spanSeconds": 11.366666666666667,
+              "maxGapSeconds": 3.6333333333333333
+            },
+            {
+              "chainId": 34,
+              "bossDamage": 40,
+              "kills": 0,
+              "depth": 8,
+              "startSeconds": 46.61666666666667,
+              "spanSeconds": 16.116666666666667,
+              "maxGapSeconds": 5.025
+            }
+          ]
+        },
+        {
+          "seed": 20261121,
+          "status": "won",
+          "shots": 68,
+          "seconds": 135.84166666666667,
+          "bossHp": 0,
+          "monsters": 8,
+          "maxBossDamage": 690,
+          "maxKills": 3,
+          "maxDepth": 76,
+          "wow": {
+            "boss": false,
+            "kills": true,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 52,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 9,
+              "startSeconds": 80.21666666666667,
+              "spanSeconds": 5.833333333333333,
+              "maxGapSeconds": 3.05
+            },
+            {
+              "chainId": 41,
+              "bossDamage": 40,
+              "kills": 0,
+              "depth": 21,
+              "startSeconds": 59.34166666666667,
+              "spanSeconds": 5.866666666666666,
+              "maxGapSeconds": 2.775
+            },
+            {
+              "chainId": 56,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 8,
+              "startSeconds": 86.90833333333333,
+              "spanSeconds": 6.6,
+              "maxGapSeconds": 4.091666666666667
+            }
+          ]
+        },
+        {
+          "seed": 20261122,
+          "status": "lost",
+          "shots": 55,
+          "seconds": 108,
+          "bossHp": 1005,
+          "monsters": 11,
+          "maxBossDamage": 210,
+          "maxKills": 0,
+          "maxDepth": 47,
+          "wow": {
+            "boss": false,
+            "kills": false,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 49,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 8,
+              "startSeconds": 73.85833333333333,
+              "spanSeconds": 4.808333333333334,
+              "maxGapSeconds": 1.5416666666666667
+            },
+            {
+              "chainId": 20,
+              "bossDamage": 30,
+              "kills": 0,
+              "depth": 13,
+              "startSeconds": 32.69166666666666,
+              "spanSeconds": 18.03333333333333,
+              "maxGapSeconds": 4.141666666666667
+            },
+            {
+              "chainId": 40,
+              "bossDamage": 10,
+              "kills": 0,
+              "depth": 8,
+              "startSeconds": 63.24166666666667,
+              "spanSeconds": 20.675,
+              "maxGapSeconds": 6.091666666666667
+            }
+          ]
+        },
+        {
+          "seed": 20261123,
+          "status": "won",
+          "shots": 63,
+          "seconds": 124.49166666666666,
+          "bossHp": 0,
+          "monsters": 7,
+          "maxBossDamage": 885,
+          "maxKills": 4,
+          "maxDepth": 76,
+          "wow": {
+            "boss": true,
+            "kills": true,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 63,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 8,
+              "startSeconds": 96.35,
+              "spanSeconds": 5.083333333333333,
+              "maxGapSeconds": 1.5583333333333333
+            },
+            {
+              "chainId": 38,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 10,
+              "startSeconds": 58.19166666666666,
+              "spanSeconds": 10.183333333333334,
+              "maxGapSeconds": 2.3833333333333333
+            },
+            {
+              "chainId": 33,
+              "bossDamage": 40,
+              "kills": 0,
+              "depth": 9,
+              "startSeconds": 51.09166666666667,
+              "spanSeconds": 12.65,
+              "maxGapSeconds": 3.7666666666666666
+            }
+          ]
+        },
+        {
+          "seed": 20261124,
+          "status": "won",
+          "shots": 64,
+          "seconds": 127.26666666666667,
+          "bossHp": 0,
+          "monsters": 7,
+          "maxBossDamage": 785,
+          "maxKills": 3,
+          "maxDepth": 73,
+          "wow": {
+            "boss": true,
+            "kills": true,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 78,
+              "bossDamage": 60,
+              "kills": 0,
+              "depth": 69,
+              "startSeconds": 114.375,
+              "spanSeconds": 12.058333333333334,
+              "maxGapSeconds": 3.0083333333333333
+            },
+            {
+              "chainId": 29,
+              "bossDamage": 50,
+              "kills": 0,
+              "depth": 8,
+              "startSeconds": 39.80833333333333,
+              "spanSeconds": 17.6,
+              "maxGapSeconds": 8.491666666666667
+            },
+            {
+              "chainId": 75,
+              "bossDamage": 120,
+              "kills": 1,
+              "depth": 17,
+              "startSeconds": 96.23333333333333,
+              "spanSeconds": 20.483333333333334,
+              "maxGapSeconds": 3.4583333333333335
+            }
+          ]
+        },
+        {
+          "seed": 20261125,
+          "status": "won",
+          "shots": 63,
+          "seconds": 125.55,
+          "bossHp": 0,
+          "monsters": 6,
+          "maxBossDamage": 830,
+          "maxKills": 4,
+          "maxDepth": 74,
+          "wow": {
+            "boss": true,
+            "kills": true,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 62,
+              "bossDamage": 10,
+              "kills": 0,
+              "depth": 14,
+              "startSeconds": 88.96666666666667,
+              "spanSeconds": 3.341666666666667,
+              "maxGapSeconds": 0.9083333333333333
+            },
+            {
+              "chainId": 70,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 9,
+              "startSeconds": 107.05833333333334,
+              "spanSeconds": 4.808333333333334,
+              "maxGapSeconds": 2.525
+            },
+            {
+              "chainId": 44,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 9,
+              "startSeconds": 64.45,
+              "spanSeconds": 7.05,
+              "maxGapSeconds": 1.8166666666666667
+            }
+          ]
+        },
+        {
+          "seed": 20261126,
+          "status": "won",
+          "shots": 67,
+          "seconds": 133.68333333333334,
+          "bossHp": 0,
+          "monsters": 7,
+          "maxBossDamage": 1140,
+          "maxKills": 2,
+          "maxDepth": 83,
+          "wow": {
+            "boss": true,
+            "kills": false,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 70,
+              "bossDamage": 40,
+              "kills": 0,
+              "depth": 14,
+              "startSeconds": 105.14999999999999,
+              "spanSeconds": 7.783333333333333,
+              "maxGapSeconds": 3.7583333333333333
+            },
+            {
+              "chainId": 43,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 12,
+              "startSeconds": 54.93333333333333,
+              "spanSeconds": 11.225,
+              "maxGapSeconds": 1.9416666666666667
+            },
+            {
+              "chainId": 18,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 8,
+              "startSeconds": 31.416666666666668,
+              "spanSeconds": 24.725,
+              "maxGapSeconds": 6.166666666666667
+            }
+          ]
+        },
+        {
+          "seed": 20261127,
+          "status": "lost",
+          "shots": 55,
+          "seconds": 108,
+          "bossHp": 1320,
+          "monsters": 11,
+          "maxBossDamage": 90,
+          "maxKills": 0,
+          "maxDepth": 24,
+          "wow": {
+            "boss": false,
+            "kills": false,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 41,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 10,
+              "startSeconds": 49.71666666666667,
+              "spanSeconds": 10.633333333333333,
+              "maxGapSeconds": 2.7416666666666667
+            },
+            {
+              "chainId": 39,
+              "bossDamage": 30,
+              "kills": 0,
+              "depth": 8,
+              "startSeconds": 48.141666666666666,
+              "spanSeconds": 12.5,
+              "maxGapSeconds": 3.375
+            },
+            {
+              "chainId": 74,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 16,
+              "startSeconds": 89.89166666666667,
+              "spanSeconds": 12.758333333333333,
+              "maxGapSeconds": 2.408333333333333
+            }
+          ]
+        },
+        {
+          "seed": 20261128,
+          "status": "won",
+          "shots": 63,
+          "seconds": 125.29166666666667,
+          "bossHp": 0,
+          "monsters": 4,
+          "maxBossDamage": 960,
+          "maxKills": 5,
+          "maxDepth": 51,
+          "wow": {
+            "boss": true,
+            "kills": true,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 60,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 12,
+              "startSeconds": 78.51666666666667,
+              "spanSeconds": 5.975,
+              "maxGapSeconds": 1.7833333333333332
+            },
+            {
+              "chainId": 75,
+              "bossDamage": 110,
+              "kills": 0,
+              "depth": 50,
+              "startSeconds": 118.1,
+              "spanSeconds": 6.883333333333333,
+              "maxGapSeconds": 0.7916666666666666
+            },
+            {
+              "chainId": 59,
+              "bossDamage": 30,
+              "kills": 0,
+              "depth": 13,
+              "startSeconds": 78.10833333333333,
+              "spanSeconds": 15.416666666666666,
+              "maxGapSeconds": 2.4416666666666664
+            }
+          ]
+        },
+        {
+          "seed": 20261129,
+          "status": "won",
+          "shots": 64,
+          "seconds": 126.575,
+          "bossHp": 0,
+          "monsters": 7,
+          "maxBossDamage": 900,
+          "maxKills": 4,
+          "maxDepth": 87,
+          "wow": {
+            "boss": true,
+            "kills": true,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 55,
+              "bossDamage": 50,
+              "kills": 0,
+              "depth": 24,
+              "startSeconds": 87.11666666666666,
+              "spanSeconds": 11.85,
+              "maxGapSeconds": 2.825
+            },
+            {
+              "chainId": 50,
+              "bossDamage": 40,
+              "kills": 0,
+              "depth": 10,
+              "startSeconds": 73.725,
+              "spanSeconds": 12.95,
+              "maxGapSeconds": 2.8833333333333333
+            },
+            {
+              "chainId": 18,
+              "bossDamage": 50,
+              "kills": 0,
+              "depth": 10,
+              "startSeconds": 27.416666666666668,
+              "spanSeconds": 17.95,
+              "maxGapSeconds": 3.2666666666666666
+            }
+          ]
+        },
+        {
+          "seed": 20261130,
+          "status": "won",
+          "shots": 67,
+          "seconds": 133.66666666666666,
+          "bossHp": 0,
+          "monsters": 7,
+          "maxBossDamage": 1080,
+          "maxKills": 3,
+          "maxDepth": 69,
+          "wow": {
+            "boss": true,
+            "kills": true,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 54,
+              "bossDamage": 30,
+              "kills": 0,
+              "depth": 11,
+              "startSeconds": 74.76666666666667,
+              "spanSeconds": 8.541666666666666,
+              "maxGapSeconds": 1.3833333333333333
+            },
+            {
+              "chainId": 27,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 8,
+              "startSeconds": 41.21666666666667,
+              "spanSeconds": 8.833333333333334,
+              "maxGapSeconds": 1.9749999999999999
+            },
+            {
+              "chainId": 55,
+              "bossDamage": 10,
+              "kills": 0,
+              "depth": 11,
+              "startSeconds": 74.79166666666667,
+              "spanSeconds": 15.483333333333333,
+              "maxGapSeconds": 3.4583333333333335
+            }
+          ]
+        },
+        {
+          "seed": 20261131,
+          "status": "won",
+          "shots": 70,
+          "seconds": 139.4,
+          "bossHp": 0,
+          "monsters": 6,
+          "maxBossDamage": 800,
+          "maxKills": 3,
+          "maxDepth": 64,
+          "wow": {
+            "boss": true,
+            "kills": true,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 46,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 9,
+              "startSeconds": 62.96666666666667,
+              "spanSeconds": 6.166666666666667,
+              "maxGapSeconds": 1.675
+            },
+            {
+              "chainId": 37,
+              "bossDamage": 40,
+              "kills": 0,
+              "depth": 10,
+              "startSeconds": 57.49166666666667,
+              "spanSeconds": 9.383333333333333,
+              "maxGapSeconds": 1.5666666666666667
+            },
+            {
+              "chainId": 49,
+              "bossDamage": 20,
+              "kills": 0,
+              "depth": 20,
+              "startSeconds": 68.64166666666667,
+              "spanSeconds": 13.833333333333334,
+              "maxGapSeconds": 2.75
+            }
+          ]
+        },
+        {
+          "seed": 20261132,
+          "status": "won",
+          "shots": 69,
+          "seconds": 137.175,
+          "bossHp": 0,
+          "monsters": 6,
+          "maxBossDamage": 1030,
+          "maxKills": 2,
+          "maxDepth": 66,
+          "wow": {
+            "boss": true,
+            "kills": false,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 83,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 8,
+              "startSeconds": 99.41666666666667,
+              "spanSeconds": 9.966666666666667,
+              "maxGapSeconds": 1.95
+            },
+            {
+              "chainId": 26,
+              "bossDamage": 50,
+              "kills": 0,
+              "depth": 10,
+              "startSeconds": 37.55833333333333,
+              "spanSeconds": 16.525,
+              "maxGapSeconds": 2.1666666666666665
+            },
+            {
+              "chainId": 55,
+              "bossDamage": 40,
+              "kills": 0,
+              "depth": 10,
+              "startSeconds": 65.475,
+              "spanSeconds": 17.308333333333334,
+              "maxGapSeconds": 4.8
+            }
+          ]
+        },
+        {
+          "seed": 20261133,
+          "status": "won",
+          "shots": 64,
+          "seconds": 126.49166666666666,
+          "bossHp": 0,
+          "monsters": 8,
+          "maxBossDamage": 1110,
+          "maxKills": 2,
+          "maxDepth": 62,
+          "wow": {
+            "boss": true,
+            "kills": false,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 67,
+              "bossDamage": 40,
+              "kills": 0,
+              "depth": 11,
+              "startSeconds": 98.51666666666667,
+              "spanSeconds": 2.533333333333333,
+              "maxGapSeconds": 0.8166666666666667
+            },
+            {
+              "chainId": 66,
+              "bossDamage": 20,
+              "kills": 0,
+              "depth": 8,
+              "startSeconds": 97.60833333333333,
+              "spanSeconds": 8.083333333333334,
+              "maxGapSeconds": 2.3583333333333334
+            },
+            {
+              "chainId": 50,
+              "bossDamage": 30,
+              "kills": 0,
+              "depth": 24,
+              "startSeconds": 71.89166666666667,
+              "spanSeconds": 10.6,
+              "maxGapSeconds": 1.6583333333333332
+            }
+          ]
+        },
+        {
+          "seed": 20261134,
+          "status": "lost",
+          "shots": 55,
+          "seconds": 108,
+          "bossHp": 1350,
+          "monsters": 11,
+          "maxBossDamage": 340,
+          "maxKills": 0,
+          "maxDepth": 21,
+          "wow": {
+            "boss": false,
+            "kills": false,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 74,
+              "bossDamage": 20,
+              "kills": 0,
+              "depth": 16,
+              "startSeconds": 101.03333333333333,
+              "spanSeconds": 6.708333333333333,
+              "maxGapSeconds": 1.3083333333333333
+            },
+            {
+              "chainId": 64,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 9,
+              "startSeconds": 81.23333333333333,
+              "spanSeconds": 7.341666666666667,
+              "maxGapSeconds": 3.0416666666666665
+            },
+            {
+              "chainId": 72,
+              "bossDamage": 20,
+              "kills": 0,
+              "depth": 8,
+              "startSeconds": 98.325,
+              "spanSeconds": 9.066666666666666,
+              "maxGapSeconds": 3.9499999999999997
+            }
+          ]
+        },
+        {
+          "seed": 20261135,
+          "status": "won",
+          "shots": 65,
+          "seconds": 128.2,
+          "bossHp": 0,
+          "monsters": 7,
+          "maxBossDamage": 540,
+          "maxKills": 2,
+          "maxDepth": 62,
+          "wow": {
+            "boss": false,
+            "kills": false,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 40,
+              "bossDamage": 10,
+              "kills": 0,
+              "depth": 12,
+              "startSeconds": 54.125,
+              "spanSeconds": 8.091666666666667,
+              "maxGapSeconds": 4.583333333333333
+            },
+            {
+              "chainId": 43,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 9,
+              "startSeconds": 57.791666666666664,
+              "spanSeconds": 9.733333333333333,
+              "maxGapSeconds": 3.341666666666667
+            },
+            {
+              "chainId": 76,
+              "bossDamage": 515,
+              "kills": 0,
+              "depth": 62,
+              "startSeconds": 116.00833333333333,
+              "spanSeconds": 12.191666666666666,
+              "maxGapSeconds": 2.058333333333333
+            }
+          ]
+        },
+        {
+          "seed": 20261136,
+          "status": "won",
+          "shots": 74,
+          "seconds": 147.875,
+          "bossHp": 0,
+          "monsters": 7,
+          "maxBossDamage": 500,
+          "maxKills": 2,
+          "maxDepth": 53,
+          "wow": {
+            "boss": false,
+            "kills": false,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 63,
+              "bossDamage": 20,
+              "kills": 0,
+              "depth": 10,
+              "startSeconds": 87.2,
+              "spanSeconds": 7.066666666666666,
+              "maxGapSeconds": 1.4833333333333334
+            },
+            {
+              "chainId": 89,
+              "bossDamage": 50,
+              "kills": 0,
+              "depth": 42,
+              "startSeconds": 132.95,
+              "spanSeconds": 10.175,
+              "maxGapSeconds": 1.4083333333333332
+            },
+            {
+              "chainId": 65,
+              "bossDamage": 40,
+              "kills": 1,
+              "depth": 13,
+              "startSeconds": 88.75833333333333,
+              "spanSeconds": 11.6,
+              "maxGapSeconds": 2.5416666666666665
+            }
+          ]
+        },
+        {
+          "seed": 20261137,
+          "status": "lost",
+          "shots": 55,
+          "seconds": 108,
+          "bossHp": 1100,
+          "monsters": 11,
+          "maxBossDamage": 270,
+          "maxKills": 0,
+          "maxDepth": 47,
+          "wow": {
+            "boss": false,
+            "kills": false,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 60,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 9,
+              "startSeconds": 90.43333333333334,
+              "spanSeconds": 5.641666666666667,
+              "maxGapSeconds": 2.8333333333333335
+            },
+            {
+              "chainId": 31,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 9,
+              "startSeconds": 48.81666666666666,
+              "spanSeconds": 9.333333333333334,
+              "maxGapSeconds": 4.841666666666667
+            },
+            {
+              "chainId": 55,
+              "bossDamage": 270,
+              "kills": 0,
+              "depth": 34,
+              "startSeconds": 78,
+              "spanSeconds": 12.924999999999999,
+              "maxGapSeconds": 0.9833333333333333
+            }
+          ]
+        },
+        {
+          "seed": 20261138,
+          "status": "won",
+          "shots": 70,
+          "seconds": 139.36666666666667,
+          "bossHp": 0,
+          "monsters": 5,
+          "maxBossDamage": 825,
+          "maxKills": 4,
+          "maxDepth": 76,
+          "wow": {
+            "boss": true,
+            "kills": true,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 75,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 19,
+              "startSeconds": 98.325,
+              "spanSeconds": 11.6,
+              "maxGapSeconds": 2.841666666666667
+            },
+            {
+              "chainId": 72,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 13,
+              "startSeconds": 90.9,
+              "spanSeconds": 13.033333333333333,
+              "maxGapSeconds": 5.95
+            },
+            {
+              "chainId": 37,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 13,
+              "startSeconds": 50.11666666666667,
+              "spanSeconds": 26.4,
+              "maxGapSeconds": 5.741666666666666
+            }
+          ]
+        },
+        {
+          "seed": 20261139,
+          "status": "won",
+          "shots": 66,
+          "seconds": 131.2,
+          "bossHp": 0,
+          "monsters": 7,
+          "maxBossDamage": 1350,
+          "maxKills": 3,
+          "maxDepth": 69,
+          "wow": {
+            "boss": true,
+            "kills": true,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 59,
+              "bossDamage": 20,
+              "kills": 0,
+              "depth": 9,
+              "startSeconds": 94.55,
+              "spanSeconds": 4.841666666666667,
+              "maxGapSeconds": 1.9749999999999999
+            },
+            {
+              "chainId": 50,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 11,
+              "startSeconds": 72.94166666666666,
+              "spanSeconds": 5.941666666666666,
+              "maxGapSeconds": 2.95
+            },
+            {
+              "chainId": 43,
+              "bossDamage": 10,
+              "kills": 0,
+              "depth": 8,
+              "startSeconds": 62.93333333333333,
+              "spanSeconds": 8.158333333333333,
+              "maxGapSeconds": 2.558333333333333
+            }
+          ]
+        },
+        {
+          "seed": 20261140,
+          "status": "won",
+          "shots": 78,
+          "seconds": 155.825,
+          "bossHp": 0,
+          "monsters": 7,
+          "maxBossDamage": 860,
+          "maxKills": 5,
+          "maxDepth": 194,
+          "wow": {
+            "boss": true,
+            "kills": true,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 66,
+              "bossDamage": 60,
+              "kills": 0,
+              "depth": 9,
+              "startSeconds": 73.3,
+              "spanSeconds": 7.758333333333333,
+              "maxGapSeconds": 2.6333333333333333
+            },
+            {
+              "chainId": 53,
+              "bossDamage": 10,
+              "kills": 0,
+              "depth": 10,
+              "startSeconds": 61.05833333333333,
+              "spanSeconds": 8.283333333333333,
+              "maxGapSeconds": 2.158333333333333
+            },
+            {
+              "chainId": 60,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 8,
+              "startSeconds": 67.25833333333333,
+              "spanSeconds": 8.758333333333333,
+              "maxGapSeconds": 3.808333333333333
+            }
+          ]
+        },
+        {
+          "seed": 20261141,
+          "status": "won",
+          "shots": 72,
+          "seconds": 142.025,
+          "bossHp": 0,
+          "monsters": 7,
+          "maxBossDamage": 770,
+          "maxKills": 1,
+          "maxDepth": 90,
+          "wow": {
+            "boss": true,
+            "kills": false,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 76,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 10,
+              "startSeconds": 136.96666666666667,
+              "spanSeconds": 4.275,
+              "maxGapSeconds": 0.825
+            },
+            {
+              "chainId": 62,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 8,
+              "startSeconds": 88.84166666666667,
+              "spanSeconds": 9.816666666666666,
+              "maxGapSeconds": 2.15
+            },
+            {
+              "chainId": 74,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 16,
+              "startSeconds": 125.625,
+              "spanSeconds": 11.341666666666667,
+              "maxGapSeconds": 3.3333333333333335
+            }
+          ]
+        },
+        {
+          "seed": 20261142,
+          "status": "won",
+          "shots": 67,
+          "seconds": 132.14166666666665,
+          "bossHp": 0,
+          "monsters": 9,
+          "maxBossDamage": 1160,
+          "maxKills": 3,
+          "maxDepth": 63,
+          "wow": {
+            "boss": true,
+            "kills": true,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 53,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 19,
+              "startSeconds": 88.79166666666667,
+              "spanSeconds": 5.225,
+              "maxGapSeconds": 1.775
+            },
+            {
+              "chainId": 30,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 8,
+              "startSeconds": 54.61666666666667,
+              "spanSeconds": 7.158333333333333,
+              "maxGapSeconds": 1.7583333333333333
+            },
+            {
+              "chainId": 51,
+              "bossDamage": 50,
+              "kills": 0,
+              "depth": 16,
+              "startSeconds": 85.35833333333333,
+              "spanSeconds": 21.433333333333334,
+              "maxGapSeconds": 6.325
+            }
+          ]
+        },
+        {
+          "seed": 20261143,
+          "status": "won",
+          "shots": 72,
+          "seconds": 143.21666666666667,
+          "bossHp": 0,
+          "monsters": 7,
+          "maxBossDamage": 1240,
+          "maxKills": 2,
+          "maxDepth": 92,
+          "wow": {
+            "boss": true,
+            "kills": false,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 56,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 9,
+              "startSeconds": 82.71666666666667,
+              "spanSeconds": 9.291666666666666,
+              "maxGapSeconds": 5.65
+            },
+            {
+              "chainId": 70,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 36,
+              "startSeconds": 124.14166666666667,
+              "spanSeconds": 12.25,
+              "maxGapSeconds": 3.3583333333333334
+            },
+            {
+              "chainId": 31,
+              "bossDamage": 30,
+              "kills": 0,
+              "depth": 12,
+              "startSeconds": 44.21666666666667,
+              "spanSeconds": 12.291666666666666,
+              "maxGapSeconds": 2.725
+            }
+          ]
+        },
+        {
+          "seed": 20261144,
+          "status": "won",
+          "shots": 69,
+          "seconds": 136.68333333333334,
+          "bossHp": 0,
+          "monsters": 8,
+          "maxBossDamage": 1320,
+          "maxKills": 3,
+          "maxDepth": 112,
+          "wow": {
+            "boss": true,
+            "kills": true,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 28,
+              "bossDamage": 40,
+              "kills": 0,
+              "depth": 12,
+              "startSeconds": 47.81666666666666,
+              "spanSeconds": 7.741666666666666,
+              "maxGapSeconds": 3.075
+            },
+            {
+              "chainId": 18,
+              "bossDamage": 60,
+              "kills": 0,
+              "depth": 12,
+              "startSeconds": 33.00833333333333,
+              "spanSeconds": 13.258333333333333,
+              "maxGapSeconds": 2.6666666666666665
+            },
+            {
+              "chainId": 53,
+              "bossDamage": 30,
+              "kills": 1,
+              "depth": 8,
+              "startSeconds": 88.86666666666666,
+              "spanSeconds": 13.658333333333333,
+              "maxGapSeconds": 3.25
+            }
+          ]
+        },
+        {
+          "seed": 20261145,
+          "status": "lost",
+          "shots": 55,
+          "seconds": 108,
+          "bossHp": 970,
+          "monsters": 11,
+          "maxBossDamage": 600,
+          "maxKills": 0,
+          "maxDepth": 62,
+          "wow": {
+            "boss": false,
+            "kills": false,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 50,
+              "bossDamage": 40,
+              "kills": 0,
+              "depth": 8,
+              "startSeconds": 64.83333333333333,
+              "spanSeconds": 5.925,
+              "maxGapSeconds": 2.2083333333333335
+            },
+            {
+              "chainId": 41,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 13,
+              "startSeconds": 49.9,
+              "spanSeconds": 15.5,
+              "maxGapSeconds": 4.816666666666666
+            },
+            {
+              "chainId": 58,
+              "bossDamage": 80,
+              "kills": 0,
+              "depth": 23,
+              "startSeconds": 80.31666666666666,
+              "spanSeconds": 17.65,
+              "maxGapSeconds": 1.7166666666666666
+            }
+          ]
+        },
+        {
+          "seed": 20261146,
+          "status": "won",
+          "shots": 72,
+          "seconds": 143.53333333333333,
+          "bossHp": 0,
+          "monsters": 3,
+          "maxBossDamage": 660,
+          "maxKills": 9,
+          "maxDepth": 70,
+          "wow": {
+            "boss": false,
+            "kills": true,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 71,
+              "bossDamage": 10,
+              "kills": 0,
+              "depth": 8,
+              "startSeconds": 92.01666666666667,
+              "spanSeconds": 5.408333333333333,
+              "maxGapSeconds": 1.3166666666666667
+            },
+            {
+              "chainId": 86,
+              "bossDamage": 40,
+              "kills": 1,
+              "depth": 39,
+              "startSeconds": 125.89166666666667,
+              "spanSeconds": 9.691666666666666,
+              "maxGapSeconds": 1.8083333333333333
+            },
+            {
+              "chainId": 41,
+              "bossDamage": 30,
+              "kills": 0,
+              "depth": 11,
+              "startSeconds": 62.84166666666667,
+              "spanSeconds": 9.933333333333334,
+              "maxGapSeconds": 2.808333333333333
+            }
+          ]
+        },
+        {
+          "seed": 20261147,
+          "status": "won",
+          "shots": 66,
+          "seconds": 131.54166666666666,
+          "bossHp": 0,
+          "monsters": 8,
+          "maxBossDamage": 710,
+          "maxKills": 2,
+          "maxDepth": 39,
+          "wow": {
+            "boss": false,
+            "kills": false,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 84,
+              "bossDamage": 40,
+              "kills": 0,
+              "depth": 35,
+              "startSeconds": 124.38333333333333,
+              "spanSeconds": 6.741666666666666,
+              "maxGapSeconds": 5.7
+            },
+            {
+              "chainId": 76,
+              "bossDamage": 230,
+              "kills": 0,
+              "depth": 32,
+              "startSeconds": 115.91666666666667,
+              "spanSeconds": 13.983333333333333,
+              "maxGapSeconds": 1.0916666666666666
+            },
+            {
+              "chainId": 78,
+              "bossDamage": 175,
+              "kills": 0,
+              "depth": 39,
+              "startSeconds": 116.46666666666667,
+              "spanSeconds": 15.075,
+              "maxGapSeconds": 0.6666666666666666
+            }
+          ]
+        },
+        {
+          "seed": 20261148,
+          "status": "won",
+          "shots": 73,
+          "seconds": 145.01666666666665,
+          "bossHp": 0,
+          "monsters": 5,
+          "maxBossDamage": 900,
+          "maxKills": 2,
+          "maxDepth": 60,
+          "wow": {
+            "boss": true,
+            "kills": false,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 83,
+              "bossDamage": 10,
+              "kills": 0,
+              "depth": 8,
+              "startSeconds": 117.02499999999999,
+              "spanSeconds": 2.1,
+              "maxGapSeconds": 0.6916666666666667
+            },
+            {
+              "chainId": 85,
+              "bossDamage": 40,
+              "kills": 0,
+              "depth": 44,
+              "startSeconds": 127.16666666666667,
+              "spanSeconds": 9.825,
+              "maxGapSeconds": 2.058333333333333
+            },
+            {
+              "chainId": 84,
+              "bossDamage": 30,
+              "kills": 0,
+              "depth": 17,
+              "startSeconds": 118.36666666666666,
+              "spanSeconds": 10.2,
+              "maxGapSeconds": 2.325
+            }
+          ]
+        },
+        {
+          "seed": 20261149,
+          "status": "won",
+          "shots": 66,
+          "seconds": 131.79166666666666,
+          "bossHp": 0,
+          "monsters": 7,
+          "maxBossDamage": 920,
+          "maxKills": 3,
+          "maxDepth": 76,
+          "wow": {
+            "boss": true,
+            "kills": true,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 68,
+              "bossDamage": 40,
+              "kills": 0,
+              "depth": 30,
+              "startSeconds": 84.85833333333333,
+              "spanSeconds": 12.358333333333333,
+              "maxGapSeconds": 2.2333333333333334
+            },
+            {
+              "chainId": 50,
+              "bossDamage": 10,
+              "kills": 0,
+              "depth": 17,
+              "startSeconds": 63.766666666666666,
+              "spanSeconds": 19.425,
+              "maxGapSeconds": 4.658333333333333
+            },
+            {
+              "chainId": 18,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 8,
+              "startSeconds": 28.275,
+              "spanSeconds": 22.341666666666665,
+              "maxGapSeconds": 5.958333333333333
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "strategy": "boss-near",
+      "summary": {
+        "games": 40,
+        "wins": 28,
+        "losses": 12,
+        "timeouts": 0,
+        "winRate": 0.7,
+        "averageShots": 64.175,
+        "averageSeconds": 127.03208333333332,
+        "wow": {
+          "any": 40,
+          "boss": 10,
+          "kills": 18,
+          "depth": 40
+        }
+      },
+      "games": [
+        {
+          "seed": 20261110,
+          "status": "won",
+          "shots": 65,
+          "seconds": 128.55,
+          "bossHp": 0,
+          "monsters": 7,
+          "maxBossDamage": 635,
+          "maxKills": 3,
+          "maxDepth": 59,
+          "wow": {
+            "boss": false,
+            "kills": true,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 32,
+              "bossDamage": 90,
+              "kills": 0,
+              "depth": 12,
+              "startSeconds": 43.733333333333334,
+              "spanSeconds": 24.591666666666665,
+              "maxGapSeconds": 3.2
+            },
+            {
+              "chainId": 57,
+              "bossDamage": 635,
+              "kills": 3,
+              "depth": 59,
+              "startSeconds": 82.61666666666666,
+              "spanSeconds": 45.93333333333333,
+              "maxGapSeconds": 1.9749999999999999
+            },
+            {
+              "chainId": 44,
+              "bossDamage": 490,
+              "kills": 1,
+              "depth": 38,
+              "startSeconds": 65.175,
+              "spanSeconds": 51.641666666666666,
+              "maxGapSeconds": 2.6166666666666667
+            }
+          ]
+        },
+        {
+          "seed": 20261111,
+          "status": "won",
+          "shots": 73,
+          "seconds": 144.65833333333333,
+          "bossHp": 0,
+          "monsters": 7,
+          "maxBossDamage": 510,
+          "maxKills": 4,
+          "maxDepth": 97,
+          "wow": {
+            "boss": false,
+            "kills": true,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 82,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 8,
+              "startSeconds": 110.76666666666667,
+              "spanSeconds": 6.6499999999999995,
+              "maxGapSeconds": 2.1166666666666667
+            },
+            {
+              "chainId": 90,
+              "bossDamage": 175,
+              "kills": 1,
+              "depth": 74,
+              "startSeconds": 134.5,
+              "spanSeconds": 10.158333333333333,
+              "maxGapSeconds": 1.4
+            },
+            {
+              "chainId": 55,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 12,
+              "startSeconds": 70.34166666666667,
+              "spanSeconds": 10.633333333333333,
+              "maxGapSeconds": 2.4416666666666664
+            }
+          ]
+        },
+        {
+          "seed": 20261112,
+          "status": "lost",
+          "shots": 55,
+          "seconds": 108,
+          "bossHp": 880,
+          "monsters": 11,
+          "maxBossDamage": 270,
+          "maxKills": 0,
+          "maxDepth": 40,
+          "wow": {
+            "boss": false,
+            "kills": false,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 54,
+              "bossDamage": 10,
+              "kills": 0,
+              "depth": 8,
+              "startSeconds": 66.85,
+              "spanSeconds": 5.233333333333333,
+              "maxGapSeconds": 1.175
+            },
+            {
+              "chainId": 58,
+              "bossDamage": 50,
+              "kills": 0,
+              "depth": 14,
+              "startSeconds": 70.08333333333333,
+              "spanSeconds": 11.058333333333334,
+              "maxGapSeconds": 2.325
+            },
+            {
+              "chainId": 77,
+              "bossDamage": 40,
+              "kills": 0,
+              "depth": 34,
+              "startSeconds": 94.98333333333333,
+              "spanSeconds": 12.916666666666666,
+              "maxGapSeconds": 1.4416666666666667
+            }
+          ]
+        },
+        {
+          "seed": 20261113,
+          "status": "won",
+          "shots": 69,
+          "seconds": 136.66666666666666,
+          "bossHp": 0,
+          "monsters": 5,
+          "maxBossDamage": 450,
+          "maxKills": 1,
+          "maxDepth": 55,
+          "wow": {
+            "boss": false,
+            "kills": false,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 87,
+              "bossDamage": 20,
+              "kills": 0,
+              "depth": 8,
+              "startSeconds": 118.55833333333334,
+              "spanSeconds": 5.775,
+              "maxGapSeconds": 2.2333333333333334
+            },
+            {
+              "chainId": 43,
+              "bossDamage": 30,
+              "kills": 0,
+              "depth": 10,
+              "startSeconds": 52.75833333333333,
+              "spanSeconds": 6.966666666666667,
+              "maxGapSeconds": 1.7249999999999999
+            },
+            {
+              "chainId": 91,
+              "bossDamage": 140,
+              "kills": 1,
+              "depth": 21,
+              "startSeconds": 128.625,
+              "spanSeconds": 8.041666666666666,
+              "maxGapSeconds": 1.6916666666666667
+            }
+          ]
+        },
+        {
+          "seed": 20261114,
+          "status": "won",
+          "shots": 70,
+          "seconds": 138.75,
+          "bossHp": 0,
+          "monsters": 7,
+          "maxBossDamage": 670,
+          "maxKills": 5,
+          "maxDepth": 113,
+          "wow": {
+            "boss": false,
+            "kills": true,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 30,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 9,
+              "startSeconds": 46.63333333333333,
+              "spanSeconds": 0.825,
+              "maxGapSeconds": 0.2916666666666667
+            },
+            {
+              "chainId": 58,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 10,
+              "startSeconds": 95.18333333333334,
+              "spanSeconds": 7.175,
+              "maxGapSeconds": 3.7916666666666665
+            },
+            {
+              "chainId": 71,
+              "bossDamage": 20,
+              "kills": 0,
+              "depth": 11,
+              "startSeconds": 116.00833333333333,
+              "spanSeconds": 10.183333333333334,
+              "maxGapSeconds": 2.6416666666666666
+            }
+          ]
+        },
+        {
+          "seed": 20261115,
+          "status": "won",
+          "shots": 72,
+          "seconds": 142.89166666666665,
+          "bossHp": 0,
+          "monsters": 4,
+          "maxBossDamage": 490,
+          "maxKills": 3,
+          "maxDepth": 57,
+          "wow": {
+            "boss": false,
+            "kills": true,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 30,
+              "bossDamage": 20,
+              "kills": 0,
+              "depth": 9,
+              "startSeconds": 40.43333333333333,
+              "spanSeconds": 12.2,
+              "maxGapSeconds": 2.85
+            },
+            {
+              "chainId": 35,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 10,
+              "startSeconds": 44.90833333333333,
+              "spanSeconds": 12.616666666666667,
+              "maxGapSeconds": 2.025
+            },
+            {
+              "chainId": 61,
+              "bossDamage": 30,
+              "kills": 0,
+              "depth": 13,
+              "startSeconds": 75.225,
+              "spanSeconds": 18.516666666666666,
+              "maxGapSeconds": 5.608333333333333
+            }
+          ]
+        },
+        {
+          "seed": 20261116,
+          "status": "won",
+          "shots": 61,
+          "seconds": 121.125,
+          "bossHp": 0,
+          "monsters": 9,
+          "maxBossDamage": 1010,
+          "maxKills": 2,
+          "maxDepth": 51,
+          "wow": {
+            "boss": true,
+            "kills": false,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 73,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 10,
+              "startSeconds": 113.93333333333334,
+              "spanSeconds": 5.758333333333333,
+              "maxGapSeconds": 1.4583333333333333
+            },
+            {
+              "chainId": 37,
+              "bossDamage": 10,
+              "kills": 0,
+              "depth": 11,
+              "startSeconds": 54.1,
+              "spanSeconds": 9.925,
+              "maxGapSeconds": 1.925
+            },
+            {
+              "chainId": 33,
+              "bossDamage": 20,
+              "kills": 0,
+              "depth": 10,
+              "startSeconds": 51.55833333333333,
+              "spanSeconds": 17.075,
+              "maxGapSeconds": 4.666666666666667
+            }
+          ]
+        },
+        {
+          "seed": 20261117,
+          "status": "won",
+          "shots": 67,
+          "seconds": 132.45,
+          "bossHp": 0,
+          "monsters": 8,
+          "maxBossDamage": 450,
+          "maxKills": 4,
+          "maxDepth": 48,
+          "wow": {
+            "boss": false,
+            "kills": true,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 68,
+              "bossDamage": 10,
+              "kills": 0,
+              "depth": 10,
+              "startSeconds": 123.00833333333333,
+              "spanSeconds": 8.883333333333333,
+              "maxGapSeconds": 5.708333333333333
+            },
+            {
+              "chainId": 53,
+              "bossDamage": 40,
+              "kills": 0,
+              "depth": 8,
+              "startSeconds": 81.94166666666666,
+              "spanSeconds": 11.208333333333334,
+              "maxGapSeconds": 1.9749999999999999
+            },
+            {
+              "chainId": 36,
+              "bossDamage": 90,
+              "kills": 0,
+              "depth": 12,
+              "startSeconds": 53.25833333333333,
+              "spanSeconds": 16.916666666666668,
+              "maxGapSeconds": 2.1083333333333334
+            }
+          ]
+        },
+        {
+          "seed": 20261118,
+          "status": "lost",
+          "shots": 70,
+          "seconds": 138,
+          "bossHp": 95,
+          "monsters": 11,
+          "maxBossDamage": 960,
+          "maxKills": 2,
+          "maxDepth": 115,
+          "wow": {
+            "boss": true,
+            "kills": false,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 62,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 8,
+              "startSeconds": 91.5,
+              "spanSeconds": 4.791666666666667,
+              "maxGapSeconds": 2.9166666666666665
+            },
+            {
+              "chainId": 67,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 9,
+              "startSeconds": 116.54166666666667,
+              "spanSeconds": 8.391666666666666,
+              "maxGapSeconds": 1.0583333333333333
+            },
+            {
+              "chainId": 60,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 8,
+              "startSeconds": 83.64166666666667,
+              "spanSeconds": 11.916666666666666,
+              "maxGapSeconds": 9.741666666666667
+            }
+          ]
+        },
+        {
+          "seed": 20261119,
+          "status": "won",
+          "shots": 66,
+          "seconds": 130.625,
+          "bossHp": 0,
+          "monsters": 6,
+          "maxBossDamage": 740,
+          "maxKills": 1,
+          "maxDepth": 75,
+          "wow": {
+            "boss": false,
+            "kills": false,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 82,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 11,
+              "startSeconds": 123.76666666666667,
+              "spanSeconds": 3.466666666666667,
+              "maxGapSeconds": 0.6583333333333333
+            },
+            {
+              "chainId": 55,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 8,
+              "startSeconds": 67.85,
+              "spanSeconds": 4.091666666666667,
+              "maxGapSeconds": 1.1666666666666667
+            },
+            {
+              "chainId": 69,
+              "bossDamage": 10,
+              "kills": 0,
+              "depth": 8,
+              "startSeconds": 85.83333333333333,
+              "spanSeconds": 8.9,
+              "maxGapSeconds": 3.6333333333333333
+            }
+          ]
+        },
+        {
+          "seed": 20261120,
+          "status": "won",
+          "shots": 67,
+          "seconds": 132.58333333333334,
+          "bossHp": 0,
+          "monsters": 7,
+          "maxBossDamage": 990,
+          "maxKills": 2,
+          "maxDepth": 80,
+          "wow": {
+            "boss": true,
+            "kills": false,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 63,
+              "bossDamage": 30,
+              "kills": 0,
+              "depth": 11,
+              "startSeconds": 87.86666666666666,
+              "spanSeconds": 11.35,
+              "maxGapSeconds": 3.9166666666666665
+            },
+            {
+              "chainId": 74,
+              "bossDamage": 0,
+              "kills": 2,
+              "depth": 45,
+              "startSeconds": 102.70833333333333,
+              "spanSeconds": 12.083333333333334,
+              "maxGapSeconds": 1.7916666666666667
+            },
+            {
+              "chainId": 51,
+              "bossDamage": 30,
+              "kills": 0,
+              "depth": 10,
+              "startSeconds": 69.575,
+              "spanSeconds": 16.425,
+              "maxGapSeconds": 8.083333333333334
+            }
+          ]
+        },
+        {
+          "seed": 20261121,
+          "status": "lost",
+          "shots": 55,
+          "seconds": 108,
+          "bossHp": 560,
+          "monsters": 11,
+          "maxBossDamage": 670,
+          "maxKills": 0,
+          "maxDepth": 67,
+          "wow": {
+            "boss": false,
+            "kills": false,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 67,
+              "bossDamage": 10,
+              "kills": 0,
+              "depth": 21,
+              "startSeconds": 103.81666666666666,
+              "spanSeconds": 4.075,
+              "maxGapSeconds": 0.4166666666666667
+            },
+            {
+              "chainId": 47,
+              "bossDamage": 90,
+              "kills": 0,
+              "depth": 24,
+              "startSeconds": 64.45833333333333,
+              "spanSeconds": 5.291666666666667,
+              "maxGapSeconds": 2.091666666666667
+            },
+            {
+              "chainId": 19,
+              "bossDamage": 60,
+              "kills": 0,
+              "depth": 9,
+              "startSeconds": 27.983333333333334,
+              "spanSeconds": 29.991666666666667,
+              "maxGapSeconds": 6.691666666666666
+            }
+          ]
+        },
+        {
+          "seed": 20261122,
+          "status": "lost",
+          "shots": 55,
+          "seconds": 108,
+          "bossHp": 915,
+          "monsters": 11,
+          "maxBossDamage": 310,
+          "maxKills": 0,
+          "maxDepth": 44,
+          "wow": {
+            "boss": false,
+            "kills": false,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 49,
+              "bossDamage": 40,
+              "kills": 0,
+              "depth": 8,
+              "startSeconds": 73.10833333333333,
+              "spanSeconds": 11.233333333333333,
+              "maxGapSeconds": 3.975
+            },
+            {
+              "chainId": 16,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 8,
+              "startSeconds": 29.349999999999998,
+              "spanSeconds": 14.133333333333333,
+              "maxGapSeconds": 7.791666666666667
+            },
+            {
+              "chainId": 41,
+              "bossDamage": 30,
+              "kills": 0,
+              "depth": 10,
+              "startSeconds": 65.29166666666667,
+              "spanSeconds": 15.975,
+              "maxGapSeconds": 4.758333333333333
+            }
+          ]
+        },
+        {
+          "seed": 20261123,
+          "status": "won",
+          "shots": 64,
+          "seconds": 127.95833333333333,
+          "bossHp": 0,
+          "monsters": 7,
+          "maxBossDamage": 840,
+          "maxKills": 2,
+          "maxDepth": 71,
+          "wow": {
+            "boss": true,
+            "kills": false,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 61,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 8,
+              "startSeconds": 97.05833333333334,
+              "spanSeconds": 3.4833333333333334,
+              "maxGapSeconds": 0.9
+            },
+            {
+              "chainId": 58,
+              "bossDamage": 10,
+              "kills": 0,
+              "depth": 8,
+              "startSeconds": 86.625,
+              "spanSeconds": 7.758333333333333,
+              "maxGapSeconds": 3.275
+            },
+            {
+              "chainId": 60,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 31,
+              "startSeconds": 93.23333333333333,
+              "spanSeconds": 9.375,
+              "maxGapSeconds": 3.5083333333333333
+            }
+          ]
+        },
+        {
+          "seed": 20261124,
+          "status": "won",
+          "shots": 64,
+          "seconds": 126.39166666666667,
+          "bossHp": 0,
+          "monsters": 8,
+          "maxBossDamage": 1040,
+          "maxKills": 3,
+          "maxDepth": 88,
+          "wow": {
+            "boss": true,
+            "kills": true,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 28,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 13,
+              "startSeconds": 47.43333333333333,
+              "spanSeconds": 7.741666666666666,
+              "maxGapSeconds": 2.2583333333333333
+            },
+            {
+              "chainId": 52,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 8,
+              "startSeconds": 91.28333333333333,
+              "spanSeconds": 9.85,
+              "maxGapSeconds": 1.75
+            },
+            {
+              "chainId": 62,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 8,
+              "startSeconds": 113.02499999999999,
+              "spanSeconds": 13.308333333333334,
+              "maxGapSeconds": 4.058333333333334
+            }
+          ]
+        },
+        {
+          "seed": 20261125,
+          "status": "won",
+          "shots": 68,
+          "seconds": 134.79166666666666,
+          "bossHp": 0,
+          "monsters": 5,
+          "maxBossDamage": 525,
+          "maxKills": 3,
+          "maxDepth": 72,
+          "wow": {
+            "boss": false,
+            "kills": true,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 59,
+              "bossDamage": 20,
+              "kills": 0,
+              "depth": 11,
+              "startSeconds": 86.24166666666666,
+              "spanSeconds": 6.408333333333333,
+              "maxGapSeconds": 2.7416666666666667
+            },
+            {
+              "chainId": 54,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 21,
+              "startSeconds": 76.1,
+              "spanSeconds": 13.525,
+              "maxGapSeconds": 5.541666666666667
+            },
+            {
+              "chainId": 11,
+              "bossDamage": 40,
+              "kills": 0,
+              "depth": 10,
+              "startSeconds": 22.575,
+              "spanSeconds": 14.608333333333333,
+              "maxGapSeconds": 3.8666666666666667
+            }
+          ]
+        },
+        {
+          "seed": 20261126,
+          "status": "lost",
+          "shots": 55,
+          "seconds": 108,
+          "bossHp": 685,
+          "monsters": 11,
+          "maxBossDamage": 250,
+          "maxKills": 0,
+          "maxDepth": 45,
+          "wow": {
+            "boss": false,
+            "kills": false,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 76,
+              "bossDamage": 120,
+              "kills": 0,
+              "depth": 45,
+              "startSeconds": 105.175,
+              "spanSeconds": 2.5166666666666666,
+              "maxGapSeconds": 0.5083333333333333
+            },
+            {
+              "chainId": 35,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 9,
+              "startSeconds": 48.666666666666664,
+              "spanSeconds": 6.325,
+              "maxGapSeconds": 3.2333333333333334
+            },
+            {
+              "chainId": 71,
+              "bossDamage": 250,
+              "kills": 0,
+              "depth": 41,
+              "startSeconds": 92.29166666666667,
+              "spanSeconds": 15.6,
+              "maxGapSeconds": 0.875
+            }
+          ]
+        },
+        {
+          "seed": 20261127,
+          "status": "lost",
+          "shots": 65,
+          "seconds": 128,
+          "bossHp": 315,
+          "monsters": 11,
+          "maxBossDamage": 490,
+          "maxKills": 2,
+          "maxDepth": 77,
+          "wow": {
+            "boss": false,
+            "kills": false,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 84,
+              "bossDamage": 110,
+              "kills": 0,
+              "depth": 77,
+              "startSeconds": 120,
+              "spanSeconds": 7.983333333333333,
+              "maxGapSeconds": 1.4166666666666667
+            },
+            {
+              "chainId": 29,
+              "bossDamage": 10,
+              "kills": 0,
+              "depth": 10,
+              "startSeconds": 42.99166666666667,
+              "spanSeconds": 11.008333333333333,
+              "maxGapSeconds": 4.358333333333333
+            },
+            {
+              "chainId": 82,
+              "bossDamage": 20,
+              "kills": 0,
+              "depth": 73,
+              "startSeconds": 114.39999999999999,
+              "spanSeconds": 13.033333333333333,
+              "maxGapSeconds": 1.4166666666666667
+            }
+          ]
+        },
+        {
+          "seed": 20261128,
+          "status": "won",
+          "shots": 69,
+          "seconds": 137.25,
+          "bossHp": 0,
+          "monsters": 5,
+          "maxBossDamage": 710,
+          "maxKills": 3,
+          "maxDepth": 81,
+          "wow": {
+            "boss": false,
+            "kills": true,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 53,
+              "bossDamage": 10,
+              "kills": 0,
+              "depth": 8,
+              "startSeconds": 79.73333333333333,
+              "spanSeconds": 8.166666666666666,
+              "maxGapSeconds": 2.5833333333333335
+            },
+            {
+              "chainId": 76,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 11,
+              "startSeconds": 118.25833333333333,
+              "spanSeconds": 10.725,
+              "maxGapSeconds": 4.216666666666667
+            },
+            {
+              "chainId": 45,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 15,
+              "startSeconds": 68.15,
+              "spanSeconds": 11.833333333333334,
+              "maxGapSeconds": 5.741666666666666
+            }
+          ]
+        },
+        {
+          "seed": 20261129,
+          "status": "won",
+          "shots": 65,
+          "seconds": 129.61666666666667,
+          "bossHp": 0,
+          "monsters": 6,
+          "maxBossDamage": 820,
+          "maxKills": 3,
+          "maxDepth": 56,
+          "wow": {
+            "boss": true,
+            "kills": true,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 68,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 12,
+              "startSeconds": 93.975,
+              "spanSeconds": 6.05,
+              "maxGapSeconds": 1.7916666666666667
+            },
+            {
+              "chainId": 73,
+              "bossDamage": 10,
+              "kills": 1,
+              "depth": 15,
+              "startSeconds": 100.85833333333333,
+              "spanSeconds": 8.341666666666667,
+              "maxGapSeconds": 1.7833333333333332
+            },
+            {
+              "chainId": 76,
+              "bossDamage": 110,
+              "kills": 0,
+              "depth": 22,
+              "startSeconds": 104.35833333333333,
+              "spanSeconds": 11.566666666666666,
+              "maxGapSeconds": 2.908333333333333
+            }
+          ]
+        },
+        {
+          "seed": 20261130,
+          "status": "won",
+          "shots": 64,
+          "seconds": 126.56666666666666,
+          "bossHp": 0,
+          "monsters": 5,
+          "maxBossDamage": 465,
+          "maxKills": 3,
+          "maxDepth": 48,
+          "wow": {
+            "boss": false,
+            "kills": true,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 66,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 15,
+              "startSeconds": 87.775,
+              "spanSeconds": 7.55,
+              "maxGapSeconds": 2.433333333333333
+            },
+            {
+              "chainId": 65,
+              "bossDamage": 50,
+              "kills": 0,
+              "depth": 8,
+              "startSeconds": 86.48333333333333,
+              "spanSeconds": 12.741666666666667,
+              "maxGapSeconds": 4.708333333333333
+            },
+            {
+              "chainId": 72,
+              "bossDamage": 60,
+              "kills": 0,
+              "depth": 30,
+              "startSeconds": 99.15,
+              "spanSeconds": 14.6,
+              "maxGapSeconds": 2.6
+            }
+          ]
+        },
+        {
+          "seed": 20261131,
+          "status": "lost",
+          "shots": 55,
+          "seconds": 108,
+          "bossHp": 1205,
+          "monsters": 11,
+          "maxBossDamage": 120,
+          "maxKills": 0,
+          "maxDepth": 39,
+          "wow": {
+            "boss": false,
+            "kills": false,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 69,
+              "bossDamage": 90,
+              "kills": 0,
+              "depth": 29,
+              "startSeconds": 93.63333333333333,
+              "spanSeconds": 10.758333333333333,
+              "maxGapSeconds": 1.1333333333333333
+            },
+            {
+              "chainId": 59,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 9,
+              "startSeconds": 74.55833333333334,
+              "spanSeconds": 17.35,
+              "maxGapSeconds": 3.725
+            },
+            {
+              "chainId": 30,
+              "bossDamage": 20,
+              "kills": 0,
+              "depth": 8,
+              "startSeconds": 44.81666666666666,
+              "spanSeconds": 17.683333333333334,
+              "maxGapSeconds": 4.708333333333333
+            }
+          ]
+        },
+        {
+          "seed": 20261132,
+          "status": "won",
+          "shots": 64,
+          "seconds": 127.79166666666667,
+          "bossHp": 0,
+          "monsters": 10,
+          "maxBossDamage": 760,
+          "maxKills": 1,
+          "maxDepth": 69,
+          "wow": {
+            "boss": true,
+            "kills": false,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 46,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 16,
+              "startSeconds": 67.86666666666666,
+              "spanSeconds": 8.141666666666666,
+              "maxGapSeconds": 5.625
+            },
+            {
+              "chainId": 49,
+              "bossDamage": 10,
+              "kills": 0,
+              "depth": 11,
+              "startSeconds": 71.29166666666667,
+              "spanSeconds": 15.424999999999999,
+              "maxGapSeconds": 2.5166666666666666
+            },
+            {
+              "chainId": 51,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 21,
+              "startSeconds": 73.9,
+              "spanSeconds": 16.28333333333333,
+              "maxGapSeconds": 3.0666666666666664
+            }
+          ]
+        },
+        {
+          "seed": 20261133,
+          "status": "lost",
+          "shots": 55,
+          "seconds": 108,
+          "bossHp": 1170,
+          "monsters": 11,
+          "maxBossDamage": 350,
+          "maxKills": 0,
+          "maxDepth": 41,
+          "wow": {
+            "boss": false,
+            "kills": false,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 63,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 15,
+              "startSeconds": 81.96666666666667,
+              "spanSeconds": 11.958333333333334,
+              "maxGapSeconds": 6.25
+            },
+            {
+              "chainId": 28,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 8,
+              "startSeconds": 41.875,
+              "spanSeconds": 14.366666666666667,
+              "maxGapSeconds": 5.325
+            },
+            {
+              "chainId": 38,
+              "bossDamage": 80,
+              "kills": 0,
+              "depth": 11,
+              "startSeconds": 52.733333333333334,
+              "spanSeconds": 16.35,
+              "maxGapSeconds": 3.5166666666666666
+            }
+          ]
+        },
+        {
+          "seed": 20261134,
+          "status": "won",
+          "shots": 65,
+          "seconds": 128.825,
+          "bossHp": 0,
+          "monsters": 9,
+          "maxBossDamage": 710,
+          "maxKills": 3,
+          "maxDepth": 67,
+          "wow": {
+            "boss": false,
+            "kills": true,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 73,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 44,
+              "startSeconds": 122.70833333333333,
+              "spanSeconds": 4.225,
+              "maxGapSeconds": 1.0083333333333333
+            },
+            {
+              "chainId": 49,
+              "bossDamage": 10,
+              "kills": 0,
+              "depth": 13,
+              "startSeconds": 64.79166666666667,
+              "spanSeconds": 13.775,
+              "maxGapSeconds": 3.4166666666666665
+            },
+            {
+              "chainId": 47,
+              "bossDamage": 10,
+              "kills": 0,
+              "depth": 9,
+              "startSeconds": 59.56666666666666,
+              "spanSeconds": 13.941666666666666,
+              "maxGapSeconds": 2.6166666666666667
+            }
+          ]
+        },
+        {
+          "seed": 20261135,
+          "status": "won",
+          "shots": 74,
+          "seconds": 147.25833333333333,
+          "bossHp": 0,
+          "monsters": 6,
+          "maxBossDamage": 645,
+          "maxKills": 1,
+          "maxDepth": 120,
+          "wow": {
+            "boss": false,
+            "kills": false,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 39,
+              "bossDamage": 20,
+              "kills": 0,
+              "depth": 8,
+              "startSeconds": 58.90833333333333,
+              "spanSeconds": 8.1,
+              "maxGapSeconds": 2.4916666666666667
+            },
+            {
+              "chainId": 14,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 8,
+              "startSeconds": 29.7,
+              "spanSeconds": 11.841666666666667,
+              "maxGapSeconds": 5.008333333333333
+            },
+            {
+              "chainId": 59,
+              "bossDamage": 20,
+              "kills": 0,
+              "depth": 8,
+              "startSeconds": 104.88333333333333,
+              "spanSeconds": 13.691666666666666,
+              "maxGapSeconds": 3.3833333333333333
+            }
+          ]
+        },
+        {
+          "seed": 20261136,
+          "status": "won",
+          "shots": 64,
+          "seconds": 127.475,
+          "bossHp": 0,
+          "monsters": 8,
+          "maxBossDamage": 590,
+          "maxKills": 2,
+          "maxDepth": 49,
+          "wow": {
+            "boss": false,
+            "kills": false,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 87,
+              "bossDamage": 50,
+              "kills": 0,
+              "depth": 30,
+              "startSeconds": 122.6,
+              "spanSeconds": 4.683333333333334,
+              "maxGapSeconds": 1.2916666666666667
+            },
+            {
+              "chainId": 36,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 8,
+              "startSeconds": 48.95,
+              "spanSeconds": 10.15,
+              "maxGapSeconds": 9.141666666666666
+            },
+            {
+              "chainId": 68,
+              "bossDamage": 10,
+              "kills": 0,
+              "depth": 10,
+              "startSeconds": 94.00833333333333,
+              "spanSeconds": 12.375,
+              "maxGapSeconds": 2.025
+            }
+          ]
+        },
+        {
+          "seed": 20261137,
+          "status": "lost",
+          "shots": 55,
+          "seconds": 108,
+          "bossHp": 925,
+          "monsters": 11,
+          "maxBossDamage": 280,
+          "maxKills": 0,
+          "maxDepth": 30,
+          "wow": {
+            "boss": false,
+            "kills": false,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 67,
+              "bossDamage": 40,
+              "kills": 0,
+              "depth": 9,
+              "startSeconds": 97.86666666666666,
+              "spanSeconds": 5.983333333333333,
+              "maxGapSeconds": 2.158333333333333
+            },
+            {
+              "chainId": 43,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 10,
+              "startSeconds": 62.68333333333333,
+              "spanSeconds": 6.2,
+              "maxGapSeconds": 1.175
+            },
+            {
+              "chainId": 50,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 11,
+              "startSeconds": 69.40833333333333,
+              "spanSeconds": 13.716666666666667,
+              "maxGapSeconds": 3.525
+            }
+          ]
+        },
+        {
+          "seed": 20261138,
+          "status": "won",
+          "shots": 70,
+          "seconds": 138.53333333333333,
+          "bossHp": 0,
+          "monsters": 9,
+          "maxBossDamage": 450,
+          "maxKills": 1,
+          "maxDepth": 51,
+          "wow": {
+            "boss": false,
+            "kills": false,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 68,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 9,
+              "startSeconds": 126.54166666666667,
+              "spanSeconds": 3.9833333333333334,
+              "maxGapSeconds": 1.1
+            },
+            {
+              "chainId": 52,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 8,
+              "startSeconds": 93.45833333333333,
+              "spanSeconds": 6.15,
+              "maxGapSeconds": 1.25
+            },
+            {
+              "chainId": 62,
+              "bossDamage": 0,
+              "kills": 1,
+              "depth": 11,
+              "startSeconds": 120.8,
+              "spanSeconds": 14.191666666666666,
+              "maxGapSeconds": 2.8
+            }
+          ]
+        },
+        {
+          "seed": 20261139,
+          "status": "won",
+          "shots": 69,
+          "seconds": 136.35,
+          "bossHp": 0,
+          "monsters": 6,
+          "maxBossDamage": 700,
+          "maxKills": 4,
+          "maxDepth": 53,
+          "wow": {
+            "boss": false,
+            "kills": true,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 74,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 10,
+              "startSeconds": 129.39166666666665,
+              "spanSeconds": 5.791666666666667,
+              "maxGapSeconds": 1.025
+            },
+            {
+              "chainId": 41,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 9,
+              "startSeconds": 49.45,
+              "spanSeconds": 9.691666666666666,
+              "maxGapSeconds": 1.575
+            },
+            {
+              "chainId": 53,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 8,
+              "startSeconds": 61.125,
+              "spanSeconds": 10.325,
+              "maxGapSeconds": 1.2916666666666667
+            }
+          ]
+        },
+        {
+          "seed": 20261140,
+          "status": "won",
+          "shots": 72,
+          "seconds": 143.9,
+          "bossHp": 0,
+          "monsters": 6,
+          "maxBossDamage": 1020,
+          "maxKills": 3,
+          "maxDepth": 91,
+          "wow": {
+            "boss": true,
+            "kills": true,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 70,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 8,
+              "startSeconds": 130.975,
+              "spanSeconds": 8.466666666666667,
+              "maxGapSeconds": 3.1
+            },
+            {
+              "chainId": 69,
+              "bossDamage": 160,
+              "kills": 1,
+              "depth": 67,
+              "startSeconds": 129.48333333333332,
+              "spanSeconds": 14.283333333333333,
+              "maxGapSeconds": 1.5583333333333333
+            },
+            {
+              "chainId": 64,
+              "bossDamage": 0,
+              "kills": 1,
+              "depth": 58,
+              "startSeconds": 106.20833333333333,
+              "spanSeconds": 15.966666666666667,
+              "maxGapSeconds": 2.3583333333333334
+            }
+          ]
+        },
+        {
+          "seed": 20261141,
+          "status": "won",
+          "shots": 61,
+          "seconds": 121.60833333333333,
+          "bossHp": 0,
+          "monsters": 10,
+          "maxBossDamage": 870,
+          "maxKills": 2,
+          "maxDepth": 64,
+          "wow": {
+            "boss": true,
+            "kills": false,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 61,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 26,
+              "startSeconds": 82.45,
+              "spanSeconds": 17.083333333333332,
+              "maxGapSeconds": 2.6166666666666667
+            },
+            {
+              "chainId": 70,
+              "bossDamage": 30,
+              "kills": 0,
+              "depth": 46,
+              "startSeconds": 94.89166666666667,
+              "spanSeconds": 18.058333333333334,
+              "maxGapSeconds": 2.8833333333333333
+            },
+            {
+              "chainId": 31,
+              "bossDamage": 20,
+              "kills": 0,
+              "depth": 8,
+              "startSeconds": 40.00833333333333,
+              "spanSeconds": 24.916666666666668,
+              "maxGapSeconds": 5.716666666666667
+            }
+          ]
+        },
+        {
+          "seed": 20261142,
+          "status": "lost",
+          "shots": 55,
+          "seconds": 108,
+          "bossHp": 710,
+          "monsters": 11,
+          "maxBossDamage": 330,
+          "maxKills": 0,
+          "maxDepth": 49,
+          "wow": {
+            "boss": false,
+            "kills": false,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 58,
+              "bossDamage": 60,
+              "kills": 0,
+              "depth": 45,
+              "startSeconds": 105.925,
+              "spanSeconds": 1.9583333333333333,
+              "maxGapSeconds": 0.7
+            },
+            {
+              "chainId": 54,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 9,
+              "startSeconds": 86.15833333333333,
+              "spanSeconds": 8.383333333333333,
+              "maxGapSeconds": 3.2416666666666667
+            },
+            {
+              "chainId": 36,
+              "bossDamage": 50,
+              "kills": 0,
+              "depth": 13,
+              "startSeconds": 52.31666666666666,
+              "spanSeconds": 14.108333333333333,
+              "maxGapSeconds": 4.3
+            }
+          ]
+        },
+        {
+          "seed": 20261143,
+          "status": "lost",
+          "shots": 60,
+          "seconds": 118,
+          "bossHp": 670,
+          "monsters": 11,
+          "maxBossDamage": 300,
+          "maxKills": 1,
+          "maxDepth": 33,
+          "wow": {
+            "boss": false,
+            "kills": false,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 37,
+              "bossDamage": 10,
+              "kills": 0,
+              "depth": 8,
+              "startSeconds": 51.35,
+              "spanSeconds": 8.208333333333334,
+              "maxGapSeconds": 1.5333333333333332
+            },
+            {
+              "chainId": 68,
+              "bossDamage": 300,
+              "kills": 0,
+              "depth": 22,
+              "startSeconds": 107.075,
+              "spanSeconds": 10.916666666666666,
+              "maxGapSeconds": 1.5583333333333333
+            },
+            {
+              "chainId": 39,
+              "bossDamage": 10,
+              "kills": 0,
+              "depth": 15,
+              "startSeconds": 56.3,
+              "spanSeconds": 11.158333333333333,
+              "maxGapSeconds": 1.8916666666666666
+            }
+          ]
+        },
+        {
+          "seed": 20261144,
+          "status": "won",
+          "shots": 74,
+          "seconds": 146.5,
+          "bossHp": 0,
+          "monsters": 4,
+          "maxBossDamage": 640,
+          "maxKills": 6,
+          "maxDepth": 135,
+          "wow": {
+            "boss": false,
+            "kills": true,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 85,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 8,
+              "startSeconds": 130.09166666666667,
+              "spanSeconds": 3.0416666666666665,
+              "maxGapSeconds": 0.6666666666666666
+            },
+            {
+              "chainId": 82,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 8,
+              "startSeconds": 124.825,
+              "spanSeconds": 3.5166666666666666,
+              "maxGapSeconds": 1.75
+            },
+            {
+              "chainId": 56,
+              "bossDamage": 30,
+              "kills": 0,
+              "depth": 9,
+              "startSeconds": 67.075,
+              "spanSeconds": 9.683333333333334,
+              "maxGapSeconds": 1.6
+            }
+          ]
+        },
+        {
+          "seed": 20261145,
+          "status": "won",
+          "shots": 64,
+          "seconds": 126.41666666666667,
+          "bossHp": 0,
+          "monsters": 7,
+          "maxBossDamage": 820,
+          "maxKills": 3,
+          "maxDepth": 73,
+          "wow": {
+            "boss": true,
+            "kills": true,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 54,
+              "bossDamage": 20,
+              "kills": 0,
+              "depth": 8,
+              "startSeconds": 74.75833333333333,
+              "spanSeconds": 7.758333333333333,
+              "maxGapSeconds": 2.408333333333333
+            },
+            {
+              "chainId": 71,
+              "bossDamage": 30,
+              "kills": 0,
+              "depth": 12,
+              "startSeconds": 91.175,
+              "spanSeconds": 11.516666666666666,
+              "maxGapSeconds": 2.841666666666667
+            },
+            {
+              "chainId": 61,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 9,
+              "startSeconds": 81.05833333333334,
+              "spanSeconds": 12.025,
+              "maxGapSeconds": 5.433333333333334
+            }
+          ]
+        },
+        {
+          "seed": 20261146,
+          "status": "won",
+          "shots": 61,
+          "seconds": 121.475,
+          "bossHp": 0,
+          "monsters": 5,
+          "maxBossDamage": 540,
+          "maxKills": 4,
+          "maxDepth": 59,
+          "wow": {
+            "boss": false,
+            "kills": true,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 71,
+              "bossDamage": 60,
+              "kills": 2,
+              "depth": 31,
+              "startSeconds": 95.16666666666667,
+              "spanSeconds": 9.25,
+              "maxGapSeconds": 3.0833333333333335
+            },
+            {
+              "chainId": 74,
+              "bossDamage": 20,
+              "kills": 0,
+              "depth": 11,
+              "startSeconds": 107.475,
+              "spanSeconds": 13.75,
+              "maxGapSeconds": 4.15
+            },
+            {
+              "chainId": 63,
+              "bossDamage": 120,
+              "kills": 1,
+              "depth": 25,
+              "startSeconds": 82.79166666666667,
+              "spanSeconds": 23.55,
+              "maxGapSeconds": 1.2916666666666667
+            }
+          ]
+        },
+        {
+          "seed": 20261147,
+          "status": "won",
+          "shots": 63,
+          "seconds": 125.84166666666667,
+          "bossHp": 0,
+          "monsters": 7,
+          "maxBossDamage": 590,
+          "maxKills": 3,
+          "maxDepth": 62,
+          "wow": {
+            "boss": false,
+            "kills": true,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 52,
+              "bossDamage": 20,
+              "kills": 0,
+              "depth": 9,
+              "startSeconds": 69.55,
+              "spanSeconds": 11.408333333333333,
+              "maxGapSeconds": 2.2666666666666666
+            },
+            {
+              "chainId": 42,
+              "bossDamage": 30,
+              "kills": 0,
+              "depth": 11,
+              "startSeconds": 59.666666666666664,
+              "spanSeconds": 12.816666666666666,
+              "maxGapSeconds": 3.3
+            },
+            {
+              "chainId": 74,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 10,
+              "startSeconds": 110.01666666666667,
+              "spanSeconds": 15.475,
+              "maxGapSeconds": 2.7333333333333334
+            }
+          ]
+        },
+        {
+          "seed": 20261148,
+          "status": "lost",
+          "shots": 55,
+          "seconds": 108,
+          "bossHp": 855,
+          "monsters": 11,
+          "maxBossDamage": 130,
+          "maxKills": 0,
+          "maxDepth": 28,
+          "wow": {
+            "boss": false,
+            "kills": false,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 54,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 9,
+              "startSeconds": 71.96666666666667,
+              "spanSeconds": 4.208333333333333,
+              "maxGapSeconds": 2.875
+            },
+            {
+              "chainId": 72,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 10,
+              "startSeconds": 99.575,
+              "spanSeconds": 8.35,
+              "maxGapSeconds": 1.3083333333333333
+            },
+            {
+              "chainId": 59,
+              "bossDamage": 0,
+              "kills": 0,
+              "depth": 9,
+              "startSeconds": 79.29166666666667,
+              "spanSeconds": 10.525,
+              "maxGapSeconds": 4.541666666666667
+            }
+          ]
+        },
+        {
+          "seed": 20261149,
+          "status": "won",
+          "shots": 72,
+          "seconds": 142.43333333333334,
+          "bossHp": 0,
+          "monsters": 6,
+          "maxBossDamage": 490,
+          "maxKills": 3,
+          "maxDepth": 121,
+          "wow": {
+            "boss": false,
+            "kills": true,
+            "depth": true
+          },
+          "anyWow": true,
+          "wowExamples": [
+            {
+              "chainId": 53,
+              "bossDamage": 20,
+              "kills": 0,
+              "depth": 9,
+              "startSeconds": 83.20833333333333,
+              "spanSeconds": 5.033333333333333,
+              "maxGapSeconds": 1.1333333333333333
+            },
+            {
+              "chainId": 67,
+              "bossDamage": 40,
+              "kills": 0,
+              "depth": 10,
+              "startSeconds": 114.09166666666667,
+              "spanSeconds": 8.066666666666666,
+              "maxGapSeconds": 2.4
+            },
+            {
+              "chainId": 37,
+              "bossDamage": 50,
+              "kills": 0,
+              "depth": 9,
+              "startSeconds": 56.125,
+              "spanSeconds": 8.883333333333333,
+              "maxGapSeconds": 1.7916666666666667
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

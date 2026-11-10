@@ -1,0 +1,406 @@
+{
+  "label": "h4000-m1000-e5",
+  "config": {
+    "width": 800,
+    "height": 680,
+    "dt": 0.008333333333333333,
+    "seed": 20261110,
+    "ball": {
+      "radius": 14,
+      "speed": 620,
+      "restitution": 0.96,
+      "friction": 0.12,
+      "stopSpeed": 2
+    },
+    "launcher": {
+      "x": 400,
+      "y": 622,
+      "coneHalfAngle": 0.20943951023931953,
+      "minDrag": 12,
+      "intervalTicks": 28
+    },
+    "resonance": {
+      "threshold": 5,
+      "radiusInBalls": 6,
+      "ignite": 2,
+      "cooldownTicks": 18,
+      "sameFrequencyMultiplier": 2,
+      "interferenceMomentum": 0.45,
+      "interferenceTicks": 48
+    },
+    "materials": [
+      {
+        "name": "實心",
+        "frequency": 1,
+        "shade": 110
+      },
+      {
+        "name": "環紋",
+        "frequency": 2,
+        "shade": 145
+      },
+      {
+        "name": "雙紋",
+        "frequency": 3,
+        "shade": 175
+      }
+    ],
+    "boss": {
+      "x": 400,
+      "y": 340,
+      "radius": 48,
+      "hp": 4000
+    },
+    "monsters": {
+      "everyShots": 5,
+      "hp": 1000,
+      "radius": 21,
+      "loseAbove": 10,
+      "edgeInset": 42
+    },
+    "damage": {
+      "normal": 10,
+      "resonant": 25,
+      "burstExtra": 10
+    },
+    "feedback": {
+      "lifetimeTicks": 72,
+      "burstTicks": 40,
+      "igniteTicks": 30,
+      "targetFlashTicks": 18,
+      "damageMergeTicks": 24
+    }
+  },
+  "seeds": [
+    20261110,
+    20261111,
+    20261112,
+    20261113,
+    20261114,
+    20261115,
+    20261116,
+    20261117
+  ],
+  "protocol": {
+    "intervalSeconds": 2,
+    "timeoutSeconds": 600,
+    "firstShotTick": 0,
+    "randomUpHalfAngleDegrees": 60,
+    "bossNear": "每發在 Boss 中心左右一個半徑內取水平瞄準點；保留遊戲扇形隨機偏移",
+    "chainMetric": "依現有 chainId 聚合爆發 targetDamage；不計一般接觸傷害、不限制連鎖延遲，並非真人爽感證據"
+  },
+  "results": [
+    {
+      "strategy": "random-up",
+      "summary": {
+        "games": 8,
+        "wins": 5,
+        "losses": 3,
+        "timeouts": 0,
+        "winRate": 0.625,
+        "averageShots": 69.5,
+        "averageSeconds": 137.61770833333335,
+        "wow": {
+          "any": 8,
+          "boss": 4,
+          "kills": 5,
+          "depth": 8
+        }
+      },
+      "games": [
+        {
+          "seed": 20261110,
+          "status": "won",
+          "shots": 78,
+          "seconds": 155.84166666666667,
+          "bossHp": 0,
+          "monsters": 6,
+          "maxBossDamage": 1335,
+          "maxKills": 3,
+          "maxDepth": 94,
+          "wow": {
+            "boss": true,
+            "kills": true,
+            "depth": true
+          },
+          "anyWow": true
+        },
+        {
+          "seed": 20261111,
+          "status": "lost",
+          "shots": 55,
+          "seconds": 108,
+          "bossHp": 2280,
+          "monsters": 11,
+          "maxBossDamage": 170,
+          "maxKills": 0,
+          "maxDepth": 41,
+          "wow": {
+            "boss": false,
+            "kills": false,
+            "depth": true
+          },
+          "anyWow": true
+        },
+        {
+          "seed": 20261112,
+          "status": "lost",
+          "shots": 55,
+          "seconds": 108,
+          "bossHp": 2280,
+          "monsters": 11,
+          "maxBossDamage": 290,
+          "maxKills": 0,
+          "maxDepth": 31,
+          "wow": {
+            "boss": false,
+            "kills": false,
+            "depth": true
+          },
+          "anyWow": true
+        },
+        {
+          "seed": 20261113,
+          "status": "won",
+          "shots": 81,
+          "seconds": 161.50833333333333,
+          "bossHp": 0,
+          "monsters": 4,
+          "maxBossDamage": 1115,
+          "maxKills": 8,
+          "maxDepth": 119,
+          "wow": {
+            "boss": true,
+            "kills": true,
+            "depth": true
+          },
+          "anyWow": true
+        },
+        {
+          "seed": 20261114,
+          "status": "won",
+          "shots": 71,
+          "seconds": 140.56666666666666,
+          "bossHp": 0,
+          "monsters": 7,
+          "maxBossDamage": 1120,
+          "maxKills": 3,
+          "maxDepth": 69,
+          "wow": {
+            "boss": true,
+            "kills": true,
+            "depth": true
+          },
+          "anyWow": true
+        },
+        {
+          "seed": 20261115,
+          "status": "won",
+          "shots": 81,
+          "seconds": 160.93333333333334,
+          "bossHp": 0,
+          "monsters": 7,
+          "maxBossDamage": 940,
+          "maxKills": 4,
+          "maxDepth": 167,
+          "wow": {
+            "boss": false,
+            "kills": true,
+            "depth": true
+          },
+          "anyWow": true
+        },
+        {
+          "seed": 20261116,
+          "status": "won",
+          "shots": 80,
+          "seconds": 158.09166666666667,
+          "bossHp": 0,
+          "monsters": 5,
+          "maxBossDamage": 1430,
+          "maxKills": 9,
+          "maxDepth": 136,
+          "wow": {
+            "boss": true,
+            "kills": true,
+            "depth": true
+          },
+          "anyWow": true
+        },
+        {
+          "seed": 20261117,
+          "status": "lost",
+          "shots": 55,
+          "seconds": 108,
+          "bossHp": 1810,
+          "monsters": 11,
+          "maxBossDamage": 370,
+          "maxKills": 0,
+          "maxDepth": 48,
+          "wow": {
+            "boss": false,
+            "kills": false,
+            "depth": true
+          },
+          "anyWow": true
+        }
+      ]
+    },
+    {
+      "strategy": "boss-near",
+      "summary": {
+        "games": 8,
+        "wins": 5,
+        "losses": 3,
+        "timeouts": 0,
+        "winRate": 0.625,
+        "averageShots": 69.5,
+        "averageSeconds": 137.55208333333331,
+        "wow": {
+          "any": 8,
+          "boss": 5,
+          "kills": 5,
+          "depth": 8
+        }
+      },
+      "games": [
+        {
+          "seed": 20261110,
+          "status": "lost",
+          "shots": 55,
+          "seconds": 108,
+          "bossHp": 1785,
+          "monsters": 11,
+          "maxBossDamage": 470,
+          "maxKills": 0,
+          "maxDepth": 28,
+          "wow": {
+            "boss": false,
+            "kills": false,
+            "depth": true
+          },
+          "anyWow": true
+        },
+        {
+          "seed": 20261111,
+          "status": "won",
+          "shots": 74,
+          "seconds": 147.95,
+          "bossHp": 0,
+          "monsters": 8,
+          "maxBossDamage": 1655,
+          "maxKills": 4,
+          "maxDepth": 135,
+          "wow": {
+            "boss": true,
+            "kills": true,
+            "depth": true
+          },
+          "anyWow": true
+        },
+        {
+          "seed": 20261112,
+          "status": "lost",
+          "shots": 55,
+          "seconds": 108,
+          "bossHp": 1880,
+          "monsters": 11,
+          "maxBossDamage": 270,
+          "maxKills": 0,
+          "maxDepth": 40,
+          "wow": {
+            "boss": false,
+            "kills": false,
+            "depth": true
+          },
+          "anyWow": true
+        },
+        {
+          "seed": 20261113,
+          "status": "won",
+          "shots": 81,
+          "seconds": 160.40833333333333,
+          "bossHp": 0,
+          "monsters": 6,
+          "maxBossDamage": 1325,
+          "maxKills": 7,
+          "maxDepth": 136,
+          "wow": {
+            "boss": true,
+            "kills": true,
+            "depth": true
+          },
+          "anyWow": true
+        },
+        {
+          "seed": 20261114,
+          "status": "won",
+          "shots": 80,
+          "seconds": 158.36666666666667,
+          "bossHp": 0,
+          "monsters": 6,
+          "maxBossDamage": 1060,
+          "maxKills": 3,
+          "maxDepth": 136,
+          "wow": {
+            "boss": true,
+            "kills": true,
+            "depth": true
+          },
+          "anyWow": true
+        },
+        {
+          "seed": 20261115,
+          "status": "won",
+          "shots": 80,
+          "seconds": 159.2,
+          "bossHp": 0,
+          "monsters": 7,
+          "maxBossDamage": 1630,
+          "maxKills": 6,
+          "maxDepth": 136,
+          "wow": {
+            "boss": true,
+            "kills": true,
+            "depth": true
+          },
+          "anyWow": true
+        },
+        {
+          "seed": 20261116,
+          "status": "won",
+          "shots": 76,
+          "seconds": 150.49166666666667,
+          "bossHp": 0,
+          "monsters": 6,
+          "maxBossDamage": 1480,
+          "maxKills": 6,
+          "maxDepth": 163,
+          "wow": {
+            "boss": true,
+            "kills": true,
+            "depth": true
+          },
+          "anyWow": true
+        },
+        {
+          "seed": 20261117,
+          "status": "lost",
+          "shots": 55,
+          "seconds": 108,
+          "bossHp": 1920,
+          "monsters": 11,
+          "maxBossDamage": 220,
+          "maxKills": 0,
+          "maxDepth": 33,
+          "wow": {
+            "boss": false,
+            "kills": false,
+            "depth": true
+          },
+          "anyWow": true
+        }
+      ]
+    }
+  ]
+}

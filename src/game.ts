@@ -130,7 +130,11 @@ export class Game {
   damage(target: Target, amount: number) {
     const actual = Math.min(target.hp, amount); if (actual <= 0) return 0;
     target.hp -= actual; target.flashUntil = this.tick + C.feedback.targetFlashTicks;
-    this.effects.push({ kind: 'damage', x: target.x, y: target.y - target.radius, radius: 0, value: actual, tick: this.tick });
+    // 同一位置短時間的傷害只保留一個總數，事件仍記錄各次實際傷害。
+    const recent = this.effects.find(e => e.kind === 'damage' && e.x === target.x
+      && e.y === target.y - target.radius && this.tick - e.tick <= C.feedback.damageMergeTicks);
+    if (recent) { recent.value += actual; recent.tick = this.tick; }
+    else this.effects.push({ kind: 'damage', x: target.x, y: target.y - target.radius, radius: 0, value: actual, tick: this.tick });
     return actual;
   }
   checkOutcome() {
