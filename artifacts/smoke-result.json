@@ -9,16 +9,42 @@
     "390px 窄畫面無水平溢出",
     "畫面重來完全重置",
     "dist/index.html 直接以 file URL 開啟並開始",
-    "實際八層連鎖回饋：桌面與 390px 截圖，RAF 時鐘加速，非真人試玩",
+    "固定種子短波重播、三秒門檻、Boss 傷害或擊殺或相對爆發數、一秒自然沉寂、桌面與 390px 截圖",
     "console error = 0、page error = 0、外部資源請求 = 0"
   ],
-  "bursts": 6,
-  "bossHp": 2950,
+  "bursts": 0,
+  "bossHp": 291,
   "feedback": {
-    "seed": 20261110,
-    "tick": 6300,
-    "shots": 26,
-    "activeEffects": 8,
-    "maxDepth": 8
+    "seed": 20261120,
+    "strategy": "random-up",
+    "tick": 7360,
+    "shots": 31,
+    "wave": {
+      "wave": 3,
+      "bursts": 11,
+      "startTick": 7195,
+      "endTick": 7360,
+      "startSeconds": 59.958333333333336,
+      "endSeconds": 61.333333333333336,
+      "durationSeconds": 1.375,
+      "bossDamage": 40,
+      "kills": 3,
+      "wow": {
+        "boss": false,
+        "kills": true,
+        "bursts": true
+      },
+      "anyWow": true,
+      "endedByOutcome": false
+    },
+    "medianWaveBursts": 2,
+    "quietGapVerified": true,
+    "browserGame": {
+      "status": "won",
+      "seconds": 142.4,
+      "shots": 72,
+      "quietRatio": 0.6769662921348315
+    },
+    "evidence": "實際滑鼠完整局評分後重播；指標座標精度與數學策略不同，獨立於 80 局模擬；測試頁時鐘加速，非真人試玩"
   }
 }

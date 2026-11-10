@@ -78,7 +78,7 @@ export class Game {
     b.resonant = b.oscillation >= C.resonance.threshold;
     if (chainId !== null) { b.chainId = chainId; b.depth = depth; }
   }
-  collide(a: Ball, b?: Ball) {
+  collide(a: Ball, b?: Ball, chargeAmount = 1) {
     const aReady = a.resonant && this.tick >= a.delayedUntil && this.tick >= a.cooldown;
     const bReady = b && b.resonant && this.tick >= b.delayedUntil && this.tick >= b.cooldown;
     if (b && a.resonant && b.resonant) {
@@ -100,7 +100,7 @@ export class Game {
       }
     }
     // 用碰撞前的共振狀態決定是否爆發；剛到閾值不會在同次碰撞爆發。
-    if (aReady) this.burst(a); else this.charge(a, 1);
+    if (aReady) this.burst(a); else this.charge(a, chargeAmount);
     if (b) { if (bReady) this.burst(b); else this.charge(b, 1); }
   }
   burst(b: Ball, multiplier = 1, sharedChain?: number) {
@@ -113,7 +113,9 @@ export class Game {
       ballId: b.id, kind: multiplier > 1 ? 'amplified' : 'burst', radius, ignitedBallIds: [], targetDamage: [] };
     for (const other of this.balls) {
       if (other === b || this.tick < other.cooldown || Math.hypot(other.x - b.x, other.y - b.y) > radius + 0.01) continue;
-      this.charge(other, C.resonance.ignite * multiplier, chainId, depth);
+      const amount = C.resonance.ignite * multiplier * C.resonance.igniteDepthDecay ** (depth - 1);
+      if (amount <= 0) continue;
+      this.charge(other, amount, chainId, depth);
       other.igniteUntil = this.tick + C.feedback.igniteTicks;
       event.ignitedBallIds.push(other.id);
       this.effects.push({ kind: 'ignite', x: other.x, y: other.y, radius: C.ball.radius + 8, value: 0, tick: this.tick });
@@ -156,9 +158,9 @@ export class Game {
       b.x += b.vx * C.dt; b.y += b.vy * C.dt;
       for (const [axis, low, high, velocity] of [['x', r, C.width-r, 'vx'], ['y', r, C.height-r, 'vy']] as const) {
         if (b[axis] <= low) {
-          b[axis] = low; if (b[velocity] < 0) { b[velocity] *= -C.ball.restitution; contact(`${b.id}:${axis}-`, () => this.collide(b)); }
+          b[axis] = low; if (b[velocity] < 0) { b[velocity] *= -C.ball.restitution; contact(`${b.id}:${axis}-`, () => this.collide(b, undefined, C.resonance.wallCharge)); }
         } else if (b[axis] >= high) {
-          b[axis] = high; if (b[velocity] > 0) { b[velocity] *= -C.ball.restitution; contact(`${b.id}:${axis}+`, () => this.collide(b)); }
+          b[axis] = high; if (b[velocity] > 0) { b[velocity] *= -C.ball.restitution; contact(`${b.id}:${axis}+`, () => this.collide(b, undefined, C.resonance.wallCharge)); }
         }
       }
     }

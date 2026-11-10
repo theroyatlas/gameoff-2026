@@ -2,3 +2,11 @@ node_modules/
 .npm-cache/
 dist/
 artifacts/*.log
+
+# 只保留可交付的平衡證據，探索檔留在本機。
+artifacts/*.json
+!artifacts/balance-before.json
+!artifacts/balance-after.json
+!artifacts/balance-round2-final.json
+!artifacts/smoke-result.json
+artifacts/sweep/
