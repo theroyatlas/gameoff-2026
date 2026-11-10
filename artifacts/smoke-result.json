@@ -1,0 +1,16 @@
+{
+  "passed": true,
+  "shots": 10,
+  "errors": [],
+  "externalRequests": [],
+  "channel": "msedge",
+  "checks": [
+    "開頁面、滑鼠拖拉發射 10 次、球保留、扇形偏移",
+    "390px 窄畫面無水平溢出",
+    "畫面重來完全重置",
+    "dist/index.html 直接以 file URL 開啟並開始",
+    "console error = 0、page error = 0、外部資源請求 = 0"
+  ],
+  "bursts": 7,
+  "bossHp": 96
+}

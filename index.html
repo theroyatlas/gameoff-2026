@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Resonance</title><link rel="icon" href="data:,"></head>
+<body>
+  <main>
+    <header><h1>Resonance</h1><span>第一週・可玩灰盒</span></header>
+    <div class="toolbar"><span id="hud">Boss 100 / 100</span><button id="restart" type="button">重來</button></div>
+    <div class="arena">
+      <canvas id="game" width="800" height="680" aria-label="共振球場：從下方圓圈按住，朝場內拖拉後放開發射">請使用支援 Canvas 的瀏覽器。</canvas>
+      <section id="overlay" aria-labelledby="overlay-title">
+        <h2 id="overlay-title">讓碰撞，連成爆發。</h2>
+        <p id="overlay-text">按住下方發射圈，朝想射的方向拖拉 → 放開。<br>外圈越亮越接近共振；雙圈球再碰撞就會爆發。</p>
+        <label id="seed-label" for="seed">亂數種子 <input id="seed" type="number" min="0" max="4294967295" step="1" value="20261110" required></label>
+        <button id="start" type="button">開始</button>
+      </section>
+    </div>
+    <footer><p id="hint">拖拉 → 放開；扇形內隨機發射。</p><p>清空 Boss HP 獲勝；場上怪物超過 10 隻就輸。</p><p id="next">下一球：實心</p><span id="outcome" class="sr-only" role="status"></span></footer>
+  </main>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
