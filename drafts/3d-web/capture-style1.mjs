@@ -26,8 +26,9 @@ async function playUntilShift(page) {
     await page.waitForTimeout(70);
   }
 }
-async function session(ring, viewport, shots) {
-  const context = await browser.newContext({ viewport, deviceScaleFactor: 1 });
+async function session(ring, viewport, shots, closeup = false) {
+  // 球組用 2 倍像素：主圖仍輸出 1280×720（scale: 'css'），另存場地中央的 2 倍特寫。
+  const context = await browser.newContext({ viewport, deviceScaleFactor: closeup ? 2 : 1 });
   const page = await context.newPage();
   page.on('pageerror', e => errors.push(`${ring}:${e.message}`)); page.on('console', m => { if (m.type() === 'error') errors.push(`${ring}:${m.text()}`); });
   await context.route(/^https?:/, r => { errors.push(`request ${r.request().url()}`); return r.abort(); });
@@ -38,7 +39,9 @@ async function session(ring, viewport, shots) {
     await page.evaluate(c => window.styleLab.set(c), { ...DEFAULT, ...choice });
     await page.waitForTimeout(140);
     const t = await page.evaluate(() => window.studyEvidence.timing());
-    await page.screenshot({ path: resolve(out, file) }); taken.push({ file, choice: { ...DEFAULT, ...choice, ring }, phase: t.phase, seconds: t.seconds });
+    await page.screenshot({ path: resolve(out, file), scale: 'css' });
+    if (closeup) await page.screenshot({ path: resolve(out, file.replace('.png', '-closeup.png')), clip: { x: 290, y: 290, width: 512, height: 288 } });
+    taken.push({ file, choice: { ...DEFAULT, ...choice, ring }, phase: t.phase, seconds: t.seconds });
   }
   await context.close(); return { ring, shiftAt: at.seconds, taken };
 }
@@ -49,7 +52,7 @@ try {
   const jobs = [];
   // 預設組合單獨一局，避免一局連拍太多張而拍到相變結束後。ONLY=ball-plain 之類可只重拍一組。
   const named = [['default', () => session(false, { width: 1280, height: 720 }, [['default-desktop-1280x720.png', {}]])]];
-  for (const ring of [false, true]) for (const g of ['ball', 'icon', 'light']) named.push([`${g}-${ring ? 'ring' : 'plain'}`, () => session(ring, { width: 1280, height: 720 }, plan(ring).filter(([f]) => f.startsWith(g)))]);
+  for (const ring of [false, true]) for (const g of ['ball', 'icon', 'light']) named.push([`${g}-${ring ? 'ring' : 'plain'}`, () => session(ring, { width: 1280, height: 720 }, plan(ring).filter(([f]) => f.startsWith(g)), g === 'ball')]);
   named.push(['mobile', () => session(false, { width: 390, height: 844 }, [['default-mobile-390x844.png', {}]])]);
   for (const [name, job] of named) if (!process.env.ONLY || process.env.ONLY.split(',').includes(name)) jobs.push(job);
   const results = [];

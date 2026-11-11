@@ -95,7 +95,9 @@ function drawIcon(x: CanvasRenderingContext2D, kind: CardKind, cx: number, cy: n
   const color = kind === 'START' || kind === 'TUNE' ? css(TOKENS.ink) : KIND_COLOR[kind];
   if (kind === 'TUNE') { handPath(x, circlePts(cx, cy, 34 * k, 30 * k), css(TOKENS.ink), style, k, 0); handPath(x, circlePts(cx, cy, 20 * k, 17 * k, 1), css(TOKENS.ink), style, k, 2); }
   if (kind === 'START') { handPath(x, [[cx - 40 * k, cy], [cx + 34 * k, cy]], color, style, k); handPath(x, [[cx + 14 * k, cy - 18 * k], [cx + 36 * k, cy], [cx + 14 * k, cy + 18 * k]], color, style, k, 1); }
-  if (kind === 'SURGE') { handPath(x, [[cx + 10 * k, cy - 38 * k], [cx - 16 * k, cy + 4 * k], [cx + 6 * k, cy + 2 * k], [cx - 10 * k, cy + 38 * k], [cx + 22 * k, cy - 8 * k], [cx, cy - 6 * k], [cx + 10 * k, cy - 38 * k]], color, style, k); }
+  if (kind === 'SURGE') { const bolt: Pt[] = [[cx + 10 * k, cy - 38 * k], [cx - 16 * k, cy + 4 * k], [cx + 6 * k, cy + 2 * k], [cx - 10 * k, cy + 38 * k], [cx + 22 * k, cy - 8 * k], [cx, cy - 6 * k], [cx + 10 * k, cy - 38 * k]];
+    if (style === 'c') { x.save(); x.fillStyle = color; x.globalAlpha = .82; x.beginPath(); bolt.forEach(([px, py], i) => i ? x.lineTo(px, py) : x.moveTo(px, py)); x.fill(); x.restore(); } // style-1.png 印刷卡的實心閃電
+    handPath(x, bolt, color, style, k); }
   if (kind === 'EVENT') { handPath(x, [...circlePts(cx, cy - 14 * k, 18 * k, 17 * k, Math.PI * 1.05, Math.PI * 1.45, 24), [cx + 2 * k, cy + 10 * k], [cx + 1 * k, cy + 18 * k]], color, style, k); x.save(); x.fillStyle = color; x.beginPath(); x.arc(cx + 1 * k, cy + 32 * k, STROKES[style].width * k * .9, 0, Math.PI * 2); x.fill(); x.restore(); }
 }
 
@@ -108,47 +110,50 @@ export function drawCard(c: HTMLCanvasElement, kind: CardKind, index: number, st
   x.save(); x.fillStyle = css(TOKENS.ink); x.globalAlpha = .9; x.font = `700 ${28 * k}px ${HAND_FONT}`; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(kind, w / 2 + off * .3, h * .79); x.font = `${13 * k}px ${HAND_FONT}`; x.textAlign = 'left'; x.fillText(String(index + 1), 20 * k, 26 * k); x.restore();
 }
 
-/** 場地紙面與墨線（核心外兩圈、發射座弧線、四角對位記號）共用圖示筆觸。 */
+/** 場地紙面與核心外兩圈墨線（style-1.png 的同心圈），共用圖示筆觸。 */
 export function drawField(c: HTMLCanvasElement, style: IconStyle, launcherZ: number) {
   const x = c.getContext('2d')!, w = c.width, h = c.height, px = (wx: number) => (wx + 4) / 8 * w, pz = (wz: number) => (wz + 3.4) / 6.8 * h, k = w / 1024;
   paperBase(x, w, h, 97);
   x.save(); x.globalAlpha = .55;
   handPath(x, circlePts(px(0), pz(0), 1.05 / 8 * w, 1.05 / 6.8 * h, .3), css(TOKENS.ink), style, k * .8, 0);
   handPath(x, circlePts(px(0), pz(0), 1.45 / 8 * w, 1.45 / 6.8 * h, 2.1), css(TOKENS.ink), style, k * .7, 1.3);
-  handPath(x, circlePts(px(0), pz(launcherZ), .62 / 8 * w, .62 / 6.8 * h, Math.PI * 1.12, Math.PI * .76, 30), css(TOKENS.ink), style, k * .8, .7);
-  for (const [sx, sz] of [[-1, -1], [1, -1], [1, 1], [-1, 1]]) { const cx = px(sx * 3.7), cz = pz(sz * 3.1); handPath(x, [[cx, cz - sz * 26 * k], [cx, cz], [cx - sx * 26 * k, cz]], css(TOKENS.ink), style, k * .7, sx + sz); }
   x.restore();
 }
 
-/** 球號紙籤：米白圓紙、手畫外圈、襯線數字；歪斜依球號奇偶交替 ±(2–4)°。 */
+/** 球號紙籤：米白圓紙、細墨外圈、襯線數字，正放。 */
 export function badgeCanvas(id: number) {
   const { c, x } = canvas(128, 128);
   x.fillStyle = css(TOKENS.paper); x.beginPath(); x.arc(64, 64, 54, 0, Math.PI * 2); x.fill();
-  handPath(x, circlePts(64, 64, 52, 52, id * .7), css(TOKENS.ink), 'a', .9, id);
+  x.lineWidth = 3; x.strokeStyle = css(TOKENS.ink); x.stroke();
   x.fillStyle = css(TOKENS.ink); x.font = `700 64px ${NUMBER_FONT}`; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(String(id).padStart(2, '0'), 64, 68);
   return c;
 }
-export const badgeTilt = (id: number) => (id % 2 ? 1 : -1) * (2 + Math.abs(id) % 3) * Math.PI / 180;
 
-/** 球三版。材質編號 0／1／2 仍以內圈數目區分（漆球的漆帶數 1／2／3）。 */
+/** 球三版，全部取自參考圖；材質 0／1／2 靠顏色與表面區分。 */
 const ballTextures = new Map<string, THREE.Texture>();
 export const SHARED_TEXTURES = new Set<THREE.Texture>();
 function shared(key: string, make: () => THREE.Texture) { let t = ballTextures.get(key); if (!t) { t = make(); ballTextures.set(key, t); SHARED_TEXTURES.add(t); } return t; }
-function lacquerTexture(material: number) {
-  const { c, x } = canvas(256, 128), body = ['#cfe3d6', '#6f7d86', '#c9963f'][material];
-  x.fillStyle = body; x.fillRect(0, 0, 256, 128);
-  const bands = material + 1; // 經線方向一圈一圈的手刷漆帶
-  for (let b = 0; b < bands; b++) { const y = 64 + (b - (bands - 1) / 2) * 14; handPath(x, [[-4, y], [260, y + 1]], css(TOKENS.ink), 'b', .9, b * 2); }
-  return tex(c);
-}
-function beadTexture(material: number) {
-  const { c, x } = canvas(256, 128), base = [[214, 170, 112], [104, 66, 38], [150, 44, 28]][material], px = x.createImageData(256, 128);
-  for (let v = 0; v < 128; v++) for (let u = 0; u < 256; u++) { const g = Math.sin((v + 4 * Math.sin(u * .05)) * .5) * 6 + Math.sin(v * .13) * 5, i = (v * 256 + u) * 4; px.data[i] = base[0] + g; px.data[i + 1] = base[1] + g * .6; px.data[i + 2] = base[2] + g * .35; px.data[i + 3] = 255; }
+/** a：style-1.png 的原木／紅漆木／陶土（數值取自 scene_styles.py 風格一 BALLS）。 */
+function b1Texture(material: number) {
+  const { c, x } = canvas(256, 128), px = x.createImageData(256, 128), r = lcg(19 + material);
+  const lo = [[153, 102, 51], [140, 26, 15], [31, 46, 84]][material], hi = [[209, 158, 92], [140, 26, 15], [61, 77, 122]][material];
+  for (let v = 0; v < 128; v++) for (let u = 0; u < 256; u++) {
+    const f = material === 0 ? .5 + .5 * Math.sin((v + 5 * Math.sin(u * .05)) * .45) : material === 2 ? r() * .6 + .2 : .5, i = (v * 256 + u) * 4;
+    for (let k = 0; k < 3; k++) px.data[i + k] = lo[k] + (hi[k] - lo[k]) * f; px.data[i + 3] = 255;
+  }
   x.putImageData(px, 0, 0); return tex(c);
 }
+/** c：02-board-closeup 的做舊球：黃銅斑駁氧化、鋼球霧面磨痕、玻璃帶細刮痕。 */
+function wornTexture(material: number) {
+  const { c, x } = canvas(256, 128), base = [TOKENS.glass, TOKENS.steel, TOKENS.brass][material], r = lcg(53 + material);
+  x.fillStyle = css(base); x.fillRect(0, 0, 256, 128);
+  for (let i = 0; i < 70; i++) { const g = x.createRadialGradient(r() * 256, r() * 128, 0, r() * 256, r() * 128, 4 + r() * 16); const tint = material === 2 ? '70,48,20' : '60,62,64'; g.addColorStop(0, `rgba(${tint},${material === 0 ? .06 : .22})`); g.addColorStop(1, `rgba(${tint},0)`); x.fillStyle = g; x.fillRect(0, 0, 256, 128); }
+  for (let i = 0; i < 90; i++) { x.strokeStyle = 'rgba(255,255,255,.18)'; x.lineWidth = .6; const sx = r() * 256, sy = r() * 128; x.beginPath(); x.moveTo(sx, sy); x.lineTo(sx + 6 + r() * 14, sy + (r() - .5) * 3); x.stroke(); }
+  return tex(c);
+}
 export function ballMaterial(style: BallStyle, material: number, emissive: number) {
-  if (style === 'a') return new THREE.MeshPhysicalMaterial({ map: shared(`lacquer${material}`, () => lacquerTexture(material)), roughness: .38, metalness: 0, clearcoat: .6, clearcoatRoughness: .3, emissive, emissiveIntensity: 0 });
-  if (style === 'c') return new THREE.MeshPhysicalMaterial({ map: shared(`bead${material}`, () => beadTexture(material)), roughness: material === 2 ? .45 : .58, metalness: 0, clearcoat: material === 2 ? .45 : 0, emissive, emissiveIntensity: 0 });
+  if (style === 'a') return new THREE.MeshPhysicalMaterial({ map: shared(`b1-${material}`, () => b1Texture(material)), roughness: [.5, .45, .7][material], metalness: 0, clearcoat: [0, .5, 0][material], clearcoatRoughness: .4, emissive, emissiveIntensity: 0 });
+  if (style === 'c') return new THREE.MeshPhysicalMaterial({ map: shared(`worn-${material}`, () => wornTexture(material)), metalness: [.05, .9, .85][material], roughness: [.22, .42, .5][material], transmission: material === 0 ? .6 : 0, thickness: .15, clearcoat: material === 0 ? .6 : .2, emissive, emissiveIntensity: 0 });
   return new THREE.MeshPhysicalMaterial({ color: [TOKENS.glass, TOKENS.steel, TOKENS.brass][material], metalness: [.05, .95, .9][material], roughness: [.06, .22, .3][material], transmission: material === 0 ? .85 : 0, thickness: .15, clearcoat: 1, emissive, emissiveIntensity: 0 });
 }
 

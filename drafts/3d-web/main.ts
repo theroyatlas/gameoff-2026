@@ -12,7 +12,7 @@ import { createHUD } from './hud';
 import { resonanceStyle } from './presentation';
 import { AdaptiveQuality } from './quality';
 import { LOW_GPU_PROFILE, TWO_D_URL } from './settings';
-import { readChoice, TOKENS, LIGHTS, walnutTexture, drawField, badgeCanvas, badgeTilt, ballMaterial, yarnTexture, buildRing, SHARED_TEXTURES, type StyleChoice } from './style1';
+import { readChoice, TOKENS, LIGHTS, walnutTexture, drawField, badgeCanvas, ballMaterial, yarnTexture, buildRing, SHARED_TEXTURES, type StyleChoice } from './style1';
 
 const canvas = document.querySelector<HTMLCanvasElement>('#scene')!;
 const stage = document.querySelector<HTMLElement>('#stage')!;
@@ -146,7 +146,7 @@ function addBall(b:Pick<typeof game.balls[number],'id'|'material'|'x'|'y'>) {
   if(b.material===0){const inner=mesh(new THREE.OctahedronGeometry(.055),new THREE.MeshStandardMaterial({color:0x9eaea2,metalness:.8,roughness:.3}),0,0,0,sphere);inner.name='glass-core';inner.visible=choice.ball==='b';}
   const halo=ring(.19,.012,new THREE.MeshBasicMaterial({color:palette.cyan,transparent:true,opacity:.0,depthWrite:false}),0,.025,0,group);halo.castShadow=false;
   const outer=ring(.26,.018,new THREE.MeshBasicMaterial({color:palette.cyan,transparent:true,depthWrite:false}),0,.028,0,group);outer.castShadow=false;
-  const label=new THREE.Sprite(new THREE.SpriteMaterial({map:badge(b.id),rotation:badgeTilt(b.id),depthTest:false,transparent:true,toneMapped:false}));label.scale.set(.21,.21,1);label.position.set(0,.39,0);label.renderOrder=20;group.add(label);
+  const label=new THREE.Sprite(new THREE.SpriteMaterial({map:badge(b.id),depthTest:false,transparent:true,toneMapped:false}));label.scale.set(.21,.21,1);label.position.set(0,.39,0);label.renderOrder=20;group.add(label);
   ballVisuals.set(b.id,{group,sphere,halo,outer,mat,label,lastX:b.x,lastY:b.y});
 }
 // 單一批次的漸細速度帶，不為每顆球建立額外 draw call。
@@ -262,7 +262,7 @@ const t=game.tick*C.dt,active=game.phase==='active',warning=game.phase==='warnin
   for(const b of game.balls){if(!ballVisuals.has(b.id))addBall(b);const v=ballVisuals.get(b.id)!;
     const dx=(b.x-v.lastX)*.01,dz=(b.y-v.lastY)*.01;v.sphere.rotation.z-=dx/.14;v.sphere.rotation.x+=dz/.14;v.lastX=b.x;v.lastY=b.y;
     v.group.position.set((b.x-400)*.01,0,(b.y-340)*.01);
-    const state=resonanceStyle(b);v.mat.emissiveIntensity=state.emission*.3;v.outer.visible=state.doubleRing;
+    const state=resonanceStyle(b);v.mat.emissiveIntensity=state.emission*.1;v.outer.visible=state.doubleRing;
     const labelWorld=new THREE.Vector3(v.group.position.x,.39,v.group.position.z).applyMatrix4(camera.matrixWorldInverse);
     const labelSize=26*2*Math.tan(THREE.MathUtils.degToRad(camera.fov/2))*(-labelWorld.z)/rect.height;v.label.scale.set(labelSize,labelSize,1);
     const p=screenPoint(b.x,b.y,.39,rect);badgeCandidates.push({id:b.id,x:p.x-rect.left,y:p.y-rect.top,priority:(b.resonant?100000:0)+(game.tick-(lastImpact.get(b.id)??-1000)<120?10000+(lastImpact.get(b.id)??0):0)});

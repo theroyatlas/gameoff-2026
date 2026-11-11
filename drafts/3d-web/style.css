@@ -9,11 +9,5 @@ button,input{font:inherit;min-height:44px;border:1px solid var(--rule);border-ra
 
 /* 風格一：手工桌遊。色票與 DESIGN.md 第 2 節一致。 */
 :root{--bg:#120b06;--ink:#efe3c8;--muted:#bfa98a;--brass:#c9963f;--cyan:#8fdcc6;--rule:#5a3a22;--paper:#e8dcc2;--paper-ink:#2b2118}
-h1,#overlay h2{font-family:"Georgia","PMingLiU",serif}
 #vignette{position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse 72% 68% at 50% 46%,rgba(8,5,3,0) 52%,rgba(8,5,3,var(--vignette,.72)) 100%)}
-#overlay{background:rgba(18,11,6,.92)}#overlay h2{color:var(--paper)}
-#start{background:var(--paper);color:var(--paper-ink);border-color:var(--paper)}
-#phase-banner{background:var(--paper);color:var(--paper-ink);border:0;box-shadow:3px 3px 0 var(--cyan);transform:translateX(-50%) rotate(-1.5deg)}
-#wave-banner{background:var(--paper);color:var(--paper-ink);border:0;box-shadow:3px 3px 0 var(--brass);transform:translateX(-50%) rotate(1.2deg)}
-#replay{background:var(--paper);color:var(--paper-ink);border-top:0;padding:12px 14px;transform:rotate(-1deg);box-shadow:0 2px 6px rgba(0,0,0,.4)}#replay strong{color:#2f6f61}
-@media(prefers-reduced-motion:reduce){#phase-banner,#wave-banner,#replay{transform:translateX(-50%)}#replay{transform:none}}
+#overlay{background:rgba(18,11,6,.92)}
