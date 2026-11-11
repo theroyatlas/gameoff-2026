@@ -15,7 +15,9 @@
     "build:polish": "tsc --noEmit && npm --prefix drafts/3d-web run build:polish",
     "verify:polish": "npm --prefix drafts/3d-web run verify:polish",
     "build:smooth": "tsc --noEmit && npm --prefix drafts/3d-web run build:smooth",
-    "verify:smooth": "npm --prefix drafts/3d-web run verify:smooth"
+    "verify:smooth": "npm --prefix drafts/3d-web run verify:smooth",
+    "sim:difficulty": "node --max-old-space-size=2048 tools/run-difficulty.mjs",
+    "sim:board-difficulty": "node --max-old-space-size=2048 tools/run-board-difficulty.mjs"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",
