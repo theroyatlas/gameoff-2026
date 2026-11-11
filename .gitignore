@@ -32,3 +32,5 @@ artifacts/3d-smooth/*.cpuprofile
 artifacts/3d-smooth/*.png
 artifacts/3d-smooth/*.webm
 artifacts/3d-smooth/video/
+drafts/3d-web/dist-style1/
+artifacts/3d-style1/
