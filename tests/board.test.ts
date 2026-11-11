@@ -110,12 +110,12 @@ describe('棋盤回合', () => {
     expect(g.tick).toBe(start + 1); expect(g.board!.phase).toBe('roll');
     expect(g.board!.tuneMaterial).toBeNull(); expect(g.balls.every(b => !b.resonant)).toBe(true);
   });
-  it('每 2 回合一波，鐘越高數量與血量越高，秒數與半血不額外生怪', () => {
+  it('依設定回合間隔出怪，鐘越高數量與血量越高，秒數與半血不額外生怪', () => {
     const g = active(); g.tick = 100000; g.boss.hp = 1; g.updateDifficulty();
     expect(g.monsters).toHaveLength(0); expect(g.upgraded).toBe(false);
-    for (let turn = 1; turn <= 6; turn++) {
+    for (let turn = 1; turn <= 3 * C.board.waveEveryTurns; turn++) {
       g.board!.bossClock = turn; g.updateDifficulty();
-      expect(g.wave).toBe(Math.floor(turn / 2));
+      expect(g.wave).toBe(Math.floor(turn / C.board.waveEveryTurns));
     }
     expect(g.monsters).toHaveLength(7); expect(g.monsters.at(-1)!.hp).toBe(C.monsters.hp + 2 * C.board.waveHpGrowth);
     expect(g.wavePlan(3).count).toBeGreaterThan(g.wavePlan(1).count);
@@ -129,7 +129,7 @@ describe('棋盤回合', () => {
       g.step();
     }
     expect(['won', 'lost']).toContain(g.status);
-    expect(g.board!.bossClock).toBeGreaterThanOrEqual(2); expect(g.wave).toBe(Math.floor(g.board!.bossClock / 2));
+    expect(g.board!.bossClock).toBeGreaterThanOrEqual(C.board.waveEveryTurns); expect(g.wave).toBe(Math.floor(g.board!.bossClock / C.board.waveEveryTurns));
     const before = g.snapshot(); expect(g.rollBoard()).toBe(false); expect(g.fire(-1)).toBe(false); g.step(); expect(g.snapshot()).toEqual(before);
   });
   it('同 seed、同操作重現完整一局的骰子、球、相變、波次及勝負；重來清空棋盤', () => {

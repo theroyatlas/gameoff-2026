@@ -25,8 +25,8 @@ export const CONFIG = {
     shotsPerTurn: 3, lapBonusShots: 1, dieSides: 6,
     rollTicks: 36, moveTicks: 18, effectTicks: 60, settleMaxTicks: 720,
     surgeCharge: 1, tuneThresholdReduction: 1, tuneMultiplier: 1.5,
-    waveEveryTurns: 2, waveBaseCount: 2, waveCountGrowth: 1,
-    wavesPerCountGrowth: 2, waveMaxCount: 8, waveHpGrowth: 120,
+    waveEveryTurns: 3, waveBaseCount: 2, waveCountGrowth: 1,
+    wavesPerCountGrowth: 2, waveMaxCount: 8, waveHpGrowth: 260,
     tiles: [
       { kind: 'START' }, { kind: 'SURGE' }, { kind: 'TUNE', material: 0 },
       { kind: 'EVENT' }, { kind: 'SURGE' }, { kind: 'TUNE', material: 1 },
