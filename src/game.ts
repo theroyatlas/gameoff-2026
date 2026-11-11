@@ -1,4 +1,5 @@
 import { CONFIG as C } from './config';
+import { createBoardState, type BoardState, type GameMode } from './board';
 
 export type Status = 'ready' | 'playing' | 'won' | 'lost';
 export interface Ball {
@@ -27,8 +28,9 @@ export class Game {
   shifts: { tick: number; kind: 'warning' | 'active' | 'release' }[] = [];
   wave = 0; upgraded = false; waveAt = 0;
   replays: Replay[] = []; replayCursor = 0; shiftEventStart = 0;
+  board: BoardState | null = null;
 
-  constructor(seed: number = C.seed) { this.seed = seed >>> 0; this.reset(); }
+  constructor(seed: number = C.seed, readonly mode: GameMode = 'realtime') { this.seed = seed >>> 0; this.reset(); }
   reset(seed = this.seed) {
     this.seed = seed >>> 0; this.randomState = this.seed;
     this.status = 'ready'; this.tick = 0; this.shots = 0; this.nextId = 1; this.nextChain = 1;
@@ -39,6 +41,7 @@ export class Game {
     this.shifts = []; this.wave = 0; this.waveAt = 0; this.upgraded = false;
     this.replays = []; this.replayCursor = this.shiftEventStart = 0;
     this.boss = { id: 0, kind: 'boss', ...C.boss, maxHp: C.boss.hp, flashUntil: 0 };
+    this.board = this.mode === 'board' ? createBoardState() : null;
   }
   start() { if (this.status === 'ready') this.status = 'playing'; }
   random() {
@@ -50,12 +53,76 @@ export class Game {
   }
   get simultaneousResonanceCount() { return this.balls.filter(b => b.resonant).length; }
   get nextMaterial() { return this.shots % C.materials.length; }
+  resonanceThreshold(b: Ball) {
+    return Math.max(1, C.resonance.threshold - (this.board?.tuneMaterial === b.material ? C.board.tuneThresholdReduction : 0));
+  }
+  sameFrequencyMultiplier(b: Ball) {
+    return C.resonance.sameFrequencyMultiplier * (this.board?.tuneMaterial === b.material ? C.board.tuneMultiplier : 1);
+  }
+  wake(b: Ball, force = false) {
+    const speed = Math.hypot(b.vx, b.vy);
+    if (force || speed < C.shift.wakeSpeed) {
+      const a = this.random() * Math.PI * 2, nextSpeed = force ? Math.max(speed, C.shift.wakeSpeed) : C.shift.wakeSpeed;
+      b.vx = Math.cos(a) * nextSpeed; b.vy = Math.sin(a) * nextSpeed;
+    }
+  }
+  rollBoard() {
+    const board = this.board;
+    if (!board || this.status !== 'playing' || board.phase !== 'roll') return false;
+    board.turn++;
+    board.shotsLeft = C.board.shotsPerTurn + board.nextTurnBonus;
+    board.nextTurnBonus = 0;
+    board.die = 1 + Math.floor(this.random() * C.board.dieSides);
+    board.stepsLeft = board.die; board.landed = false;
+    board.rolls.push({ tick: this.tick, turn: board.turn, die: board.die });
+    board.phase = 'rolling'; board.phaseUntil = this.tick + C.board.rollTicks;
+    return true;
+  }
+  private applyBoardTile() {
+    const board = this.board!, tile = C.board.tiles[board.position];
+    board.landed = true;
+    if (tile.kind === 'SURGE') {
+      for (const b of this.balls) {
+        this.wake(b, true);
+        // 電涌是格子充能，能喚醒冷卻球；每球確實增加一點，不受碰撞充能上限限制。
+        b.cooldown = 0; b.oscillation += C.board.surgeCharge;
+        const wasResonant = b.resonant;
+        b.resonant = b.oscillation >= this.resonanceThreshold(b);
+        if (b.resonant && !wasResonant) this.effects.push({ kind: 'resonate', x: b.x, y: b.y, radius: 30, value: 0, tick: this.tick });
+      }
+    } else if (tile.kind === 'TUNE') {
+      board.tuneMaterial = tile.material;
+      for (const b of this.balls) if (b.material === tile.material && this.tick >= b.cooldown) this.charge(b, 0);
+    }
+    board.phase = 'effect'; board.phaseUntil = this.tick + C.board.effectTicks;
+  }
+  private advanceBoard(): boolean {
+    const board = this.board!;
+    if (board.phase === 'rolling' && this.tick >= board.phaseUntil) {
+      board.phase = 'moving'; board.phaseUntil = this.tick + C.board.moveTicks;
+    } else if (board.phase === 'moving' && this.tick >= board.phaseUntil) {
+      board.position = (board.position + 1) % C.board.tiles.length;
+      if (board.position === 0) { board.laps++; board.nextTurnBonus += C.board.lapBonusShots; }
+      board.stepsLeft--; board.phaseUntil = this.tick + C.board.moveTicks;
+      if (board.stepsLeft === 0) this.applyBoardTile();
+    } else if (board.phase === 'effect' && this.tick >= board.phaseUntil) board.phase = 'shooting';
+    return board.phase === 'shooting' || board.phase === 'settling';
+  }
+  private finishBoardTurn() {
+    const board = this.board!;
+    board.bossClock++; board.tuneMaterial = null;
+    // 相變仍保有全場共振；一般狀態則恢復材質的正常門檻。
+    if (this.phase === 'idle') for (const b of this.balls) b.resonant = b.oscillation >= C.resonance.threshold;
+    board.phase = 'roll';
+    this.updateDifficulty(); this.checkOutcome();
+  }
   makeBall(x: number, y: number, material = 0): Ball {
     return { id: this.nextId++, x, y, vx: 0, vy: 0, material, oscillation: 0, resonant: false,
       cooldown: 0, delayedUntil: 0, igniteUntil: 0, chainId: null, depth: 0 };
   }
   fire(angle: number) {
     if (this.status !== 'playing' || !Number.isFinite(angle) || this.tick - this.lastShotTick < C.launcher.intervalTicks) return false;
+    if (this.board && (this.board.phase !== 'shooting' || this.board.shotsLeft <= 0)) return false;
     const actualAngle = angle + (this.random() * 2 - 1) * C.launcher.coneHalfAngle;
     const b = this.makeBall(C.launcher.x, C.launcher.y, this.nextMaterial);
     b.vx = Math.cos(actualAngle) * C.ball.speed; b.vy = Math.sin(actualAngle) * C.ball.speed;
@@ -63,6 +130,9 @@ export class Game {
     this.shots++; this.lastShotTick = this.tick;
     this.effects.push({ kind: 'launch', x: b.x, y: b.y, radius: 80, value: actualAngle, tick: this.tick });
     if (this.phase === 'active') { b.resonant = true; b.oscillation = C.resonance.threshold; }
+    if (this.board && --this.board.shotsLeft === 0) {
+      this.board.phase = 'settling'; this.board.phaseUntil = this.tick + C.board.settleMaxTicks;
+    }
     this.checkOutcome(); return true;
   }
   spawnMonster(hp: number = C.monsters.hp) {
@@ -83,9 +153,10 @@ export class Game {
   }
   charge(b: Ball, amount: number, chainId: number | null = null, depth = 0) {
     if (this.tick < b.cooldown) return;
-    b.oscillation = Math.min(C.resonance.threshold, b.oscillation + amount);
+    const threshold = this.resonanceThreshold(b);
+    b.oscillation = Math.min(threshold, b.oscillation + amount);
     const wasResonant = b.resonant;
-    b.resonant = b.oscillation >= C.resonance.threshold;
+    b.resonant = b.oscillation >= threshold;
     if (b.resonant && !wasResonant) this.effects.push({ kind: 'resonate', x: b.x, y: b.y, radius: 30, value: depth, tick: this.tick });
     if (chainId !== null) { b.chainId = chainId; b.depth = depth; }
   }
@@ -113,8 +184,8 @@ export class Game {
         const chainId = a.chainId ?? b.chainId ?? this.nextChain++;
         // 先鎖定兩球，避免第一個爆發重新點燃正在釋放的另一球。
         a.cooldown = b.cooldown = this.tick + C.resonance.cooldownTicks;
-        this.burst(a, C.resonance.sameFrequencyMultiplier, chainId);
-        this.burst(b, C.resonance.sameFrequencyMultiplier, chainId);
+        this.burst(a, this.sameFrequencyMultiplier(a), chainId);
+        this.burst(b, this.sameFrequencyMultiplier(b), chainId);
         return;
       }
     }
@@ -170,18 +241,23 @@ export class Game {
     else if (this.monsters.length > C.monsters.loseAbove) this.status = 'lost';
   }
   wavePlan(wave: number) {
+    if (this.board) return {
+      count: Math.min(C.board.waveMaxCount, C.board.waveBaseCount + Math.floor(Math.max(0, wave - 1) / C.board.wavesPerCountGrowth) * C.board.waveCountGrowth),
+      hp: C.monsters.hp + Math.max(0, wave - 1) * C.board.waveHpGrowth,
+    };
     return { count: wave <= 2 ? 2 : Math.min(8,2+Math.floor((wave-1)/2)), hp: C.monsters.hp+Math.max(0,wave-2)*C.difficulty.hpGrowth };
   }
   updateDifficulty() {
     const seconds = this.tick*C.dt;
-    const due = seconds < C.difficulty.firstWaveSeconds ? 0 : 1+Math.floor((seconds-C.difficulty.firstWaveSeconds)/C.difficulty.waveSeconds);
+    const due = this.board ? Math.floor(this.board.bossClock / C.board.waveEveryTurns)
+      : seconds < C.difficulty.firstWaveSeconds ? 0 : 1+Math.floor((seconds-C.difficulty.firstWaveSeconds)/C.difficulty.waveSeconds);
     if (due > this.wave) {
       this.wave = due; this.waveAt = this.tick;
       const plan = this.wavePlan(due);
       for (let i=0;i<plan.count;i++) this.spawnMonster(plan.hp);
       this.effects.push({ kind: 'wave', x: C.width/2, y: 80, radius: 0, value: due, tick: this.tick });
     }
-    if (!this.upgraded && seconds >= C.difficulty.graceSeconds && this.boss.hp <= this.boss.maxHp*C.difficulty.upgradeAt) {
+    if (!this.board && !this.upgraded && seconds >= C.difficulty.graceSeconds && this.boss.hp <= this.boss.maxHp*C.difficulty.upgradeAt) {
       this.upgraded = true; this.waveAt = this.tick;
       for (let i=0;i<3;i++) this.spawnMonster(this.wavePlan(this.wave).hp);
       this.effects.push({ kind: 'wave', x: C.width/2, y: 80, radius: 0, value: -1, tick: this.tick });
@@ -199,13 +275,13 @@ export class Game {
       this.effects.push({ kind: 'shift', x: 400, y: 340, radius: 500, value: 0, tick: this.tick });
       for (const b of this.balls) {
         b.resonant = true; b.oscillation = C.resonance.threshold; b.cooldown = 0;
-        if (Math.hypot(b.vx,b.vy)<C.shift.wakeSpeed) { const a=this.random()*Math.PI*2; b.vx=Math.cos(a)*C.shift.wakeSpeed; b.vy=Math.sin(a)*C.shift.wakeSpeed; }
+        this.wake(b);
       }
     } else if (this.phase === 'active' && this.tick >= this.phaseUntil) {
       const chain = this.nextChain++;
       // 同步鎖定，避免同次釋放重新點燃尚未處理的球。
       for (const b of this.balls) b.cooldown=this.tick+C.resonance.cooldownTicks;
-      for (const b of this.balls) this.burst(b,C.resonance.sameFrequencyMultiplier,chain);
+      for (const b of this.balls) this.burst(b,this.sameFrequencyMultiplier(b),chain);
       this.phase = 'idle'; this.shiftReadyAt = this.tick+C.shift.cooldownTicks;
       this.shifts.push({ tick: this.tick, kind: 'release' });
       this.effects.push({ kind: 'release', x: 400, y: 340, radius: 500, value: 0, tick: this.tick });
@@ -222,8 +298,11 @@ export class Game {
   }
   step() {
     if (this.status !== 'playing') return;
+    if (this.board?.phase === 'roll') return;
     this.tick++;
-    this.updateDifficulty(); this.updatePhase();
+    if (this.board && !this.advanceBoard()) return;
+    if (!this.board) this.updateDifficulty();
+    this.updatePhase();
     const current = new Set<string>();
     const contact = (key: string, fn: () => void) => { current.add(key); if (!this.contacts.has(key)) fn(); };
     const r = C.ball.radius;
@@ -276,6 +355,8 @@ export class Game {
     }
     this.effects = this.effects.filter(e => this.tick-e.tick < C.feedback.lifetimeTicks);
     this.checkOutcome();
+    if (this.status === 'playing' && this.board?.phase === 'settling'
+      && (this.tick >= this.board.phaseUntil || this.phase === 'idle' && this.balls.every(b => b.vx === 0 && b.vy === 0))) this.finishBoardTurn();
   }
   snapshot() {
     return JSON.parse(JSON.stringify({ seed: this.seed, randomState: this.randomState, tick: this.tick, status: this.status,
@@ -283,6 +364,7 @@ export class Game {
       balls: this.balls, boss: this.boss, monsters: this.monsters, events: this.events, effects: this.effects,
       inputs: this.inputs, contacts: [...this.contacts].sort(), phase: this.phase, phaseUntil: this.phaseUntil,
       shiftReadyAt: this.shiftReadyAt, phaseMaterial: this.phaseMaterial, shifts: this.shifts, wave: this.wave, waveAt: this.waveAt,
-      upgraded: this.upgraded, replays: this.replays, replayCursor: this.replayCursor, shiftEventStart: this.shiftEventStart }));
+      upgraded: this.upgraded, replays: this.replays, replayCursor: this.replayCursor, shiftEventStart: this.shiftEventStart,
+      ...(this.board ? { mode: this.mode, board: this.board } : {}) }));
   }
 }

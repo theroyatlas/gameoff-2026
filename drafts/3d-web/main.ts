@@ -13,6 +13,7 @@ import { resonanceStyle } from './presentation';
 import { AdaptiveQuality } from './quality';
 import { LOW_GPU_PROFILE, TWO_D_URL } from './settings';
 
+export function startRealtime() {
 const canvas = document.querySelector<HTMLCanvasElement>('#scene')!;
 const stage = document.querySelector<HTMLElement>('#stage')!;
 const phaseText = document.querySelector<HTMLElement>('#phase')!;
@@ -307,3 +308,4 @@ previous=performance.now();quality.resetWindow();
 requestAnimationFrame(frame);
 }
 try{startScene();}catch{showFallback();}
+}

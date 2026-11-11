@@ -1,0 +1,80 @@
+# 棋盤灰盒試玩
+
+## 怎麼玩
+
+1. 開啟本頁並加上 `?mode=board`，選種子、按「開始」，再按「擲骰」或空白鍵。
+2. 自動順時針走格、套用格子效果後，點球場／拖拉後放開發射；也可用方向滑桿、左右鍵與「發射」或空白鍵，每回合 3 發。
+3. 發完等待球停下（最多 6 秒），Boss 鐘 +1；Boss 歸零獲勝、怪物超過 10 隻失敗，「重來」保留種子並重置整局。
+
+## 入口與建置
+
+- 規則：`D:\Projects\Active\competitions\game-off-2026\g4-resonance\src\game.ts`、`D:\Projects\Active\competitions\game-off-2026\g4-resonance\src\board.ts`、`D:\Projects\Active\competitions\game-off-2026\g4-resonance\src\config.ts`。
+- 畫面：`D:\Projects\Active\competitions\game-off-2026\g4-resonance\drafts\3d-web\board-ring.ts` 與同目錄的 `board-ring.css`。獨立灰盒，不載入美術素材；共用 three.js 與本機生成音效。
+- 在 `D:\Projects\Active\competitions\game-off-2026\g4-resonance\drafts\3d-web` 執行 `npm run build:board`，只輸出 `D:\Projects\Active\competitions\game-off-2026\g4-resonance\drafts\3d-web\dist-board\index.html`。此目錄已忽略，不提交產物。
+- 同一個 HTML 帶 `?mode=board` 為棋盤版，無參數為即時版。可離線開啟，不需要伺服器或外部服務。
+- `entry.ts` 選擇呈現入口；`main.ts` 只增加 `startRealtime()` 函式包覆的兩行，內容保持原樣，降低與美術分支的合併衝突。
+- 工作流採用 ENTRY v0.14、W-TASK-001 v0.1 的有界驗收；工具索引 v0.22 與 T-CREATIVE-20 的 three.js 列適用於既有 WebGL 管線，因此不新增引擎或依賴。
+
+## 所有新規則參數與理由
+
+數值集中在 `CONFIG.board`；1 tick = 1/120 秒。以下為待 11/20 並排試玩的初始數值，不是平衡已定案。
+
+| 參數 | 值 | 理由 |
+|---|---:|---|
+| `shotsPerTurn` | 3 | 固定少量發射，讓格子效果成為每回合的選擇依據。 |
+| `lapBonusShots` | 1 | 每跨過 00 START 一次，**下一回合**多 1 發；兌現後清空，不永久疊加。 |
+| `dieSides` | 6 | 只擲一顆六面骰；每次有效擲骰只消耗共用 RNG 一次。 |
+| `rollTicks` | 36（0.3 秒） | 顯示骰子結果，避免額外隨機值或物理骰子影響重現。 |
+| `moveTicks` | 18（每格 0.15 秒） | 逐格可見，同時讓六步也只花 0.9 秒。 |
+| `effectTicks` | 60（0.5 秒） | 落格高亮與效果文字先出現，再開放發射。 |
+| `settleMaxTicks` | 720（6 秒） | 從最後一發計時，長相變／運動不讓回合無限拖延。 |
+| `surgeCharge` | 1 | 全部留場球震盪各 +1，已共振球也確實加 1；這次格子充能不截斷於普通碰撞門檻。 |
+| `tuneThresholdReduction` | 1 | 綁定材質門檻由 2 降至 1，最低 1；已有足夠震盪且不在冷卻的球立即共振。 |
+| `tuneMultiplier` | 1.5 | 綁定材質的同頻倍率由 2 變 3，既有範圍、點燃與傷害計算共同使用；相變同頻釋放也適用。 |
+| `waveEveryTurns` | 2 | Boss 鐘每 2 回合生成一波；瞄準時間不額外催生波次。 |
+| `waveBaseCount` | 2 | 前兩波保留觀察與練習空間。 |
+| `waveCountGrowth` | 1 | 波次按小幅增量提高壓力。 |
+| `wavesPerCountGrowth` | 2 | 每兩波增一隻，數量序列為 2、2、3、3、4、4……。 |
+| `waveMaxCount` | 8 | 限制單次生成量，避免不受控增加場邊靶。 |
+| `waveHpGrowth` | 120 | 第一波沿用怪物血量 60，後續每波 +120；配合每回合少量發射，低於即時版的每波成長 180。 |
+| `tiles` | 14 格 | 1 START、5 SURGE、5 TUNE、3 EVENT；位置與材質綁定固定。 |
+
+### 棋盤順序
+
+00 START → 01 SURGE → 02 TUNE（實心）→ 03 EVENT → 04 SURGE → 05 TUNE（環紋）→ 06 SURGE → 07 EVENT → 08 TUNE（雙紋）→ 09 SURGE → 10 TUNE（實心）→ 11 EVENT → 12 SURGE → 13 TUNE（環紋）→ 00。
+
+現有材質只有三種，五個 TUNE 格依 0／1／2／0／1 綁定，不新增材質。START 無論經過或剛好停上去都只計一次繞圈獎勵；例如第 4 回合跨過，獎勵供第 5 回合使用。
+
+### 效果與回合邊界
+
+- SURGE 重用相變的 `wake()`：每球從同一支 RNG 取方向，速度至少使用既有 `shift.wakeSpeed = 430`，原本更快的球保留速度量值；清除碰撞充能冷卻，讓所有留場球都能接受格子充能。
+- TUNE 只維持這個回合（包含最後等待結算）；結算時撤除。一般狀態的不足門檻球取消共振，進行中的相變仍保留其全場共振規則。
+- EVENT 不抽牌、不消耗 RNG、不改桌面，只顯示「事件（之後加）」。
+- 等待擲骰時模擬暫停；擲骰、走格與效果顯示階段暫停球移動，固定 tick 繼續推進回合呈現。射擊與結算階段使用原有固定步物理。
+- 球全停且沒有未完成相變時可提前結算；否則到 720 ticks 即結算。仍在動的球保留位置與速度，下一回合恢復，球不移除。
+- 怪物仍是靜止靶；Boss 鐘只是回合計數。棋盤版不套用即時版的按秒波次與半血增怪，沒有新增 Boss 階段。
+
+## 與即時版的差別、重現方式
+
+- 即時版：預設 `new Game(seed)`，持續固定步物理、發射冷卻、15 秒首波／30 秒波距及既有半血增怪皆保留；無棋盤狀態欄位混入既有快照。
+- 棋盤版：`new Game(seed, 'board')`，回合狀態依序為 `roll → rolling → moving → effect → shooting → settling → roll`；每個完整回合 Boss 鐘 +1。
+- 骰子、發射散布、喚醒與怪物位置共用 `Game.random()`。相同 seed **及相同操作／tick 時序**可重現整局；玩家改角度或等待時間會改變碰撞，也可能改變後續骰子。不是只憑 seed 就忽略操作的預錄局。
+- `snapshot().board.rolls` 保留擲骰 tick、回合與點數；`inputs` 保留發射 tick 與角度。驗收 API `window.boardEvidence` 只有快照與投影，不開放植球、跳時鐘或改勝負。
+- 棋盤呈現是純色方塊、圓柱棋子與點數立方體；即時呈現保留原有材質與行為。
+
+## 驗證
+
+- 根目錄執行 `npm test`：棋盤規則、完整一局確定性、所有既有測試，以及固定 seed 直接與不可變 `84d6550ea25a710cb8a65ee8a1a13f4ff3ab5b94` 規則比較完整快照。基準由 `git show` 讀取，不從候選重新產生預期值。
+- 根目錄執行 `npx tsc --noEmit` 檢查共用規則與測試；3D 沿用既有 Vite TypeScript 轉譯管線，未增裝 three.js 型別套件。
+- 3D 目錄執行 `npm run verify:board`：離線 Edge 實際按鈕／鍵盤完整遊玩至勝敗、重來、無參數即時入口、390×844 合成觸控發射與取消，以及 console／page error／外部請求檢查。
+- 量測與 1280×720、390×844、SURGE 截圖輸出至 repo 外 `D:\Projects\Active\competitions\game-off-2026\review-board-graybox\`，不提交。
+- 本次結果：8 個測試檔、73 個測試通過；固定 seed 整局 12 回合、38 發、Boss 鐘 12，以怪物超量失敗收局。console error、page error、外部請求皆為 0。這是可執行驗收，不是勝率或手感評分。
+- 已做 impeccable 技術檢查與桌面／手機合併視覺檢查；集中修正頁底背景、手機滑桿 44px 觸控高度與格名字級、棋子遮字。機械檢查的色票／字級差異屬本次明確指定的灰盒例外，不修改 DESIGN.md。
+
+## 還沒做與證據邊界
+
+- 不做商店、金錢、build、裝備、耐久、敘事、Boss 階段、怪物 AI、事件牌、美術資產。
+- 沒有修改 SPEC.md 或 DESIGN.md，這是供並排試玩的分支實驗；沒有合併美術分支、merge 或 push。
+- 自動操作可通關或失敗，不代表好玩或平衡；正式收錄與數值仍等 11/20 真人並排試玩。
+- 手機只有 Edge 模擬 390×844 和 CDP 合成觸控，未做實體手機與手機 GPU 效能驗收。小球與格名在窄畫面仍受尺寸限制。
+- 未做螢幕閱讀器完整遊戲操作、長時間效能壓力測試，亦未量測真人操作差異。

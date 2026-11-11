@@ -12,7 +12,9 @@
     "build:polish": "vite build --outDir dist-polish --emptyOutDir",
     "verify:polish": "node verify-polish.mjs",
     "build:smooth": "vite build --outDir dist-smooth --emptyOutDir",
-    "verify:smooth": "node verify-smooth.mjs"
+    "verify:smooth": "node verify-smooth.mjs",
+    "build:board": "vite build --outDir dist-board --emptyOutDir",
+    "verify:board": "node verify-board.mjs"
   },
   "dependencies": {
     "three": "0.180.0"

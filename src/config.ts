@@ -21,4 +21,18 @@ export const CONFIG = {
   shift: { threshold: 3, warningTicks: 84, durationTicks: 600, cooldownTicks: 14400, friction: 0.055, wakeSpeed: 430 },
   damage: { normal: 3, resonant: 5, burstExtra: 20 },
   feedback: { lifetimeTicks: 72, burstTicks: 40, igniteTicks: 30, targetFlashTicks: 18, damageMergeTicks: 24 },
+  board: {
+    shotsPerTurn: 3, lapBonusShots: 1, dieSides: 6,
+    rollTicks: 36, moveTicks: 18, effectTicks: 60, settleMaxTicks: 720,
+    surgeCharge: 1, tuneThresholdReduction: 1, tuneMultiplier: 1.5,
+    waveEveryTurns: 2, waveBaseCount: 2, waveCountGrowth: 1,
+    wavesPerCountGrowth: 2, waveMaxCount: 8, waveHpGrowth: 120,
+    tiles: [
+      { kind: 'START' }, { kind: 'SURGE' }, { kind: 'TUNE', material: 0 },
+      { kind: 'EVENT' }, { kind: 'SURGE' }, { kind: 'TUNE', material: 1 },
+      { kind: 'SURGE' }, { kind: 'EVENT' }, { kind: 'TUNE', material: 2 },
+      { kind: 'SURGE' }, { kind: 'TUNE', material: 0 }, { kind: 'EVENT' },
+      { kind: 'SURGE' }, { kind: 'TUNE', material: 1 },
+    ],
+  },
 } as const;

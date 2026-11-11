@@ -34,3 +34,16 @@ date: 2026-11-11
 - 自然輸入的微小時序差異會改變相變時機與球數；同機三輪中位數是本機體驗比較，不能直接稱為固定負載的因果實驗。保留每輪與所有長幀，不刪異常輪次。
 
 證據：D:\Projects\Active\competitions\game-off-2026\g4-resonance\drafts\3d-web\PERFORMANCE.md；原始資料在 D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\3d-smooth。
+
+## 共用規則的模式隔離
+
+status: draft
+promote: yes
+date: 2026-11-11
+
+- 增加遊戲模式時，直接用 `git show <不可變 commit>:<規則檔>` 載入基準，套用固定 seed 與相同 tick 輸入，比較完整快照；不能從候選重新生成基準而宣稱行為不變。
+- 回合規則、骰子 RNG 與結算上限應留在共用規則層；呈現只消費狀態。整局驗收以 DOM 操作抵達真正勝敗，唯讀快照用於觀測，避免測試控制直接改出成功狀態。
+- 單一離線 HTML 同時包含兩個入口時，以明確啟動函式隔離初始化，避免同頁建立兩套 renderer；灰盒 CSS 限定模式 class，防止改動預設畫面。
+- 種子確定性仍需要相同操作與 tick 時序。瀏覽器自然操作的延遲會改變碰撞結果，不能把兩次不同時序的自動點擊當成相同輸入。
+
+證據：`D:\Projects\Active\competitions\game-off-2026\g4-resonance\tests\realtime-baseline.test.ts`、`D:\Projects\Active\competitions\game-off-2026\g4-resonance\drafts\3d-web\BOARD-NOTES.md`；量測在 repo 外 `D:\Projects\Active\competitions\game-off-2026\review-board-graybox\verification.json`。
