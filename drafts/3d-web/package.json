@@ -23,7 +23,8 @@
     "build:art-round2": "vite build --outDir dist-art-round2 --emptyOutDir",
     "build:closeup-ab": "vite build --outDir dist-closeup-ab --emptyOutDir",
     "build:closeup-ab-r": "vite build --outDir dist-closeup-ab-r --emptyOutDir",
-    "build:mobile-card": "vite build --outDir dist-mobile-card --emptyOutDir"
+    "build:mobile-card": "vite build --outDir dist-mobile-card --emptyOutDir",
+    "build:mobile-card-r": "vite build --outDir dist-mobile-card-r"
   },
   "dependencies": {
     "three": "0.180.0"

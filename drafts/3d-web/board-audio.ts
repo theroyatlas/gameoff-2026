@@ -22,6 +22,22 @@ const BALL_SOUNDS: Record<'shiny' | 'wood', BallSound[]> = {
 };
 const TUNE_PITCH = [880, 659.25, 523.25];
 
+/** 最後一級軟限幅：單音範圍內保持單位增益，峰值才進入連續的一階曲線。
+ * 留下取樣間峰值餘裕；實際 −1 dBTP 驗收由原本的四倍 FIR 壓力案例量測。
+ * 不使用過取樣濾波，避免改變門檻以下單音的高頻與響度。
+ */
+export const LIMITER_ONSET = .65;
+export const LIMITER_CEILING = .78;
+export function limitMasterSample(sample: number) {
+  const a = Math.abs(sample);
+  if (a <= LIMITER_ONSET) return sample;
+  const span = LIMITER_CEILING - LIMITER_ONSET;
+  return Math.sign(sample) * (LIMITER_ONSET + span * (1 - Math.exp(-(a - LIMITER_ONSET) / span)));
+}
+export function masterLimiterCurve() {
+  return Float32Array.from({ length: 65537 }, (_, i) => limitMasterSample(i / 32768 - 1));
+}
+
 export class BoardAudio {
   context?: AudioContext; master?: GainNode; dry?: GainNode; wet?: GainNode; noise?: AudioBuffer;
   muted = false; voices = 0; played = 0; log: string[] = [];
@@ -35,7 +51,8 @@ export class BoardAudio {
       this.master = ctx.createGain(); this.master.gain.value = this.muted ? 0 : .5;
       const compressor = ctx.createDynamicsCompressor();
       compressor.threshold.value = -18; compressor.knee.value = 8; compressor.ratio.value = 6; compressor.attack.value = .003; compressor.release.value = .12;
-      this.master.connect(compressor); compressor.connect(ctx.destination);
+      const limiter = ctx.createWaveShaper(); limiter.curve = masterLimiterCurve(); limiter.oversample = 'none';
+      this.master.connect(compressor); compressor.connect(limiter); limiter.connect(ctx.destination);
       // 小房間殘響：程式產生的指數衰減雜訊脈衝，1.1 秒。讓桌面聽起來在一個房間裡。
       this.dry = ctx.createGain(); this.wet = ctx.createGain(); this.wet.gain.value = .16;
       const reverb = ctx.createConvolver(); reverb.buffer = this.impulse(1.1, 3.2);

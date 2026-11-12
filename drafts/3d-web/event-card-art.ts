@@ -163,10 +163,6 @@ export function createEventReveal(o: RevealOptions) {
   const root = document.createElement('div'); root.className = 'event-reveal'; root.dataset.variant = o.variant; root.setAttribute('aria-hidden', 'true'); root.hidden = true;
   root.innerHTML = '<div class="er-card"><div class="er-face er-back"></div><div class="er-face er-front"></div></div><div class="er-stamp">抽到</div><div class="er-dots"></div>';
   document.body.append(root);
-  // 手機的操作區可能在首屏下方；舞台內保留同一張卡面的副本。
-  const mobileSlot = makeCanvas(CARD_W / 2, CARD_H / 2);
-  mobileSlot.className = 'mobile-card-slot'; mobileSlot.hidden = true;
-  mobileSlot.setAttribute('aria-hidden', 'true'); o.stage.append(mobileSlot);
   const card = root.querySelector<HTMLElement>('.er-card')!, stampEl = root.querySelector<HTMLElement>('.er-stamp')!, dots = root.querySelector<HTMLElement>('.er-dots')!;
   const back = makeCanvas(); drawCardBack(back, o.variant); root.querySelector('.er-back')!.append(back);
   for (let i = 0; i < 10; i++) dots.append(document.createElement('i'));
@@ -179,8 +175,7 @@ export function createEventReveal(o: RevealOptions) {
   function paintSlot(f: CardFront) {
     f.draw(null); const x = o.slot.getContext('2d')!; o.slot.width = CARD_W / 2; o.slot.height = CARD_H / 2;
     x.drawImage(f.canvas, 0, 0, CARD_W / 2, CARD_H / 2); o.slot.hidden = false;
-    mobileSlot.getContext('2d')!.drawImage(f.canvas, 0, 0, mobileSlot.width, mobileSlot.height);
-    mobileSlot.hidden = false; mobileSlot.style.visibility = '';
+    o.slot.style.visibility = '';
   }
   function finish() {
     if (root.hidden || !front) return;
@@ -193,8 +188,9 @@ export function createEventReveal(o: RevealOptions) {
   function start(drawn: DrawnLike, now: number, fromPoint: { x: number; y: number }) {
     front?.canvas.remove(); front = faceFor(drawn); front.draw(o.reduced || front.face.count === null ? null : 0);
     root.querySelector('.er-front')!.append(front.canvas); from = fromPoint; startAt = now; frozen = null; fired = new Set(); root.hidden = false; o.slot.classList.remove('slot-arrive');
-    if (mobileSlot.hidden) { mobileSlot.hidden = false; mobileSlot.style.visibility = 'hidden'; }
     if (o.reduced) paintSlot(faceFor(drawn));
+    // 手機保留操作區的排版位置作收卡終點，不另外在舞台疊一張卡。
+    if (innerWidth <= 700) { o.slot.hidden = false; o.slot.style.visibility = 'hidden'; }
   }
   function once(key: string, fn: () => void) { if (!fired.has(key)) { fired.add(key); if (frozen === null) fn(); } }
   function update(now: number) {
@@ -222,9 +218,9 @@ export function createEventReveal(o: RevealOptions) {
       const tx = visible ? s.left + s.width / 2 : cx, ty = visible ? s.top + s.height / 2 : cy + r.height * .6, e = k * k;
       x = cx + (tx - cx) * e; y = cy + (ty - cy) * e; scale = 1 - .62 * e; opacity = 1 - .7 * e;
     }
-    // 桌機保留現有呈現；手機的收卡與翻卡音效條件獨立，終點不再落在首屏之外。
+    // 桌機保留現有呈現；手機的收卡與翻卡音效條件獨立，終點使用正常排版的操作區卡位。
     if (innerWidth <= 700 && t >= m.flyAt) {
-      const s = mobileSlot.getBoundingClientRect(), k = Math.min(1, (t - m.flyAt) / REVEAL.fly), e = k * k;
+      const s = o.slot.getBoundingClientRect(), k = Math.min(1, (t - m.flyAt) / REVEAL.fly), e = k * k;
       x = cx + (s.left + s.width / 2 - cx) * e; y = cy + (s.top + s.height / 2 - cy) * e;
       scale = 1 + (s.width / w - 1) * e; opacity = 1;
     }
@@ -252,7 +248,7 @@ export function createEventReveal(o: RevealOptions) {
     freeze(drawn: DrawnLike, t: number, fromPoint: { x: number; y: number }) { start(drawn, 0, fromPoint); frozen = t; fired = new Set(['draw', 'flip', 'stamp', 'reward', 'slot']); update(0); },
     /** 不播展示，直接把這張卡面放進操作區（例如截圖腳本快轉之後）。 */
     show(drawn: DrawnLike) { paintSlot(faceFor(drawn)); },
-    reset() { root.hidden = true; o.slot.hidden = true; mobileSlot.hidden = true; o.stage.style.translate = ''; front = null; },
+    reset() { root.hidden = true; o.slot.hidden = true; o.slot.style.visibility = ''; o.stage.style.translate = ''; front = null; },
     get active() { return !root.hidden; },
   };
 }
