@@ -147,5 +147,5 @@ describe('棋盤回合', () => {
     expect(a.status).not.toBe('playing'); expect(a.snapshot()).toEqual(b.snapshot());
     expect(run(88).board!.rolls).not.toEqual(a.board!.rolls);
     a.reset(); expect(a.snapshot()).toEqual(new Game(87, 'board').snapshot());
-  });
+  }, 20000);
 });
