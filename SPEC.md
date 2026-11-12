@@ -116,5 +116,5 @@ Boss 和怪物只是被連鎖打的靶：沒有 AI、不移動、不攻擊、沒
 ## 8. 文字與紀錄規範
 
 - 程式、註解、commit 訊息、README 都只描述這個專案本身，不寫其他專案。
-- 不要建立 GitHub repo，不要 push，不要上傳 itch.io，不要加入或送出 jam。只在本機 `git init`、本機 commit。
+- 公開 repo 是 theroyatlas/gameoff-2026，只推 main；不 force push、不改寫歷史。不要上傳 itch.io，不要加入或送出 jam。
 - 不要讀取或複製這個資料夾以外的任何遊戲程式碼。
