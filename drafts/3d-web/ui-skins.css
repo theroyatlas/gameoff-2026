@@ -122,3 +122,5 @@ body.board-mode[data-ui=c] button:disabled{opacity:1;color:rgba(232,220,194,.4);
 @keyframes slot-arrive{from{transform:scale(1.25);box-shadow:0 0 0 4px #c9963f,0 4px 8px rgba(18,11,6,.6)}to{transform:scale(1)}}
 @media(prefers-reduced-motion:reduce){.board-mode #board-card-face.slot-arrive{animation:none}}
 @media(max-width:700px){.board-mode .board-card-row{grid-column:1/-1}.board-mode #board-card-face{width:60px;height:84px}.event-reveal .er-stamp{font-size:17px}}
+.board-mode .mobile-card-slot{display:none;pointer-events:none}
+@media(max-width:700px){.board-mode .mobile-card-slot:not([hidden]){display:block;position:absolute;right:10px;bottom:10px;width:60px;height:84px;border-radius:3px;box-shadow:0 4px 8px rgba(18,11,6,.6)}}

@@ -1,6 +1,7 @@
 import { TOKENS, HAND_FONT, NUMBER_FONT, paperBase, handPath, circlePts, walnutTexture, type Pt, type IconStyle } from './style1';
 import { cardFace, revealMoments, revealCount, REVEAL, type ArtVariant, type CardFace, type EventCardValues } from './art-round2';
 import type { BoardAudio } from './board-audio';
+import { bindRevealSkip } from './reveal-input';
 
 /**
  * 事件卡卡面三版與抽卡展示。全部用 Canvas 程式繪製，不載入圖檔或字型。
@@ -162,6 +163,10 @@ export function createEventReveal(o: RevealOptions) {
   const root = document.createElement('div'); root.className = 'event-reveal'; root.dataset.variant = o.variant; root.setAttribute('aria-hidden', 'true'); root.hidden = true;
   root.innerHTML = '<div class="er-card"><div class="er-face er-back"></div><div class="er-face er-front"></div></div><div class="er-stamp">抽到</div><div class="er-dots"></div>';
   document.body.append(root);
+  // 手機的操作區可能在首屏下方；舞台內保留同一張卡面的副本。
+  const mobileSlot = makeCanvas(CARD_W / 2, CARD_H / 2);
+  mobileSlot.className = 'mobile-card-slot'; mobileSlot.hidden = true;
+  mobileSlot.setAttribute('aria-hidden', 'true'); o.stage.append(mobileSlot);
   const card = root.querySelector<HTMLElement>('.er-card')!, stampEl = root.querySelector<HTMLElement>('.er-stamp')!, dots = root.querySelector<HTMLElement>('.er-dots')!;
   const back = makeCanvas(); drawCardBack(back, o.variant); root.querySelector('.er-back')!.append(back);
   for (let i = 0; i < 10; i++) dots.append(document.createElement('i'));
@@ -171,10 +176,24 @@ export function createEventReveal(o: RevealOptions) {
     const face = cardFace(drawn.id, o.values, drawn.material !== undefined ? o.materialName(drawn.material) : undefined, drawn.targetBallId);
     return new CardFront(o.variant, drawn.id, drawn.name, face);
   }
-  function paintSlot(f: CardFront) { f.draw(null); const x = o.slot.getContext('2d')!; o.slot.width = CARD_W / 2; o.slot.height = CARD_H / 2; x.drawImage(f.canvas, 0, 0, CARD_W / 2, CARD_H / 2); o.slot.hidden = false; }
+  function paintSlot(f: CardFront) {
+    f.draw(null); const x = o.slot.getContext('2d')!; o.slot.width = CARD_W / 2; o.slot.height = CARD_H / 2;
+    x.drawImage(f.canvas, 0, 0, CARD_W / 2, CARD_H / 2); o.slot.hidden = false;
+    mobileSlot.getContext('2d')!.drawImage(f.canvas, 0, 0, mobileSlot.width, mobileSlot.height);
+    mobileSlot.hidden = false; mobileSlot.style.visibility = '';
+  }
+  function finish() {
+    if (root.hidden || !front) return;
+    paintSlot(front); root.hidden = true; o.stage.style.translate = ''; frozen = null;
+    // 不補播跳過的音效，避免快速連點時把整串聲音擠在一起。
+    fired.add('slot');
+    if (!o.reduced) o.slot.classList.add('slot-arrive');
+  }
+  bindRevealSkip(document, () => !root.hidden, finish);
   function start(drawn: DrawnLike, now: number, fromPoint: { x: number; y: number }) {
     front?.canvas.remove(); front = faceFor(drawn); front.draw(o.reduced || front.face.count === null ? null : 0);
     root.querySelector('.er-front')!.append(front.canvas); from = fromPoint; startAt = now; frozen = null; fired = new Set(); root.hidden = false; o.slot.classList.remove('slot-arrive');
+    if (mobileSlot.hidden) { mobileSlot.hidden = false; mobileSlot.style.visibility = 'hidden'; }
     if (o.reduced) paintSlot(faceFor(drawn));
   }
   function once(key: string, fn: () => void) { if (!fired.has(key)) { fired.add(key); if (frozen === null) fn(); } }
@@ -189,7 +208,7 @@ export function createEventReveal(o: RevealOptions) {
       if (t >= m.stampAt) once('stamp', () => o.audio.cardStamp(o.variant));
       if (t >= m.countEnd) once('reward', () => o.audio.cardReward(ORDER.indexOf(front!.id)));
       place(cx, cy, 1, 0, 0, 1); stamp(1, 1); root.dataset.phase = 'static';
-      if (frozen === null && t > staticEnd) root.hidden = true;
+      if (frozen === null && t > staticEnd) finish();
       return;
     }
     let x = cx, y = cy, scale = 1, rotY = 0, rotZ = 0, opacity = 1;
@@ -203,6 +222,12 @@ export function createEventReveal(o: RevealOptions) {
       const tx = visible ? s.left + s.width / 2 : cx, ty = visible ? s.top + s.height / 2 : cy + r.height * .6, e = k * k;
       x = cx + (tx - cx) * e; y = cy + (ty - cy) * e; scale = 1 - .62 * e; opacity = 1 - .7 * e;
     }
+    // 桌機保留現有呈現；手機的收卡與翻卡音效條件獨立，終點不再落在首屏之外。
+    if (innerWidth <= 700 && t >= m.flyAt) {
+      const s = mobileSlot.getBoundingClientRect(), k = Math.min(1, (t - m.flyAt) / REVEAL.fly), e = k * k;
+      x = cx + (s.left + s.width / 2 - cx) * e; y = cy + (s.top + s.height / 2 - cy) * e;
+      scale = 1 + (s.width / w - 1) * e; opacity = 1;
+    }
     root.dataset.phase = t < m.flipAt ? 'back' : t < m.stampAt ? 'flip' : t < m.flyAt ? 'shown' : 'fly';
     place(x, y, scale, rotY, rotZ, opacity);
     // 蓋章：翻開那一刻章從 2.2 倍砸下來，舞台震 3 px，墨點往外濺。
@@ -215,19 +240,19 @@ export function createEventReveal(o: RevealOptions) {
     // 數字跳動：每跳一次一記短點擊；跳完一串上行的獎勵音。
     if (front.face.count !== null && t >= m.stampAt) { const value = revealCount(t, front.face.count); if (front.draw(value) && t < m.countEnd) once(`tick-${value}`, () => o.audio.tick(value * 2)); }
     if (t >= m.countEnd) once('reward', () => o.audio.cardReward(ORDER.indexOf(front!.id)));
-    if (t >= m.end) { if (frozen === null) { root.hidden = true; o.stage.style.translate = ''; } once('slot', () => { paintSlot(front!); o.slot.classList.add('slot-arrive'); }); }
+    if (t >= m.end && frozen === null) finish();
   }
   function place(x: number, y: number, scale: number, rotY: number, rotZ: number, opacity: number) {
     root.style.transform = `translate(${x}px,${y}px)`; card.style.transform = `translate(-50%,-50%) scale(${scale}) rotateZ(${rotZ}deg) rotateY(${rotY}deg)`; root.style.opacity = String(opacity);
   }
   function stamp(scale: number, opacity: number) { stampEl.style.transform = `translate(-50%,-50%) rotate(-12deg) scale(${scale})`; stampEl.style.opacity = String(opacity); }
   return {
-    start, update,
+    start, update, finish,
     /** 截圖用：停在時間表的某一刻，不發聲。 */
     freeze(drawn: DrawnLike, t: number, fromPoint: { x: number; y: number }) { start(drawn, 0, fromPoint); frozen = t; fired = new Set(['draw', 'flip', 'stamp', 'reward', 'slot']); update(0); },
     /** 不播展示，直接把這張卡面放進操作區（例如截圖腳本快轉之後）。 */
     show(drawn: DrawnLike) { paintSlot(faceFor(drawn)); },
-    reset() { root.hidden = true; o.slot.hidden = true; o.stage.style.translate = ''; front = null; },
+    reset() { root.hidden = true; o.slot.hidden = true; mobileSlot.hidden = true; o.stage.style.translate = ''; front = null; },
     get active() { return !root.hidden; },
   };
 }
