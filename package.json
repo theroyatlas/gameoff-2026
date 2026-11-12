@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite --host 127.0.0.1",
+    "dev": "npm --prefix drafts/3d-web run dev",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview --host 127.0.0.1",
     "test": "vitest run",
@@ -17,7 +17,9 @@
     "build:smooth": "tsc --noEmit && npm --prefix drafts/3d-web run build:smooth",
     "verify:smooth": "npm --prefix drafts/3d-web run verify:smooth",
     "sim:difficulty": "node --max-old-space-size=2048 tools/run-difficulty.mjs",
-    "sim:board-difficulty": "node --max-old-space-size=2048 tools/run-board-difficulty.mjs"
+    "sim:board-difficulty": "node --max-old-space-size=2048 tools/run-board-difficulty.mjs",
+    "build:main": "npm --prefix drafts/3d-web run build:main",
+    "dev:2d": "vite --host 127.0.0.1"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",

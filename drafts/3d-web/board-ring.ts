@@ -4,28 +4,23 @@ import { CONFIG as C } from '../../src/config';
 import { Sound } from '../../src/audio';
 import type { BoardPhase } from '../../src/board';
 import './board-ring.css';
+import { readChoice, TOKENS, LIGHTS, walnutTexture, drawField, ballMaterial, buildRing } from './style1';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
 const phaseNames: Record<BoardPhase, string> = {
   roll: '等待擲骰', rolling: '擲骰中', moving: '自動走格', effect: '格子效果', shooting: '瞄準與射擊', settling: '等待球停下',
 };
-// 從左下角沿左側往上，再沿上、右、下緣順時針走。
-const positions = [
-  [-5.2, 4.7], [-5.2, 1.55], [-5.2, -1.55], [-5.2, -4.7],
-  [-2.6, -4.7], [0, -4.7], [2.6, -4.7], [5.2, -4.7],
-  [5.2, -1.55], [5.2, 1.55], [5.2, 4.7], [2.6, 4.7], [0, 4.7], [-2.6, 4.7],
-];
-const colors = { background: 0xe4e5e7, table: 0xbec2c7, edge: 0x777e88,
-  START: 0xc8d6c8, SURGE: 0xa8c4d8, TUNE: 0xd5c9b0, EVENT: 0xc5c6cb,
-  landed: 0xffe28b, pawn: 0x254a70, boss: 0x59616c, monster: 0x86594f,
-  materials: [0xf4f5f6, 0x778a9e, 0xc49c61], resonance: 0x226288 };
+const colors = { background: TOKENS.bgIdle, edge: TOKENS.brass,
+  landed: TOKENS.ochre, pawn: TOKENS.lacquer, boss: TOKENS.brass, monster: TOKENS.brass,
+  resonance: TOKENS.yarn };
 
 export function startBoard() {
   document.body.classList.add('board-mode');
-  document.title = '共振桌 · 灰盒棋盤';
+  document.title = '共振桌 · 棋盤';
   const root = document.querySelector('main')!;
   root.className = 'board-app';
   root.innerHTML = `
-    <header class="board-header"><div><h1>共振桌 · 棋盤</h1><p>14 格順時針 · 灰盒試玩</p></div><a id="board-realtime">即時版</a></header>
+    <header class="board-header"><div><h1>共振桌 · 棋盤</h1><p>14 格順時針 · 每回合 3 發</p></div><a id="board-realtime">即時版</a></header>
     <div class="board-topline"><label class="board-boss">Boss <progress id="board-hp" max="12000" value="12000"></progress><span id="board-hp-value"></span></label><span id="board-monsters"></span></div>
     <form id="board-setup"><label>種子 <input id="board-seed" type="number" min="0" max="4294967295" step="1" required value="${C.seed}"></label><button id="board-start" type="submit">開始</button></form>
     <div class="board-readout"><strong id="board-phase" role="status"></strong><span id="board-turn"></span><span id="board-shots"></span><strong id="board-clock"></strong></div>
@@ -44,7 +39,9 @@ export function startBoard() {
     <p id="board-result" role="status" hidden></p>
     <footer class="board-help"><p>擲骰 → 走格 → 射 3 發 → 等球停下（最多 6 秒）→ Boss 鐘 +1。</p><p>點球場或拖拉後放開發射；← → 瞄準、空白鍵擲骰／發射。Boss 歸零獲勝，怪物超過 10 隻失敗。</p></footer>`;
   const get = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id)! as T;
-  get<HTMLAnchorElement>('board-realtime').href = location.pathname;
+  const realtimeURL = new URL(location.href); realtimeURL.searchParams.set('mode', 'realtime');
+  get<HTMLAnchorElement>('board-realtime').href = realtimeURL.href;
+  const choice = readChoice(location.search);
   const canvas = get<HTMLCanvasElement>('board-scene'), stage = get('board-stage'), labels = get('board-labels');
   const roll = get<HTMLButtonElement>('board-roll'), fire = get<HTMLButtonElement>('board-fire');
   const aim = get<HTMLInputElement>('board-angle'), seed = get<HTMLInputElement>('board-seed');
@@ -54,55 +51,56 @@ export function startBoard() {
   try { renderer = new THREE.WebGLRenderer({ canvas, antialias: true }); }
   catch { get('board-failure').hidden = false; return; }
   renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
+  renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = .9;
   const scene = new THREE.Scene(); scene.background = new THREE.Color(colors.background);
   const camera = new THREE.OrthographicCamera(-7, 7, 6.4, -6.4, .1, 80);
   camera.position.set(0, 15, 6.5); camera.lookAt(0, 0, 0);
-  scene.add(new THREE.HemisphereLight(0xffffff, 0x9299a1, 2.2));
-  const light = new THREE.DirectionalLight(0xffffff, 2); light.position.set(-4, 8, 5); scene.add(light);
-  const mat = (color: number) => new THREE.MeshLambertMaterial({ color });
+  const L = LIGHTS[choice.light];
+  scene.add(new THREE.HemisphereLight(0xffe5b7, 0x2a1a10, L.ambient));
+  const light = new THREE.SpotLight(L.color, L.intensity, 30, L.angle, L.penumbra, 2);
+  light.position.set(...L.position); light.castShadow = true; light.shadow.mapSize.set(1024, 1024);
+  scene.add(light, light.target);
+  const rim = new THREE.DirectionalLight(0xc8d8d4, .35); rim.position.set(4, 6, -5); scene.add(rim);
+  const pmrem = new THREE.PMREMGenerator(renderer), room = new RoomEnvironment();
+  scene.environment = pmrem.fromScene(room, .04).texture; scene.environmentIntensity = .3; room.dispose(); pmrem.dispose();
+  const mat = (color: number) => new THREE.MeshStandardMaterial({ color, roughness: .55 });
   function mesh(geometry: THREE.BufferGeometry, material: THREE.Material, x = 0, y = 0, z = 0) {
-    const object = new THREE.Mesh(geometry, material); object.position.set(x, y, z); scene.add(object); return object;
+    const object = new THREE.Mesh(geometry, material); object.position.set(x, y, z); object.castShadow = object.receiveShadow = true; scene.add(object); return object;
   }
   function box(w: number, h: number, d: number, color: number, x = 0, y = 0, z = 0) {
     return mesh(new THREE.BoxGeometry(w, h, d), mat(color), x, y, z);
   }
-  box(8, .18, 6.8, colors.table, 0, -.12);
-  for (const x of [-4.07, 4.07]) box(.14, .22, 6.94, colors.edge, x);
-  for (const z of [-3.47, 3.47]) box(8.28, .22, .14, colors.edge, 0, 0, z);
-  const tiles = C.board.tiles.map((tile, i) => {
-    const [x, z] = positions[i];
-    const object = box(1.82, .20, 1.5, colors[tile.kind], x, -.04, z);
+  const wood = new THREE.MeshStandardMaterial({ map: walnutTexture(512), roughness: .6 });
+  mesh(new THREE.BoxGeometry(15, .35, 13), wood, 0, -.65);
+  const fieldCanvas = document.createElement('canvas'); fieldCanvas.width = 1024; fieldCanvas.height = 870;
+  drawField(fieldCanvas, choice.icon, (C.launcher.y - 340) * .01);
+  const fieldMap = new THREE.CanvasTexture(fieldCanvas); fieldMap.colorSpace = THREE.SRGBColorSpace;
+  mesh(new THREE.BoxGeometry(8, .18, 6.8), new THREE.MeshStandardMaterial({ map: fieldMap, roughness: .92 }), 0, -.12);
+  for (const x of [-4.07, 4.07]) mesh(new THREE.BoxGeometry(.18, .25, 6.98), wood, x);
+  for (const z of [-3.47, 3.47]) mesh(new THREE.BoxGeometry(8.32, .25, .18), wood, 0, 0, z);
+  const outer = buildRing(wood, choice.icon, C.board.tiles); scene.add(outer.group);
+  const positions = outer.cards.map(card => [card.mesh.position.x, card.mesh.position.z]);
+  const tiles = outer.cards.map((card, i) => {
+    const tile = C.board.tiles[i];
     const label = document.createElement('div'); label.className = 'board-tile-label';
-    label.innerHTML = `<b>${String(i).padStart(2, '0')}</b> ${tile.kind}${tile.kind === 'TUNE' ? `<small>${C.materials[tile.material].name}</small>` : ''}`;
-    labels.append(label); return { object, label };
+    label.innerHTML = `<b>${String(i).padStart(2, '0')} ${tile.kind}</b>${tile.kind === 'TUNE' ? `<small>${C.materials[tile.material].name}</small>` : ''}`;
+    labels.append(label); return { ...card, label };
   });
-  const pathPoints = positions.map(([x, z]) => new THREE.Vector3(x, -.17, z)); pathPoints.push(pathPoints[0]);
-  scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pathPoints), new THREE.LineBasicMaterial({ color: colors.edge })));
-  const pawn = mesh(new THREE.CylinderGeometry(.22, .22, .48, 20), mat(colors.pawn));
-  const boss = mesh(new THREE.CylinderGeometry(C.boss.radius * .01, C.boss.radius * .01, .55, 24), mat(colors.boss), 0, .27, 0);
-  const launcher = mesh(new THREE.CylinderGeometry(.23, .23, .15, 20), mat(colors.pawn), 0, .08, (C.launcher.y - 340) * .01);
-  const aimLine = new THREE.Line(new THREE.BufferGeometry(), new THREE.LineBasicMaterial({ color: colors.pawn })); scene.add(aimLine);
-  const diceMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff });
-  const dice = mesh(new THREE.BoxGeometry(.72, .72, .72), diceMaterial, -3.15, .38, 2.62);
-  const diceTextures = Array.from({ length: 6 }, (_, i) => {
-    const surface = document.createElement('canvas'); surface.width = surface.height = 128;
-    const ctx = surface.getContext('2d')!; ctx.fillStyle = '#f7f7f8'; ctx.fillRect(0, 0, 128, 128);
-    ctx.strokeStyle = '#626975'; ctx.lineWidth = 3; ctx.strokeRect(2, 2, 124, 124);
-    const pips = [[[64, 64]], [[32, 32], [96, 96]], [[32, 32], [64, 64], [96, 96]],
-      [[32, 32], [96, 32], [32, 96], [96, 96]], [[32, 32], [96, 32], [64, 64], [32, 96], [96, 96]],
-      [[32, 28], [96, 28], [32, 64], [96, 64], [32, 100], [96, 100]]][i];
-    ctx.fillStyle = '#19212b';
-    for (const [x, y] of pips) { ctx.beginPath(); ctx.arc(x, y, 10, 0, Math.PI * 2); ctx.fill(); }
-    const texture = new THREE.CanvasTexture(surface); texture.colorSpace = THREE.SRGBColorSpace; return texture;
-  });
-  diceMaterial.map = diceTextures[0]; dice.rotation.y = .25;
-  const ballGeometry = new THREE.SphereGeometry(C.ball.radius * .01, 16, 12);
-  const ballMaterials = colors.materials.map(color => mat(color));
+  const pawn = outer.pawn, dice = outer.die; dice.position.set(3.3, .28, 2.65);
+  mesh(new THREE.CylinderGeometry(.59, .59, .16, 32), mat(TOKENS.brass), 0, .08);
+  const boss = mesh(new THREE.SphereGeometry(C.boss.radius * .01, 32, 20, 0, Math.PI * 2, 0, Math.PI / 2),
+    new THREE.MeshPhysicalMaterial({ color: TOKENS.glass, transmission: .9, thickness: .18, roughness: .08 }), 0, .16);
+  mesh(new THREE.OctahedronGeometry(.19), new THREE.MeshStandardMaterial({ color: TOKENS.yarn, emissive: TOKENS.yarn, emissiveIntensity: 1.2 }), 0, .37);
+  const launcher = mesh(new THREE.CylinderGeometry(.23, .23, .15, 20), mat(TOKENS.brass), 0, .08, (C.launcher.y - 340) * .01);
+  const aimLine = new THREE.Line(new THREE.BufferGeometry(), new THREE.LineBasicMaterial({ color: TOKENS.ochre })); scene.add(aimLine);
+  const ballGeometry = new THREE.SphereGeometry(C.ball.radius * .01, 20, 16);
+  const ballMaterials = C.materials.map((_, i) => ballMaterial(choice.ball, i, 0));
   const ringGeometry = new THREE.TorusGeometry(.20, .023, 6, 24);
   const resonanceMaterial = new THREE.MeshBasicMaterial({ color: colors.resonance });
   const balls = new Map<number, { sphere: THREE.Mesh; ring: THREE.Mesh; label: HTMLElement }>();
   const monsters = new Map<number, THREE.Mesh>();
-  const monsterGeometry = new THREE.BoxGeometry(.42, .46, .42), monsterMaterial = mat(colors.monster);
+  const monsterGeometry = new THREE.IcosahedronGeometry(.26, 0), monsterMaterial = new THREE.MeshStandardMaterial({ color: colors.monster, metalness: .65, roughness: .4, wireframe: true });
   const effectGeometry = new THREE.TorusGeometry(1, .012, 5, 48);
   const effects = new Map<object, THREE.Mesh>();
   let seen = new WeakSet<object>(), previous = performance.now(), accumulator = 0, angle = -Math.PI / 2;
@@ -156,7 +154,7 @@ export function startBoard() {
     for (const item of monsters.values()) scene.remove(item); monsters.clear();
     for (const item of effects.values()) { scene.remove(item); (item.material as THREE.Material).dispose(); } effects.clear();
     seen = new WeakSet(); drag = null; accumulator = 0; previous = performance.now(); setAngle(-Math.PI / 2);
-    lastDie = 0; diceMaterial.map = diceTextures[0]; dice.rotation.set(0, .25, 0);
+    lastDie = 0; outer.setDie(1); dice.rotation.set(0, .25, 0);
   }
   get('board-setup').addEventListener('submit', e => {
     e.preventDefault(); if (!seed.reportValidity()) return;
@@ -179,6 +177,8 @@ export function startBoard() {
   canvas.addEventListener('webglcontextlost', e => { e.preventDefault(); stopped = true; get('board-failure').hidden = false; roll.disabled = fire.disabled = true; });
   function banner() {
     const board = game.board!, tile = C.board.tiles[board.position];
+    if (game.status === 'won') return 'Boss 擊破！按「重來」再玩一局。';
+    if (game.status === 'lost') return '怪物超過 10 隻。按「重來」再玩一局。';
     if (game.status === 'ready') return '擲骰後自動走格，落格效果會改變這一回合。';
     if (board.phase === 'rolling') return '擲 1 顆六面骰…';
     if (board.phase === 'moving') return `順時針前進 · 還有 ${board.stepsLeft} 格`;
@@ -208,7 +208,8 @@ export function startBoard() {
     roll.disabled = !running || board.phase !== 'roll'; fire.disabled = !shooting || game.tick - game.lastShotTick < C.launcher.intervalTicks; aim.disabled = !shooting;
     get('board-result').hidden = game.status !== 'won' && game.status !== 'lost';
     if (game.status === 'won' || game.status === 'lost') text('board-result', `${game.status === 'won' ? 'Boss 擊破，獲勝！' : '怪物超過 10 隻，這局結束。'} ${board.turn} 回合 · ${game.shots} 發 · 按「重來」可用同一種子再玩。`);
-    if (board.die && board.die !== lastDie) { lastDie = board.die; diceMaterial.map = diceTextures[board.die - 1]; }
+    dice.visible = board.die > 0 || board.phase === 'rolling';
+    if (board.die && board.die !== lastDie) { lastDie = board.die; outer.setDie(board.die); }
     if (board.phase === 'rolling' && !reduced) dice.rotation.set(game.tick * .13, game.tick * .09, game.tick * .06);
     else dice.rotation.set(0, .25, 0);
     const rect = canvas.getBoundingClientRect();
@@ -216,12 +217,12 @@ export function startBoard() {
       const p = new THREE.Vector3(x, y, z).project(camera);
       label.style.transform = `translate(${(p.x + 1) * rect.width / 2}px,${(1 - p.y) * rect.height / 2}px) translate(-50%,-50%)`;
     }
-    tiles.forEach(({ object, label }, i) => {
+    tiles.forEach(({ top, label }, i) => {
       const selected = i === board.position, landed = selected && board.landed;
-      (object.material as THREE.MeshLambertMaterial).color.setHex(landed ? colors.landed : colors[C.board.tiles[i].kind]);
-      label.dataset.active = String(selected); labelAt(label, positions[i][0], positions[i][1] - .22, .13);
+      top.emissive.setHex(landed ? colors.landed : 0); top.emissiveIntensity = landed ? .35 : 0;
+      label.dataset.active = String(selected); labelAt(label, positions[i][0], positions[i][1] + .43, .02);
     });
-    pawn.position.set(positions[board.position][0] + .58, .38, positions[board.position][1] + .46);
+    pawn.position.set(positions[board.position][0] + .38, -.25, positions[board.position][1] - .18);
     for (const b of game.balls) {
       const item = balls.get(b.id) ?? addBall(b), x = (b.x - 400) * .01, z = (b.y - 340) * .01;
       item.sphere.position.set(x, .14, z); item.ring.position.set(x, .025, z); item.ring.visible = b.resonant;
@@ -249,12 +250,13 @@ export function startBoard() {
     const z = (C.launcher.y - 340) * .01;
     aimLine.geometry.setFromPoints([new THREE.Vector3(0, .08, z), new THREE.Vector3(Math.cos(angle) * 1.2, .08, z + Math.sin(angle) * 1.2)]);
     launcher.rotation.y = -angle;
+    scene.background = new THREE.Color(game.phase === 'active' ? TOKENS.bgShift : TOKENS.bgIdle);
     renderer.render(scene, camera);
     canvas.dataset.ready = 'true'; canvas.dataset.status = game.status; canvas.dataset.phase = board.phase; canvas.dataset.position = String(board.position);
   }
   // 驗收只讀取真實規則與投影；遊戲操作仍走 DOM 輸入。
   Object.assign(window, { boardEvidence: {
-    snapshot: () => ({ game: game.snapshot(), frameCount, renderedBalls: balls.size, renderedMonsters: monsters.size, drawCalls: renderer.info.render.calls, audio: sound.context?.state ?? 'not-started' }),
+    snapshot: () => ({ game: game.snapshot(), frameCount, visual: { choice, ring: true, cards: tiles.map(t => ({ index: t.index, kind: t.kind, x: t.mesh.position.x, z: t.mesh.position.z, highlighted: t.top.emissiveIntensity > 0 })), pawn: { x: pawn.position.x, z: pawn.position.z }, die: lastDie }, renderedBalls: balls.size, renderedMonsters: monsters.size, drawCalls: renderer.info.render.calls, audio: sound.context?.state ?? 'not-started' }),
     project,
   } });
   function frame(now: number) {

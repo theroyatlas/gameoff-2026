@@ -165,26 +165,27 @@ export function yarnTexture() {
   const t = tex(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(1, 6); return t;
 }
 
-/** 外圈棋盤：只有外觀，不接規則。14 格順時針，從左下 START 起。 */
+/** 外圈紙卡與木製道具；棋盤模式由規則提供格子順序。 */
 const RING: { kind: CardKind; x: number; z: number; tilt: number }[] = [
   { kind: 'START', x: -4.6, z: 4.55, tilt: -5.5 }, { kind: 'TUNE', x: -2.3, z: 4.6, tilt: 3 }, { kind: 'TUNE', x: 0, z: 4.55, tilt: -2.5 }, { kind: 'SURGE', x: 2.3, z: 4.6, tilt: 4 }, { kind: 'EVENT', x: 4.6, z: 4.55, tilt: -6 },
   { kind: 'SURGE', x: 5.2, z: 1.45, tilt: 3.5 }, { kind: 'TUNE', x: 5.2, z: -1.5, tilt: -2 },
   { kind: 'EVENT', x: 4.6, z: -4.55, tilt: 5 }, { kind: 'SURGE', x: 2.3, z: -4.6, tilt: -3 }, { kind: 'TUNE', x: 0, z: -4.55, tilt: 2 }, { kind: 'SURGE', x: -2.3, z: -4.6, tilt: -4 }, { kind: 'EVENT', x: -4.6, z: -4.55, tilt: 6 },
   { kind: 'TUNE', x: -5.2, z: -1.5, tilt: -3.5 }, { kind: 'SURGE', x: -5.2, z: 1.45, tilt: 2.5 },
 ];
-export function buildRing(walnut: THREE.Material, style: IconStyle) {
+export function buildRing(walnut: THREE.Material, style: IconStyle, rules?: readonly { kind: CardKind }[]) {
   const group = new THREE.Group(); group.name = 'outer-ring';
   const slab = new THREE.Mesh(new THREE.BoxGeometry(12.6, .1, 10.9), walnut); slab.position.y = -.33; slab.receiveShadow = true; group.add(slab);
   const edgeMat = new THREE.MeshStandardMaterial({ color: TOKENS.paperEdge, roughness: .95 });
-  const cards: { canvas: HTMLCanvasElement; texture: THREE.Texture; kind: CardKind; index: number }[] = [];
-  RING.forEach((cell, index) => {
+  const cards: { canvas: HTMLCanvasElement; texture: THREE.Texture; kind: CardKind; index: number; mesh: THREE.Mesh; top: THREE.MeshStandardMaterial }[] = [];
+  const layout = rules ? rules.map((tile, index) => ({ ...RING[(14 - index) % 14], kind: tile.kind })) : RING;
+  layout.forEach((cell, index) => {
     const { c } = canvas(256, 196); drawCard(c, cell.kind, index, style); const t = tex(c); t.anisotropy = 4;
     const top = new THREE.MeshStandardMaterial({ map: t, roughness: .92, metalness: 0 });
     const card = new THREE.Mesh(new THREE.BoxGeometry(1.5, .014, 1.15), [edgeMat, edgeMat, top, edgeMat, edgeMat, edgeMat]);
     // 放卡的手往棋盤中心推一點：每張朝內 0.04（約卡寬 3%）。
     const inward = new THREE.Vector2(-cell.x, -cell.z).normalize().multiplyScalar(.04);
     card.position.set(cell.x + inward.x, -.263, cell.z + inward.y); card.rotation.y = cell.tilt * Math.PI / 180; card.castShadow = card.receiveShadow = true; group.add(card);
-    cards.push({ canvas: c, texture: t, kind: cell.kind, index });
+    cards.push({ canvas: c, texture: t, kind: cell.kind, index, mesh: card, top });
   });
   // 紅漆木棋子：站在下排 SURGE 上。
   const profile = [[0, 0], [.17, 0], [.17, .04], [.11, .07], [.07, .2], [.05, .3], [.09, .36], [.1, .42], [.07, .5], [0, .52]].map(([a, b]) => new THREE.Vector2(a, b));
@@ -196,5 +197,11 @@ export function buildRing(walnut: THREE.Material, style: IconStyle) {
     for (const [sx, sy] of spots[n]) { x.beginPath(); x.arc(sx + 1, sy + 1, 10, 0, Math.PI * 2); x.fill(); } return new THREE.MeshStandardMaterial({ map: tex(c), roughness: .6 }); };
   const die = new THREE.Mesh(new THREE.BoxGeometry(.42, .42, .42), [face(3), face(4), face(5), face(2), face(1), face(6)]);
   die.position.set(4.2, -.565, 6.2); die.rotation.y = .42; die.castShadow = die.receiveShadow = true; group.add(die);
-  return { group, redraw(style: IconStyle) { for (const card of cards) { drawCard(card.canvas, card.kind, card.index, style); card.texture.needsUpdate = true; } } };
+  const dieFaces = Array.from({ length: 6 }, (_, i) => face(i + 1));
+  return { group, cards, pawn, die,
+    setDie(value: number) {
+      if (!value) return;
+      // 上面與正面顯示已擲點數，背面維持互補點數。
+      die.material = [dieFaces[2], dieFaces[3], dieFaces[value - 1], dieFaces[6 - value], dieFaces[value - 1], dieFaces[6 - value]];
+    }, redraw(style: IconStyle) { for (const card of cards) { drawCard(card.canvas, card.kind, card.index, style); card.texture.needsUpdate = true; } } };
 }

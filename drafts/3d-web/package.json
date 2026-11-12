@@ -16,7 +16,8 @@
     "build:board": "vite build --outDir dist-board --emptyOutDir",
     "verify:board": "node verify-board.mjs",
     "build:style1": "vite build --outDir dist-style1 --emptyOutDir",
-    "verify:style1": "node verify-style1.mjs"
+    "verify:style1": "node verify-style1.mjs",
+    "build:main": "vite build --outDir dist-main --emptyOutDir"
   },
   "dependencies": {
     "three": "0.180.0"
