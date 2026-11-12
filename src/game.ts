@@ -1,5 +1,6 @@
 import { CONFIG as C } from './config';
 import { createBoardState, type BoardState, type GameMode } from './board';
+import { EVENT_CARDS, type DrawnCard } from './event-cards';
 
 export type Status = 'ready' | 'playing' | 'won' | 'lost';
 export interface Ball {
@@ -52,7 +53,7 @@ export class Game {
     return ((t ^ t >>> 14) >>> 0) / 4294967296;
   }
   get simultaneousResonanceCount() { return this.balls.filter(b => b.resonant).length; }
-  get nextMaterial() { return this.shots % C.materials.length; }
+  get nextMaterial() { return this.board?.nextMaterial ?? this.shots % C.materials.length; }
   resonanceThreshold(b: Ball) {
     return Math.max(1, C.resonance.threshold - (this.board?.tuneMaterial === b.material ? C.board.tuneThresholdReduction : 0));
   }
@@ -93,8 +94,42 @@ export class Game {
     } else if (tile.kind === 'TUNE') {
       board.tuneMaterial = tile.material;
       for (const b of this.balls) if (b.material === tile.material && this.tick >= b.cooldown) this.charge(b, 0);
+    } else if (tile.kind === 'EVENT') {
+      this.drawEventCard();
     }
     board.phase = 'effect'; board.phaseUntil = this.tick + C.board.effectTicks;
+  }
+  private drawEventCard() {
+    const board = this.board!;
+    const card = EVENT_CARDS[Math.floor(this.random() * EVENT_CARDS.length)];
+    const draw: DrawnCard = { ...card, turn: board.turn, tick: this.tick, effect: '' };
+    // 最後射出的球是固定、可辨認的目標；空場時效果留給下一球。
+    const ball = this.balls.at(-1), value = C.board.events;
+    switch (card.id) {
+      case 'extra-shot':
+        board.nextTurnBonus += value.bonusShots;
+        draw.effect = `下一回合 +${value.bonusShots} 發（可與繞圈加發累計）`; break;
+      case 'change-material':
+        board.nextMaterial = (this.nextMaterial + 1) % C.materials.length;
+        draw.material = board.nextMaterial;
+        draw.effect = `下一球改為「${C.materials[board.nextMaterial].name}」，只換一球`; break;
+      case 'rewind':
+        board.bossClock = Math.max(0, board.bossClock - value.rewind);
+        draw.effect = `Boss 鐘回撥 ${value.rewind}（最低 0），已出現的怪物保留`; break;
+      case 'double-burst':
+        board.boostedBallId = ball?.id ?? -1;
+        draw.targetBallId = ball?.id;
+        draw.effect = `${ball ? `球 #${ball.id}` : '下一球'}下一次爆發的範圍、點燃量與傷害 ×${value.burstMultiplier}，一次用完`; break;
+      case 'burst-now':
+        if (ball) { this.burst(ball); draw.targetBallId = ball.id; }
+        else board.burstNextBall = true;
+        draw.effect = ball ? `球 #${ball.id} 立刻爆發一次，球仍留場` : '空場：下一球射出時立刻爆發一次，球仍留場'; break;
+      case 'chip-boss':
+        this.damage(this.boss, value.bossDamage);
+        draw.effect = `Boss 受到 ${value.bossDamage} 點傷害`; break;
+    }
+    board.cards.push(draw);
+    this.checkOutcome();
   }
   private advanceBoard(): boolean {
     const board = this.board!;
@@ -127,9 +162,14 @@ export class Game {
     const b = this.makeBall(C.launcher.x, C.launcher.y, this.nextMaterial);
     b.vx = Math.cos(actualAngle) * C.ball.speed; b.vy = Math.sin(actualAngle) * C.ball.speed;
     this.balls.push(b); this.inputs.push({ tick: this.tick, angle, actualAngle, material: b.material });
+    if (this.board) {
+      this.board.nextMaterial = null;
+      if (this.board.boostedBallId === -1) this.board.boostedBallId = b.id;
+    }
     this.shots++; this.lastShotTick = this.tick;
     this.effects.push({ kind: 'launch', x: b.x, y: b.y, radius: 80, value: actualAngle, tick: this.tick });
     if (this.phase === 'active') { b.resonant = true; b.oscillation = C.resonance.threshold; }
+    if (this.board?.burstNextBall) { this.board.burstNextBall = false; this.burst(b); }
     if (this.board && --this.board.shotsLeft === 0) {
       this.board.phase = 'settling'; this.board.phaseUntil = this.tick + C.board.settleMaxTicks;
     }
@@ -198,6 +238,10 @@ export class Game {
     if (speed > 0) { const factor = Math.min(C.ball.maxSpeed,speed*C.ball.resonanceBoost+90)/speed; b.vx*=factor; b.vy*=factor; }
   }
   burst(b: Ball, multiplier = 1, sharedChain?: number) {
+    if (this.board?.boostedBallId === b.id) {
+      multiplier *= C.board.events.burstMultiplier;
+      this.board.boostedBallId = null;
+    }
     const chainId = sharedChain ?? b.chainId ?? this.nextChain++;
     const depth = b.depth + 1;
     const radius = C.ball.radius * C.resonance.radiusInBalls * multiplier;

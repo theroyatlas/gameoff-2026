@@ -26,7 +26,8 @@ export const CONFIG = {
     rollTicks: 36, moveTicks: 18, effectTicks: 60, settleMaxTicks: 720,
     surgeCharge: 1, tuneThresholdReduction: 1, tuneMultiplier: 1.5,
     waveEveryTurns: 3, waveBaseCount: 2, waveCountGrowth: 1,
-    wavesPerCountGrowth: 2, waveMaxCount: 8, waveHpGrowth: 260,
+    wavesPerCountGrowth: 2, waveMaxCount: 8, waveHpGrowth: 300,
+    events: { bonusShots: 1, rewind: 1, burstMultiplier: 2, bossDamage: 60 },
     tiles: [
       { kind: 'START' }, { kind: 'SURGE' }, { kind: 'TUNE', material: 0 },
       { kind: 'EVENT' }, { kind: 'SURGE' }, { kind: 'TUNE', material: 1 },

@@ -47,3 +47,16 @@ date: 2026-11-11
 - 種子確定性仍需要相同操作與 tick 時序。瀏覽器自然操作的延遲會改變碰撞結果，不能把兩次不同時序的自動點擊當成相同輸入。
 
 證據：`./tests/realtime-baseline.test.ts`、`./drafts/3d-web/BOARD-NOTES.md`；量測在 repo 外 `../review-board-graybox/verification.json`。
+
+## 事件卡與同盤面驗收
+
+status: draft
+promote: yes
+date: 2026-11-12
+
+- 抽卡使用規則本身的 seeded RNG，並保留每張的 tick、回合、目標與效果。逐局 CSV 與獨立重算器可分開核對勝率，不以彙總百分比取代原始局紀錄。
+- 畫面減量對照只切呈現策略，前後核對完整規則快照雜湊；多球截圖不能各挑一個較有利的盤面。
+- 加速瀏覽器時計若以粗粒度輪詢才發射，實際輸入會晚於階段切換。精確節奏的 DOM 驅動可用受控 RAF 對齊階段和發射 tick，但不得回寫球、血量或結局；本輪 seed 20261113 的完整勝局重跑一致。
+- Node 的逐 tick 輸入紀錄直接移到 Edge 未完全對齊；本輪在 18037 tick 提早回合結束，原紀錄下一個操作在 18102。原因尚未定位，不能把同執行環境重現外推成跨執行環境逐位一致。
+
+證據：repo 同層 `../review-event-cards/csv-recount.json`、`capture.json`、`browser-fixed-input.json`、`cross-runtime-replay-attempt.log`。

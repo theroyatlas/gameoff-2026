@@ -18,7 +18,8 @@
     "build:style1": "vite build --outDir dist-style1 --emptyOutDir",
     "verify:style1": "node verify-style1.mjs",
     "build:main": "vite build --outDir dist-main --emptyOutDir",
-    "build:polish-board": "vite build --outDir dist-polish-board --emptyOutDir"
+    "build:polish-board": "vite build --outDir dist-polish-board --emptyOutDir",
+    "build:event-cards": "vite build --outDir dist-event-cards --emptyOutDir"
   },
   "dependencies": {
     "three": "0.180.0"

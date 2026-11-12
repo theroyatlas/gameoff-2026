@@ -39,6 +39,9 @@ export function startBoard() {
         <label class="board-angle">發射方向 <output id="board-angle-value">−90°</output><input id="board-angle" type="range" min="-165" max="-15" step="1" value="-90" aria-label="發射方向，角度" disabled></label>
         <button id="board-fire" disabled>發射</button>
         <p id="board-next"></p><p id="board-wave"></p><p id="board-bonus"></p>
+        <p id="board-card" role="status" hidden></p>
+        <p id="board-inspect" role="status">移過球查看球號；觸控請先按「查看球號」。</p>
+        <button id="board-inspect-toggle" aria-pressed="false">查看球號</button>
         <div class="board-utilities"><button id="board-mute" aria-pressed="false">音效：開</button><button id="board-restart">重來</button></div>
       </aside>
     </div>
@@ -62,11 +65,13 @@ export function startBoard() {
   renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.1;
   const scene = new THREE.Scene(); scene.background = new THREE.Color(colors.background);
-  // 參考圖 C1 的斜上方俯視：看得到桌子厚度。寬畫面仰角 47°，窄畫面拉到 60° 讓球號好讀。
+  // 參考圖 C1 的斜上方俯視：看得到桌子厚度。寬畫面仰角 45°，窄畫面 58°。
   const camera = new THREE.PerspectiveCamera(30, 16 / 9, .1, 120);
   const camTarget = new THREE.Vector3(0, -.35, .5), camBase = new THREE.Vector3(), lookNow = new THREE.Vector3();
-  let elevation = 47 * Math.PI / 180;
-  const shot = params.get('cam');
+  let elevation = 45 * Math.PI / 180; // resize 的 fit 會依寬高比重新設定。
+  let shot = params.get('cam');
+  let inspectMode = false, inspectedId: number | null = null, legacyDensity = false;
+  let visibleTagCount = 0, visibleLinkCount = 0;
   const L = LIGHTS[choice.light];
   // 棋盤模式的補光只用一半，讓暖色聚光在中央形成光池、外圈退進暗處（C1、B1）。
   scene.add(new THREE.HemisphereLight(0xffe5b7, 0x2a1a10, L.ambient * .5));
@@ -176,16 +181,32 @@ export function startBoard() {
     setAngle(Math.atan2(Math.min(-20, p.y - C.launcher.y), p.x - C.launcher.x));
   }
   const unlock = () => sound.unlock();
+  const inspectToggle = get<HTMLButtonElement>('board-inspect-toggle');
+  inspectToggle.addEventListener('click', () => {
+    inspectMode = !inspectMode; inspectedId = null;
+    inspectToggle.setAttribute('aria-pressed', String(inspectMode));
+    inspectToggle.textContent = inspectMode ? '結束查看球號' : '查看球號';
+  });
+  function inspectAt(e: PointerEvent) {
+    let best = 24, found: number | null = null;
+    for (const b of game.balls) {
+      const p = project(b.x, b.y, .14), d = Math.hypot(p.x - e.clientX, p.y - e.clientY);
+      if (d < best) { best = d; found = b.id; }
+    }
+    inspectedId = found;
+  }
   roll.addEventListener('click', () => { unlock(); game.rollBoard(); canvas.focus({ preventScroll: true }); });
   fire.addEventListener('click', () => { unlock(); game.fire(angle); });
   aim.addEventListener('input', () => setAngle(Number(aim.value) * Math.PI / 180));
   get('board-mute').addEventListener('click', () => { unlock(); sound.toggle(); text('board-mute', sound.muted ? '音效：關' : '音效：開'); get('board-mute').setAttribute('aria-pressed', String(sound.muted)); });
   canvas.addEventListener('pointerdown', e => {
+    if (inspectMode) { inspectAt(e); canvas.focus({ preventScroll: true }); return; }
     if (e.button !== 0 || game.board!.phase !== 'shooting' || game.status !== 'playing') return;
     const p = world(e.clientX, e.clientY); if (!p || p.x < 0 || p.x > C.width || p.y < 0 || p.y > C.height) return;
     unlock(); drag = e.pointerId; canvas.setPointerCapture(e.pointerId); canvas.focus({ preventScroll: true }); aimAt(e);
   });
-  canvas.addEventListener('pointermove', e => { if (drag === e.pointerId) aimAt(e); });
+  canvas.addEventListener('pointermove', e => { if (drag === e.pointerId) aimAt(e); else if (e.pointerType === 'mouse') inspectAt(e); });
+  canvas.addEventListener('pointerleave', () => { if (!inspectMode) inspectedId = null; });
   canvas.addEventListener('pointerup', e => {
     if (drag !== e.pointerId) return;
     aimAt(e); game.fire(angle); drag = null;
@@ -194,7 +215,15 @@ export function startBoard() {
   for (const event of ['pointercancel', 'lostpointercapture']) canvas.addEventListener(event, () => { drag = null; });
   window.addEventListener('blur', () => { drag = null; });
   document.addEventListener('keydown', e => {
-    if (e.target instanceof HTMLInputElement || game.status !== 'playing') return;
+    if (inspectMode && e.target === canvas && ['ArrowLeft', 'ArrowRight', 'Escape'].includes(e.key)) {
+      e.preventDefault();
+      if (e.key === 'Escape') { inspectToggle.click(); return; }
+      const i = game.balls.findIndex(b => b.id === inspectedId), n = game.balls.length;
+      if (n) inspectedId = game.balls[(i + (e.key === 'ArrowLeft' ? -1 : 1) + n) % n].id;
+      return;
+    }
+    if (inspectMode && e.target === canvas) return;
+    if (e.target instanceof HTMLInputElement || e.target instanceof HTMLButtonElement || e.target instanceof HTMLAnchorElement || game.status !== 'playing') return;
     if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { setAngle(angle + (e.key === 'ArrowLeft' ? -.08 : .08)); e.preventDefault(); }
     if (e.code === 'Space') { e.preventDefault(); if (e.repeat) return; unlock(); if (game.board!.phase === 'roll') game.rollBoard(); else game.fire(angle); }
   });
@@ -204,6 +233,7 @@ export function startBoard() {
     for (const item of effects.values()) { scene.remove(item); (item.material as THREE.Material).dispose(); } effects.clear();
     for (const f of floaters) f.el.remove(); floaters.length = 0;
     seen = new WeakSet(); drag = null; accumulator = 0; previous = performance.now(); setAngle(-Math.PI / 2);
+    inspectedId = null;
     lastDie = 0; outer.setDie(1); dice.rotation.set(0, .25, 0); dice.position.copy(dieRest);
     Object.assign(juice, { step: -1, lastBurst: -99, total: 0, shown: 0, punchAt: -99, slammed: true, landAt: -99, kickAt: -99, hopAt: -99, lastPos: 0, lastLaps: 0, lastPhase: 'roll', rollAt: -99, landed: false });
     tally.hidden = true; stamp.hidden = true;
@@ -225,11 +255,14 @@ export function startBoard() {
     elevation = (narrow ? 58 : 45) * Math.PI / 180; camera.fov = narrow ? 34 : 30; camera.aspect = aspect;
     camTarget.set(0, -.35, narrow ? .3 : .5);
     const dir = new THREE.Vector3(0, Math.sin(elevation), Math.cos(elevation));
+    const close = shot === 'field';
+    if (close) camTarget.set(0, 0, 0);
+    const corners = close ? [-4.15, 4.15].flatMap(x => [-.15, .65].flatMap(y => [-3.55, 3.55].map(z => new THREE.Vector3(x, y, z)))) : fitCorners;
     let lo = 4, hi = 80;
     for (let i = 0; i < 26; i++) {
       const mid = (lo + hi) / 2; camera.position.copy(camTarget).addScaledVector(dir, mid); camera.lookAt(camTarget);
       camera.updateProjectionMatrix(); camera.updateMatrixWorld();
-      const fits = fitCorners.every(c => { probe.copy(c).project(camera); return Math.abs(probe.x) <= .985 && Math.abs(probe.y) <= .97; });
+      const fits = corners.every(c => { probe.copy(c).project(camera); return Math.abs(probe.x) <= .985 && Math.abs(probe.y) <= .97; });
       if (fits) hi = mid; else lo = mid;
     }
     camBase.copy(camTarget).addScaledVector(dir, hi);
@@ -257,7 +290,7 @@ export function startBoard() {
     if (board.phase === 'roll') return `回合結束 · Boss 鐘 ${board.bossClock} · 請擲骰`;
     if (tile.kind === 'SURGE') return 'SURGE · 全場球喚醒，震盪各 +1';
     if (tile.kind === 'TUNE') return `TUNE · ${C.materials[tile.material].name}：本回合門檻 −1，同頻倍率 ×1.5`;
-    if (tile.kind === 'EVENT') return '事件（之後加）';
+    if (tile.kind === 'EVENT') { const card = board.cards.at(-1); return card ? `EVENT · ${card.name}：${card.effect}` : 'EVENT'; }
     return `START · 繞圈完成，下一回合 +${C.board.lapBonusShots} 發`;
   }
   function addBall(b: Ball) {
@@ -338,8 +371,12 @@ export function startBoard() {
     text('board-banner', banner()); text('board-die', `骰子 ${board.die || '—'}`);
     text('board-position', `${String(board.position).padStart(2, '0')} ${C.board.tiles[board.position].kind}`);
     text('board-next', `下一球：${C.materials[game.nextMaterial].name} · 留場 ${game.balls.length} 顆`);
-    text('board-wave', `第 ${game.wave} 波 · ${C.board.waveEveryTurns - board.bossClock % C.board.waveEveryTurns} 回合後下一波`);
+    text('board-wave', `第 ${game.wave} 波 · ${(game.wave + 1) * C.board.waveEveryTurns - board.bossClock} 回合後下一波`);
     text('board-bonus', `下一回合額外 ${board.nextTurnBonus} 發 · 已繞 ${board.laps} 圈`);
+    const card = board.cards.at(-1); get('board-card').hidden = !card;
+    if (card) text('board-card', `第 ${card.turn} 回合 · ${card.name}\n${card.effect}`);
+    const inspected = game.balls.find(b => b.id === inspectedId);
+    text('board-inspect', inspected ? `球 #${inspected.id} · ${C.materials[inspected.material].name} · ${inspected.resonant ? '共振中' : '蓄能中'}` : inspectMode ? '點球查看；鍵盤 ← → 換球，Esc 結束查看。' : '移過球查看球號；觸控請先按「查看球號」。');
     text('board-monsters', `怪物 ${game.monsters.length} / ${C.monsters.loseAbove}`);
     text('board-hp-value', `${game.boss.hp} / ${game.boss.maxHp}`); get<HTMLProgressElement>('board-hp').value = game.boss.hp;
     roll.disabled = !running || board.phase !== 'roll'; fire.disabled = !shooting || game.tick - game.lastShotTick < C.launcher.intervalTicks; aim.disabled = !shooting;
@@ -395,22 +432,39 @@ export function startBoard() {
     // 球：號碼印在球上；螢幕上的球小於 22 px 時，另補一張小紙籤在右上，不蓋住球。
     const r = C.ball.radius * .01, edge = projectWorld(r, .14, 0), center = projectWorld(0, .14, 0), diameter = Math.abs(edge.x - center.x) * 2;
     const needTag = diameter < 22; ballPx = Math.round(diameter * 10) / 10;
+    // 只保留最近三球、被查看的球與少量共振球；紙籤按螢幕距離避讓。
+    const recent = new Set(game.balls.slice(-3).map(b => b.id));
+    const priority = [...game.balls].sort((a, b) =>
+      Number(b.id === inspectedId) - Number(a.id === inspectedId) || Number(recent.has(b.id)) - Number(recent.has(a.id)) || Number(b.resonant) - Number(a.resonant) || b.id - a.id);
+    const tagIds = new Set<number>(), tagPositions: { x: number; y: number }[] = [];
+    for (const b of priority) {
+      if (b.id !== inspectedId && (!needTag || (!recent.has(b.id) && !b.resonant))) continue;
+      const p = projectWorld(W(b.x) + r * .9, .14 + r * 1.2, Z(b.y) - r * .2);
+      if (p.x < 10 || p.x > rect.width - 20 || p.y < 16 || p.y > rect.height - 12) continue;
+      if (tagIds.size >= (rect.width < 600 ? 6 : 10) || tagPositions.some(q => Math.abs(p.x - q.x) < 24 && Math.abs(p.y - q.y) < 22)) continue;
+      tagIds.add(b.id); tagPositions.push(p);
+    }
+    visibleTagCount = 0;
     for (const b of game.balls) {
       const item = balls.get(b.id) ?? addBall(b), x = W(b.x), z = Z(b.y);
       item.sphere.position.set(x, .14, z); item.ring.position.set(x, .025, z); item.ring.visible = b.resonant;
-      item.label.hidden = !needTag; if (needTag) { const p = projectWorld(x + r * .9, .14 + r * 1.2, z - r * .2); item.label.style.transform = `translate(${p.x + 6}px,${p.y - 6}px) translate(-50%,-50%)`; }
+      item.label.hidden = legacyDensity ? !needTag : !tagIds.has(b.id);
+      if (!item.label.hidden) { visibleTagCount++; const p = projectWorld(x + r * .9, .14 + r * 1.2, z - r * .2); item.label.style.transform = `translate(${p.x + 6}px,${p.y - 6}px) translate(-50%,-50%)`; }
     }
     for (const [id, item] of balls) if (!game.balls.some(b => b.id === id)) { scene.remove(item.sphere, item.ring); item.label.remove(); balls.delete(id); }
     // 毛線：球在爆發半徑內的最近兩顆之間牽線；有一端已共振就亮，相變期全亮。
     const reach = C.ball.radius * C.resonance.radiusInBalls, links: YarnLink[] = [], pairs = new Set<string>();
     for (const a of game.balls) {
+      if (!legacyDensity && !a.resonant && a.id !== inspectedId) continue;
       const near = game.balls.filter(o => o !== a && Math.hypot(o.x - a.x, o.y - a.y) <= reach).sort((p, q) => Math.hypot(p.x - a.x, p.y - a.y) - Math.hypot(q.x - a.x, q.y - a.y)).slice(0, 2);
       for (const o of near) {
         const key = a.id < o.id ? `${a.id}:${o.id}` : `${o.id}:${a.id}`; if (pairs.has(key)) continue; pairs.add(key);
+        if (!legacyDensity && links.length >= (rect.width < 600 ? 12 : 24)) continue;
         const lit = game.phase === 'active' ? 1 : a.resonant && o.resonant ? 1 : a.resonant || o.resonant ? .7 : 0;
         links.push({ ax: W(a.x), az: Z(a.y), bx: W(o.x), bz: Z(o.y), side: (a.id + o.id) % 2 ? 1 : -1, glow: lit });
       }
     }
+    visibleLinkCount = links.length;
     yarn.set(links); yarn.animate(now, reduced, game.phase === 'active' ? 1.4 : 1); pulses.update(now, reduced);
     for (const [id, item] of monsters) if (!game.monsters.some(m => m.id === id)) { scene.remove(item); monsters.delete(id); }
     for (const m of game.monsters) {
@@ -465,6 +519,13 @@ export function startBoard() {
   } });
   // ?lab=1：截圖腳本用。用固定角度、固定節奏推進同一個 seed，讓各版本的球位完全相同。只呼叫公開的規則操作。
   if (params.get('lab') === '1') Object.assign(window, { boardLab: {
+    // 僅供同盤面呈現對照：保留原本「全紙籤／全毛線」邏輯，不改規則或時間。
+    presentation(options: { legacyDensity?: boolean; camera?: 'table' | 'field' }) {
+      if (options.legacyDensity !== undefined) legacyDensity = options.legacyDensity;
+      if (options.camera) { shot = options.camera === 'field' ? 'field' : null; resize(); }
+      render();
+      return { visibleTagCount, visibleLinkCount, ballPx, camera: shot ?? 'table' };
+    },
     fastForward(shots: number, seedValue = 20261111) {
       game.reset(seedValue); resetVisuals(); game.start(); get('board-setup').hidden = true;
       let guard = 0;

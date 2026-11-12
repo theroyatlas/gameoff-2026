@@ -32,3 +32,7 @@ body.board-mode{min-height:100vh;--board-bg:#17100b;--board-ink:#f3dfbb;--board-
 @media(max-width:700px){.board-mode .board-ball-label{font-size:11px;line-height:14px;min-width:16px;min-height:16px}.board-mode #board-stage{height:360px}.board-mode #board-tally .tally-value{font-size:24px}.board-mode #board-stamp{font-size:20px}.board-mode .board-float{font-size:14px}.board-mode .board-tile-label,.board-mode .board-tile-label small{font-size:10px}}
 /* 浮字與蓋章字會疊在亮紙或亮球上：加 3px 夜桌色描邊，對比靠描邊而不是背景。 */
 .board-mode .board-float,.board-mode #board-stamp{-webkit-text-stroke:3px #120b06;paint-order:stroke fill}
+.board-mode #board-card{white-space:pre-line;background:#e8dcc2;color:#2b2118;border:1px solid #cdbb98;padding:8px 10px;font-size:13px;line-height:1.6}
+.board-mode #board-inspect{min-height:3.2em}
+.board-mode #board-inspect-toggle{width:100%;font-size:12px}
+@media(max-width:700px){.board-mode #board-card,.board-mode #board-inspect{grid-column:1/-1}.board-mode #board-inspect-toggle{grid-column:1/-1}}

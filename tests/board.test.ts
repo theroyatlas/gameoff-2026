@@ -83,12 +83,13 @@ describe('棋盤回合', () => {
     expect(g.boss.hp).toBe(C.boss.hp - 2 * C.damage.burstExtra * multiplier);
     expect(g.sameFrequencyMultiplier(g.makeBall(50, 50, 1))).toBe(C.resonance.sameFrequencyMultiplier);
   });
-  it('EVENT 不改球、材質或 RNG；只走顯示階段', () => {
+  it('EVENT 在落格時抽一張牌並消耗 seeded RNG', () => {
     const g = active(); g.rollBoard(); g.board!.position = (3 - g.board!.die + 14) % 14;
     const state = g.randomState;
     while (g.board!.phase !== 'effect') g.step();
     expect(g.board!.position).toBe(3); expect(g.board!.tuneMaterial).toBeNull();
-    expect(g.balls).toHaveLength(0); expect(g.randomState).toBe(state);
+    expect(g.balls).toHaveLength(0); expect(g.randomState).not.toBe(state);
+    expect(g.board!.cards).toHaveLength(1);
   });
   it('發完 3 發才結算，球還在動最多等 6 秒，Boss 鐘只加一次', () => {
     const g = active(); shootTurn(g);
