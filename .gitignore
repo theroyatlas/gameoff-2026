@@ -32,11 +32,8 @@ artifacts/3d-smooth/*.cpuprofile
 artifacts/3d-smooth/*.png
 artifacts/3d-smooth/*.webm
 artifacts/3d-smooth/video/
-<<<<<<< HEAD
 
 drafts/3d-web/dist-board/
 drafts/3d-web/dist-board2/
-=======
 drafts/3d-web/dist-style1/
 artifacts/3d-style1/
->>>>>>> art/style1

@@ -13,13 +13,10 @@
     "verify:polish": "node verify-polish.mjs",
     "build:smooth": "vite build --outDir dist-smooth --emptyOutDir",
     "verify:smooth": "node verify-smooth.mjs",
-<<<<<<< HEAD
     "build:board": "vite build --outDir dist-board --emptyOutDir",
-    "verify:board": "node verify-board.mjs"
-=======
+    "verify:board": "node verify-board.mjs",
     "build:style1": "vite build --outDir dist-style1 --emptyOutDir",
     "verify:style1": "node verify-style1.mjs"
->>>>>>> art/style1
   },
   "dependencies": {
     "three": "0.180.0"
