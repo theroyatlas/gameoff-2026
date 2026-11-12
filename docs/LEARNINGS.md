@@ -72,4 +72,4 @@ date: 2026-11-12
 - 小浮點差不等於小結果差。Node／Edge 各跑相同 10 seeds × 3 bots，9/30 組勝負不同，雖然總勝局只差 8 對 7。必須同時報總體勝率與配對分歧率。
 - 視覺變體應在相同盤面上比對；預設與凍結建置做 PNG 位元組比對，規則層用完整快照比對，兩種證據分開保留。
 
-證據：`D:\Projects\Active\competitions\game-off-2026\review-closeup-ab\DETERMINISM.md`、`runtime-comparison.json`、`cross-runtime-bots.csv`、`capture.json`、`browser-verification.json`。
+證據：`..\review-closeup-ab\DETERMINISM.md`、`runtime-comparison.json`、`cross-runtime-bots.csv`、`capture.json`、`browser-verification.json`。

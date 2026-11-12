@@ -12,11 +12,11 @@
 
 | 截圖 | 完整路徑 |
 |---|---|
-| A 桌面 1280×720 | `D:\Projects\Active\competitions\game-off-2026\review-closeup-ab\desktop-fieldA.png` |
-| B 桌面 1280×720 | `D:\Projects\Active\competitions\game-off-2026\review-closeup-ab\desktop-fieldB.png` |
-| A 手機 390×844 | `D:\Projects\Active\competitions\game-off-2026\review-closeup-ab\mobile-fieldA.png` |
-| B 手機 390×844 | `D:\Projects\Active\competitions\game-off-2026\review-closeup-ab\mobile-fieldB.png` |
-| 整桌對照 1280×720 | `D:\Projects\Active\competitions\game-off-2026\review-closeup-ab\desktop-table.png` |
+| A 桌面 1280×720 | `..\review-closeup-ab\desktop-fieldA.png` |
+| B 桌面 1280×720 | `..\review-closeup-ab\desktop-fieldB.png` |
+| A 手機 390×844 | `..\review-closeup-ab\mobile-fieldA.png` |
+| B 手機 390×844 | `..\review-closeup-ab\mobile-fieldB.png` |
+| 整桌對照 1280×720 | `..\review-closeup-ab\desktop-table.png` |
 
 球在中央的投影直徑：整桌桌面 13.7 px；A 桌面 38.1 px／手機 26.2 px；B 桌面 42.4 px／手機 22.8 px。這是呈現量測，不是物理尺寸。
 
@@ -32,10 +32,10 @@
 
 ### 建置與凍結檔
 
-- 建置：`D:\Projects\Active\competitions\game-off-2026\g4-resonance\drafts\3d-web\dist-closeup-ab\index.html`。
+- 建置：`drafts\3d-web\dist-closeup-ab\index.html`。
 - SHA-256：`2e1204ecb9ce800efaedb526f843db0985c5bb768eae951120f9de2b074e2c61`。
 - 只執行 `npm --prefix drafts/3d-web run build:closeup-ab`，沒有重建任何凍結資料夾。
-- 13 個指定凍結檔，開工雜湊全部符合指定值，收工全數與開工逐字相同。證據：`D:\Projects\Active\competitions\game-off-2026\review-closeup-ab\frozen-start.json`、`frozen-end.json`。
+- 13 個指定凍結檔，開工雜湊全部符合指定值，收工全數與開工逐字相同。證據：`..\review-closeup-ab\frozen-start.json`、`frozen-end.json`。
 - `dist-art-round2` 保持未追蹤，沒有刪除、移動或加入 commit。
 
 ### 其他工作階段的分支變動

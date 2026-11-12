@@ -1,7 +1,7 @@
 # 共振桌跨執行環境重播調查
 
 日期：2026-11-12。規則基準：9595b42e47c75ace0c1ec4c7cd5514c791fa4c7b。
-資料目錄：`D:\Projects\Active\competitions\game-off-2026\review-closeup-ab`。
+資料目錄：`..\review-closeup-ab`。
 
 ## 已查證
 
@@ -14,7 +14,7 @@
   - Edge：`329.7213270317436`
   - Edge − Node：`-5.684341886080802e-14`
 - 這個 tick 落在 SURGE：`Game.advanceBoard()` → `applyBoardTile()` → `wake(b, true)`。
-- 原始碼位置：`D:\Projects\Active\competitions\game-off-2026\g4-resonance\src\game.ts` 第 63–67 行；差異來自 `b.vy = Math.sin(a) * nextSpeed`。
+- 原始碼位置：`src\game.ts` 第 63–67 行；差異來自 `b.vy = Math.sin(a) * nextSpeed`。
 
 ### 最小運算證據
 
@@ -62,7 +62,7 @@ Edge 在 tick 18037 已完成第 13 回合、進入 `roll`；Node 輸入紀錄�
 
 ### 原始證據與重跑
 
-以下檔案全在 `D:\Projects\Active\competitions\game-off-2026\review-closeup-ab\`：
+以下檔案全在 `..\review-closeup-ab\`：
 
 - `node-tick-hashes.csv`、`edge-tick-hashes.csv`：逐 tick 摘要。演算法為 FNV-1a32＋DJB2-32；完整目前狀態加只追加歷史的滾動摘要，沒有捨去浮點小數。這是定位用摘要，並非密碼學碰撞證明；首個差異另外直接比較完整 JSON。
 - `first-divergence-states.json`：tick 8411、8412 的 Node／Edge 完整狀態。
@@ -73,7 +73,7 @@ Edge 在 tick 18037 已完成第 13 回合、進入 `roll`；Node 輸入紀錄�
 - `cross-runtime-bots.csv`、`cross-runtime-bots.json`：30 組配對勝負。
 - `determinism-probe.js`、`determinism-probe.html`：本輪兩環境使用的同一份打包診斷程式，不連外。
 
-在 `D:\Projects\Active\competitions\game-off-2026\g4-resonance` 執行：
+在 `.`（repo 根目錄） 執行：
 
 ```powershell
 node tools\compare-runtimes.mjs 20261113 lazy
