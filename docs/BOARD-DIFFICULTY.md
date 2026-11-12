@@ -78,7 +78,7 @@
 - ObservedGame 先呼叫原公開方法再記錄出怪。所有新增控制及統計都在 tools；src 和 drafts\3d-web 沒有任何修改，也沒有新增讀取用 export。
 
 ```powershell
-Set-Location -LiteralPath 'D:\Projects\Active\competitions\game-off-2026\g4-resonance'
+Set-Location -LiteralPath '.'
 git switch analysis/board-difficulty
 npm run sim:board-difficulty -- --count 30 --budget-seconds 2700
 python tools\verify-board-difficulty.py
@@ -90,7 +90,7 @@ git switch main
 
 腳本預設本次 2026-11-11 17:00（+08:00）停止線。日後另行授權重跑時，完整模擬命令可用 `npm run sim:board-difficulty -- --count 30 --budget-seconds 2700 --stop-at ((Get-Date).AddMinutes(45).ToString("o"))`。報表與驗證可隨時重跑，不會重跑模擬。原來源命令 `npm run sim:difficulty -- --count 30 --budget-seconds 1500 --no-plot` 也保留，只執行即時量測並輸出至 artifacts\difficulty。
 
-原始資料目錄：`D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\board-difficulty`（本機 git exclude，沒有 commit）。逐局 `summary.json`／`runs.csv`，執行 log `run.log`，獨立驗證 `verification.json`。
+原始資料目錄：`./artifacts/board-difficulty`（本機 git exclude，沒有 commit）。逐局 `summary.json`／`runs.csv`，執行 log `run.log`，獨立驗證 `verification.json`。
 
 ## 已查證：驗證、資源與保護邊界
 
@@ -116,12 +116,12 @@ git switch main
 
 | 完整 Windows 絕對路徑 | 開工 | 收工前 |
 |---|---|---|
-| `D:\Projects\Active\competitions\game-off-2026\g4-resonance\dist\index.html` | `495c5d39242dcd6d317ca8812273c2e33b33a0b9d28bac864de8f0bec32a5a83` | `495c5d39242dcd6d317ca8812273c2e33b33a0b9d28bac864de8f0bec32a5a83` |
-| `D:\Projects\Active\competitions\game-off-2026\g4-resonance\drafts\3d-web\dist\index.html` | `2b6bc04b03331c77c919acd9de9f8229a01d204ab58aea3fbe723b2f386f008b` | `2b6bc04b03331c77c919acd9de9f8229a01d204ab58aea3fbe723b2f386f008b` |
-| `D:\Projects\Active\competitions\game-off-2026\g4-resonance\drafts\3d-web\dist-parity\index.html` | `e146515bbab83ce7280b4f5d6cf68ceec2c030c3bbd4b8a03712d2a0a9a14dca` | `e146515bbab83ce7280b4f5d6cf68ceec2c030c3bbd4b8a03712d2a0a9a14dca` |
-| `D:\Projects\Active\competitions\game-off-2026\g4-resonance\drafts\3d-web\dist-polish\index.html` | `2c7ed9b4f7c39ae3e93fae9d01bc8b3e7018f924574f34722453bcf3ff1a6db9` | `2c7ed9b4f7c39ae3e93fae9d01bc8b3e7018f924574f34722453bcf3ff1a6db9` |
-| `D:\Projects\Active\competitions\game-off-2026\g4-resonance\drafts\3d-web\dist-smooth\index.html` | `be355e0081647fd332141a77e4530cda93736ac663b80d0540e285627170652d` | `be355e0081647fd332141a77e4530cda93736ac663b80d0540e285627170652d` |
-| `D:\Projects\Active\competitions\game-off-2026\g4-resonance\drafts\3d-web\dist-style1\index.html` | `95f7f23f36882b890c2e14d4900407c68844c81f7340ba5f0a8e815bc7458880` | `95f7f23f36882b890c2e14d4900407c68844c81f7340ba5f0a8e815bc7458880` |
-| `D:\Projects\Active\competitions\game-off-2026\g4-resonance\drafts\3d-web\dist-board\index.html` | `eb42325d409582076a9ae61d7bab7998c91f1945e40f195d6dc8a45ea96a5624` | `eb42325d409582076a9ae61d7bab7998c91f1945e40f195d6dc8a45ea96a5624` |
+| `./dist/index.html` | `495c5d39242dcd6d317ca8812273c2e33b33a0b9d28bac864de8f0bec32a5a83` | `495c5d39242dcd6d317ca8812273c2e33b33a0b9d28bac864de8f0bec32a5a83` |
+| `./drafts/3d-web/dist/index.html` | `2b6bc04b03331c77c919acd9de9f8229a01d204ab58aea3fbe723b2f386f008b` | `2b6bc04b03331c77c919acd9de9f8229a01d204ab58aea3fbe723b2f386f008b` |
+| `./drafts/3d-web/dist-parity/index.html` | `e146515bbab83ce7280b4f5d6cf68ceec2c030c3bbd4b8a03712d2a0a9a14dca` | `e146515bbab83ce7280b4f5d6cf68ceec2c030c3bbd4b8a03712d2a0a9a14dca` |
+| `./drafts/3d-web/dist-polish/index.html` | `2c7ed9b4f7c39ae3e93fae9d01bc8b3e7018f924574f34722453bcf3ff1a6db9` | `2c7ed9b4f7c39ae3e93fae9d01bc8b3e7018f924574f34722453bcf3ff1a6db9` |
+| `./drafts/3d-web/dist-smooth/index.html` | `be355e0081647fd332141a77e4530cda93736ac663b80d0540e285627170652d` | `be355e0081647fd332141a77e4530cda93736ac663b80d0540e285627170652d` |
+| `./drafts/3d-web/dist-style1/index.html` | `95f7f23f36882b890c2e14d4900407c68844c81f7340ba5f0a8e815bc7458880` | `95f7f23f36882b890c2e14d4900407c68844c81f7340ba5f0a8e815bc7458880` |
+| `./drafts/3d-web/dist-board/index.html` | `eb42325d409582076a9ae61d7bab7998c91f1945e40f195d6dc8a45ea96a5624` | `eb42325d409582076a9ae61d7bab7998c91f1945e40f195d6dc8a45ea96a5624` |
 
-報告生成時間：2026-11-11T15:24:50+08:00。切回 main 後的再驗證另存 `D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\board-difficulty\hashes-final.json`。
+報告生成時間：2026-11-11T15:24:50+08:00。切回 main 後的再驗證另存 `./artifacts/board-difficulty/hashes-final.json`。

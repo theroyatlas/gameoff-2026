@@ -13,7 +13,7 @@
 | 實作一致性 | 3/4 | 固定斜俯視、四角籠靶、球號、核心、發射座與相變網齊備；材質與模型仍簡化 |
 | 合計 | 14/20 | 僅代表此原型自查，不代表正式發行品質 |
 
-偵測器：針對 index.html、main.ts、style.css 執行一次，輸出為空 findings 陣列，見 `D:\Projects\Active\competitions\game-off-2026\g4-resonance\drafts\3d-web\evidence\impeccable-detect.json`。這不能代替畫面判斷。
+偵測器：針對 index.html、main.ts、style.css 執行一次，輸出為空 findings 陣列，見 `./drafts/3d-web/evidence/impeccable-detect.json`。這不能代替畫面判斷。
 
 ## 一輪修正與確認
 

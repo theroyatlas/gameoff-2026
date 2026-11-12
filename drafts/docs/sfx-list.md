@@ -2,7 +2,7 @@
 
 ## 已查證：目前的合成音效
 
-依據 `D:\Projects\Active\competitions\game-off-2026\g4-resonance\src\audio.ts` 的 Sound.play、`D:\Projects\Active\competitions\game-off-2026\g4-resonance\src\game.ts` 的 Effect 與觸發點，以及 `D:\Projects\Active\competitions\game-off-2026\g4-resonance\src\main.ts` 的 feedback。以下完整列出八種有合成預設的事件。
+依據 `./src/audio.ts` 的 Sound.play、`./src/game.ts` 的 Effect 與觸發點，以及 `./src/main.ts` 的 feedback。以下完整列出八種有合成預設的事件。
 
 所有聲音共用 6 ms 起音、指數衰減、低通、總音量與壓縮器；最多同時 18 聲部。第一次使用者手勢才啟用音訊。相變期間以正弦波取代原波形、頻率乘 1.5、低通由 2400 Hz 改為 4200 Hz。一般掃頻降到起始頻率的 0.65 倍；死亡降至 0.22 倍；相變開始上升至 4 倍。最低終點為 30 Hz。
 

@@ -5,7 +5,7 @@
 ## 已查證：完成與限制
 
 - 自適應畫質本來就在基底中，沒有重複併入。先對凍結入口做 CPU profiler／Performance trace，再針對實測繪圖提交成本合批靜態同材質零件。
-- 每幀 draw call 約 446.85 → 239.94，frame callback 平均 16.38 → 13.38ms。方法、原始檔與限制詳 `D:\Projects\Active\competitions\game-off-2026\g4-resonance\drafts\3d-web\PERFORMANCE.md`。
+- 每幀 draw call 約 446.85 → 239.94，frame callback 平均 16.38 → 13.38ms。方法、原始檔與限制詳 `./drafts/3d-web/PERFORMANCE.md`。
 - 球號使用 26 CSS px 圓牌、30px 中心間距排除重疊，共振／近期碰撞優先；不移動球、不縮字。策略理由在 NOTES.md 三行說明。
 - 拖尾預設關閉，只有 `?trail=1` 才開啟實驗效果；低畫質與減少動態仍停用。本批沒有做拖尾美術驗收，正式影像及 FPS 都關閉拖尾。
 - `npm test` 6 檔 59/59 通過；`npm run build:polish` TypeScript noEmit 與 Vite 通過，只輸出 dist-polish。
@@ -28,18 +28,18 @@ WebGL 禁用、renderer 初始化例外與 context 遺失三例皆通過退回�
 
 ## 新入口與影像
 
-入口：`D:\Projects\Active\competitions\game-off-2026\g4-resonance\drafts\3d-web\dist-polish\index.html`。
+入口：`./drafts/3d-web/dist-polish/index.html`。
 
 SHA-256：`2c7ed9b4f7c39ae3e93fae9d01bc8b3e7018f924574f34722453bcf3ff1a6db9`。
 
-- 桌面密集畫面：`D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\3d-polish\dense-desktop.png`
-- 手機 390×844：`D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\3d-polish\dense-mobile.png`
-- 桌面相變：`D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\3d-polish\shift-desktop.png`
-- 勝局 PNG：`D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\3d-polish\won-desktop.png`
-- 敗局 PNG：`D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\3d-polish\lost-desktop.png`
-- 敗局完整錄影：`D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\3d-polish\lost-full.webm`
-- 勝局完整錄影：`D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\3d-polish\won-full.webm`
-- 12 格總覽：`D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\3d-polish\sheet.png`
+- 桌面密集畫面：`./artifacts/3d-polish/dense-desktop.png`
+- 手機 390×844：`./artifacts/3d-polish/dense-mobile.png`
+- 桌面相變：`./artifacts/3d-polish/shift-desktop.png`
+- 勝局 PNG：`./artifacts/3d-polish/won-desktop.png`
+- 敗局 PNG：`./artifacts/3d-polish/lost-desktop.png`
+- 敗局完整錄影：`./artifacts/3d-polish/lost-full.webm`
+- 勝局完整錄影：`./artifacts/3d-polish/won-full.webm`
+- 12 格總覽：`./artifacts/3d-polish/sheet.png`
 
 `dist-polish` 已加入 .gitignore；產物目錄列入本機 .git/info/exclude。另以本機排除規則保留建置目錄，讓切回 main 後工作樹仍乾淨。安全命令見 NOTES.md，不可執行其他輸出位置的 build。
 
@@ -47,9 +47,9 @@ SHA-256：`2c7ed9b4f7c39ae3e93fae9d01bc8b3e7018f924574f34722453bcf3ff1a6db9`。
 
 | 完整路徑 | 開工 SHA-256 | 驗收 SHA-256 |
 |---|---|---|
-| D:\Projects\Active\competitions\game-off-2026\g4-resonance\dist\index.html | 495c5d39242dcd6d317ca8812273c2e33b33a0b9d28bac864de8f0bec32a5a83 | 495c5d39242dcd6d317ca8812273c2e33b33a0b9d28bac864de8f0bec32a5a83 |
-| D:\Projects\Active\competitions\game-off-2026\g4-resonance\drafts\3d-web\dist\index.html | 2b6bc04b03331c77c919acd9de9f8229a01d204ab58aea3fbe723b2f386f008b | 2b6bc04b03331c77c919acd9de9f8229a01d204ab58aea3fbe723b2f386f008b |
-| D:\Projects\Active\competitions\game-off-2026\g4-resonance\drafts\3d-web\dist-parity\index.html | e146515bbab83ce7280b4f5d6cf68ceec2c030c3bbd4b8a03712d2a0a9a14dca | e146515bbab83ce7280b4f5d6cf68ceec2c030c3bbd4b8a03712d2a0a9a14dca |
+| ./dist/index.html | 495c5d39242dcd6d317ca8812273c2e33b33a0b9d28bac864de8f0bec32a5a83 | 495c5d39242dcd6d317ca8812273c2e33b33a0b9d28bac864de8f0bec32a5a83 |
+| ./drafts/3d-web/dist/index.html | 2b6bc04b03331c77c919acd9de9f8229a01d204ab58aea3fbe723b2f386f008b | 2b6bc04b03331c77c919acd9de9f8229a01d204ab58aea3fbe723b2f386f008b |
+| ./drafts/3d-web/dist-parity/index.html | e146515bbab83ce7280b4f5d6cf68ceec2c030c3bbd4b8a03712d2a0a9a14dca | e146515bbab83ce7280b4f5d6cf68ceec2c030c3bbd4b8a03712d2a0a9a14dca |
 
 沒有執行重建或寫入上述三個檔案的命令。
 

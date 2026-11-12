@@ -38,10 +38,10 @@
 - 直接呼叫未修改的 tools/board-difficulty-sim.ts simulateBoard；它重用 tools/difficulty-sim.ts 的 bot。固定 dt=1/120 秒、射擊間隔 2 秒、自然擲骰與結算，每局最多 600 模擬秒。
 - 只有 tools/run-board-waves.mjs 在記憶體覆寫 CONFIG.board.waveEveryTurns，完成後還原。每次執行比對全部 src 與兩份 bot 模組，除允許重跑時來源 config 的該數字外，必須等同基準。這次實際 src 沒有任何改動。
 - firstChain 為首次 depth >= 2 的模擬秒數，無事件留空；firstChainTurn 另列回合。deepestChain 為整局最大事件深度。
-- 逐局 CSV：`D:\Projects\Active\competitions\game-off-2026\review-board2\runs-waves.csv`；270 筆資料＋1 列欄名。包含基準值 2 的 90 局與新測值 3、4 的 180 局，provenance 區分來源。
+- 逐局 CSV：`../review-board2/runs-waves.csv`；270 筆資料＋1 列欄名。包含基準值 2 的 90 局與新測值 3、4 的 180 局，provenance 區分來源。
 - CSV SHA-256：`55ae0f6f8511b26f81f8fcdf6d4fda1149b0ee9bcf951d646cb24d060e07378e`。
-- 完整逐局 JSON（含輸入、擲骰、波次、曲線與終局 snapshot）：`D:\Projects\Active\competitions\game-off-2026\review-board2\waves-summary.json`。SHA-256：`84e15baf53b5028a5f360112d891b9baf89e9742be6f92d2931e5bf3f8c21ea5`。
-- 引用基準：`D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\board-difficulty\summary.json`。SHA-256：`d80f5825728153affb0553afb8bc1ec7b9f54f03a8feee192d506a9eed629657`，與 a90eb9c 報告記錄一致。
+- 完整逐局 JSON（含輸入、擲骰、波次、曲線與終局 snapshot）：`../review-board2/waves-summary.json`。SHA-256：`84e15baf53b5028a5f360112d891b9baf89e9742be6f92d2931e5bf3f8c21ea5`。
+- 引用基準：`./artifacts/board-difficulty/summary.json`。SHA-256：`d80f5825728153affb0553afb8bc1ec7b9f54f03a8feee192d506a9eed629657`，與 a90eb9c 報告記錄一致。
 - CSV、JSON、執行 log 與驗證輸出皆在 repo 外，不 commit。
 
 ## 已查證：驗證結果
@@ -51,19 +51,19 @@
 - Python 獨立核對 3965 項通過（樣本、CSV、基準逐局引用、勝敗、中位數與停止決策）；既有完整回合驗證器對 3 為 79573 項、對 4 為 78627 項，全部通過。
 - 回合驗證器的即時資料為引用既有 90 局，沒有新跑即時模擬；它們逐局等同基準原始 JSON。不要把這項資料核對稱為新跑 90 局即時模式。
 - BLOCKED 路徑沒有 build、沒有 dist-board2、沒有瀏覽器整局驗證或新截圖；console/page error 數量因此未量測，不能填 0。
-- 未產生檔案：`D:\Projects\Active\competitions\game-off-2026\g4-resonance\drafts\3d-web\dist-board2\index.html`；SHA-256 不適用。
-- 未產生截圖：`D:\Projects\Active\competitions\game-off-2026\review-board2\board2-desktop.png`；SHA-256 不適用。
-- 測試 log：`D:\Projects\Active\competitions\game-off-2026\review-board2\npm-test.log`；資料驗證：`D:\Projects\Active\competitions\game-off-2026\review-board2\waves-verification.json`。
+- 未產生檔案：`./drafts/3d-web/dist-board2/index.html`；SHA-256 不適用。
+- 未產生截圖：`../review-board2/board2-desktop.png`；SHA-256 不適用。
+- 測試 log：`../review-board2/npm-test.log`；資料驗證：`../review-board2/waves-verification.json`。
 
 ## 已查證：完整重跑指令
 
 在相同本機資料仍存在、已授權重跑時執行。日後重跑會更新 repo 外量測輸出；程式拒絕不符雜湊的基準資料。
 
 ```powershell
-Set-Location -LiteralPath 'D:\Projects\Active\competitions\game-off-2026\g4-resonance'
+Set-Location -LiteralPath '.'
 git switch tune/board-waves
 node --max-old-space-size=2048 tools/run-board-waves.mjs --budget-seconds 1800 --stop-at ((Get-Date).AddMinutes(30).ToString('o'))
-python tools/verify-board-waves.py --directory 'D:\Projects\Active\competitions\game-off-2026\review-board2'
+python tools/verify-board-waves.py --directory '../review-board2'
 $env:NODE_OPTIONS='--max-old-space-size=1024'
 npm test -- --maxWorkers=1 --no-file-parallelism
 npx tsc --noEmit
@@ -77,7 +77,7 @@ git status --porcelain=v1 # 預期無輸出
 本次實際量測命令（停止線早於指定截止）：
 
 ```powershell
-Set-Location -LiteralPath 'D:\Projects\Active\competitions\game-off-2026\g4-resonance'
+Set-Location -LiteralPath '.'
 node --max-old-space-size=2048 tools/run-board-waves.mjs --budget-seconds 1800 --stop-at '2026-11-11T16:05:00+08:00'
 ```
 
@@ -96,14 +96,14 @@ node --max-old-space-size=2048 tools/run-board-waves.mjs --budget-seconds 1800 -
 
 | 完整 Windows 路徑 | 開工 SHA-256 | 結束核對 SHA-256 |
 |---|---|---|
-| `D:\Projects\Active\competitions\game-off-2026\g4-resonance\dist\index.html` | `495c5d39242dcd6d317ca8812273c2e33b33a0b9d28bac864de8f0bec32a5a83` | `495c5d39242dcd6d317ca8812273c2e33b33a0b9d28bac864de8f0bec32a5a83` |
-| `D:\Projects\Active\competitions\game-off-2026\g4-resonance\drafts\3d-web\dist\index.html` | `2b6bc04b03331c77c919acd9de9f8229a01d204ab58aea3fbe723b2f386f008b` | `2b6bc04b03331c77c919acd9de9f8229a01d204ab58aea3fbe723b2f386f008b` |
-| `D:\Projects\Active\competitions\game-off-2026\g4-resonance\drafts\3d-web\dist-parity\index.html` | `e146515bbab83ce7280b4f5d6cf68ceec2c030c3bbd4b8a03712d2a0a9a14dca` | `e146515bbab83ce7280b4f5d6cf68ceec2c030c3bbd4b8a03712d2a0a9a14dca` |
-| `D:\Projects\Active\competitions\game-off-2026\g4-resonance\drafts\3d-web\dist-polish\index.html` | `2c7ed9b4f7c39ae3e93fae9d01bc8b3e7018f924574f34722453bcf3ff1a6db9` | `2c7ed9b4f7c39ae3e93fae9d01bc8b3e7018f924574f34722453bcf3ff1a6db9` |
-| `D:\Projects\Active\competitions\game-off-2026\g4-resonance\drafts\3d-web\dist-smooth\index.html` | `be355e0081647fd332141a77e4530cda93736ac663b80d0540e285627170652d` | `be355e0081647fd332141a77e4530cda93736ac663b80d0540e285627170652d` |
-| `D:\Projects\Active\competitions\game-off-2026\g4-resonance\drafts\3d-web\dist-style1\index.html` | `95f7f23f36882b890c2e14d4900407c68844c81f7340ba5f0a8e815bc7458880` | `95f7f23f36882b890c2e14d4900407c68844c81f7340ba5f0a8e815bc7458880` |
-| `D:\Projects\Active\competitions\game-off-2026\g4-resonance\drafts\3d-web\dist-board\index.html` | `eb42325d409582076a9ae61d7bab7998c91f1945e40f195d6dc8a45ea96a5624` | `eb42325d409582076a9ae61d7bab7998c91f1945e40f195d6dc8a45ea96a5624` |
-| `D:\Projects\Active\competitions\game-off-2026\g4-resonance\drafts\3d-web\dist-perf\index.html` | `79c8c24a14a1d00431388a972921206b5bb08b5b0630041e646e12ac9d551eb4` | `79c8c24a14a1d00431388a972921206b5bb08b5b0630041e646e12ac9d551eb4` |
+| `./dist/index.html` | `495c5d39242dcd6d317ca8812273c2e33b33a0b9d28bac864de8f0bec32a5a83` | `495c5d39242dcd6d317ca8812273c2e33b33a0b9d28bac864de8f0bec32a5a83` |
+| `./drafts/3d-web/dist/index.html` | `2b6bc04b03331c77c919acd9de9f8229a01d204ab58aea3fbe723b2f386f008b` | `2b6bc04b03331c77c919acd9de9f8229a01d204ab58aea3fbe723b2f386f008b` |
+| `./drafts/3d-web/dist-parity/index.html` | `e146515bbab83ce7280b4f5d6cf68ceec2c030c3bbd4b8a03712d2a0a9a14dca` | `e146515bbab83ce7280b4f5d6cf68ceec2c030c3bbd4b8a03712d2a0a9a14dca` |
+| `./drafts/3d-web/dist-polish/index.html` | `2c7ed9b4f7c39ae3e93fae9d01bc8b3e7018f924574f34722453bcf3ff1a6db9` | `2c7ed9b4f7c39ae3e93fae9d01bc8b3e7018f924574f34722453bcf3ff1a6db9` |
+| `./drafts/3d-web/dist-smooth/index.html` | `be355e0081647fd332141a77e4530cda93736ac663b80d0540e285627170652d` | `be355e0081647fd332141a77e4530cda93736ac663b80d0540e285627170652d` |
+| `./drafts/3d-web/dist-style1/index.html` | `95f7f23f36882b890c2e14d4900407c68844c81f7340ba5f0a8e815bc7458880` | `95f7f23f36882b890c2e14d4900407c68844c81f7340ba5f0a8e815bc7458880` |
+| `./drafts/3d-web/dist-board/index.html` | `eb42325d409582076a9ae61d7bab7998c91f1945e40f195d6dc8a45ea96a5624` | `eb42325d409582076a9ae61d7bab7998c91f1945e40f195d6dc8a45ea96a5624` |
+| `./drafts/3d-web/dist-perf/index.html` | `79c8c24a14a1d00431388a972921206b5bb08b5b0630041e646e12ac9d551eb4` | `79c8c24a14a1d00431388a972921206b5bb08b5b0630041e646e12ac9d551eb4` |
 
 ## 推論
 

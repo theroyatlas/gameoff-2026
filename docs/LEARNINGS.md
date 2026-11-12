@@ -8,7 +8,7 @@ date: 2026-11-10
 
 依 chainId 聚合不等於短時間爆發；應保留事件跨度與最長間隔。連鎖數值、瀏覽器可見回饋、真人爽感是三個不同驗收層次。提高場邊失敗壓力，可能降低專注中央目標策略的勝率，不能只看全體平均。
 
-證據：D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\balance-before.json、D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\balance-after.json、D:\Projects\Active\competitions\game-off-2026\g4-resonance\REPORT.md。
+證據：./artifacts/balance-before.json、./artifacts/balance-after.json、./REPORT.md。
 
 ## 動態驗收與主題切換
 
@@ -20,7 +20,7 @@ date: 2026-11-11
 - CSS 變數定義在 body 時，從根元素繼承的 color 已經完成計算，不會隨 body 變數重新求值。主題容器必須明確套用 color 與 background。用明暗主題的開始畫面和手機頁尾一起檢查才能發現。
 - 三十秒怪物平均數以尚在遊戲內的實際 tick 加權，並列出存活局數；終局後不補零，避免把提早獲勝誤讀成後期更容易。
 
-證據：D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\motion\evidence.json、D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\balance-morning.json。
+證據：./artifacts/motion/evidence.json、./artifacts/balance-morning.json。
 
 ## 3D 長幀與量測邊界
 
@@ -33,7 +33,7 @@ date: 2026-11-11
 - 材質預熱要經實際離屏 composer 管線，並保留代表材質以維持 program cache；compile 不能自動代表所有後續變體都不會再編譯。合成降級測試仍有 1 個 link，須如實列出。
 - 自然輸入的微小時序差異會改變相變時機與球數；同機三輪中位數是本機體驗比較，不能直接稱為固定負載的因果實驗。保留每輪與所有長幀，不刪異常輪次。
 
-證據：D:\Projects\Active\competitions\game-off-2026\g4-resonance\drafts\3d-web\PERFORMANCE.md；原始資料在 D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\3d-smooth。
+證據：./drafts/3d-web/PERFORMANCE.md；原始資料在 ./artifacts/3d-smooth。
 
 ## 共用規則的模式隔離
 
@@ -46,4 +46,4 @@ date: 2026-11-11
 - 單一離線 HTML 同時包含兩個入口時，以明確啟動函式隔離初始化，避免同頁建立兩套 renderer；灰盒 CSS 限定模式 class，防止改動預設畫面。
 - 種子確定性仍需要相同操作與 tick 時序。瀏覽器自然操作的延遲會改變碰撞結果，不能把兩次不同時序的自動點擊當成相同輸入。
 
-證據：`D:\Projects\Active\competitions\game-off-2026\g4-resonance\tests\realtime-baseline.test.ts`、`D:\Projects\Active\competitions\game-off-2026\g4-resonance\drafts\3d-web\BOARD-NOTES.md`；量測在 repo 外 `D:\Projects\Active\competitions\game-off-2026\review-board-graybox\verification.json`。
+證據：`./tests/realtime-baseline.test.ts`、`./drafts/3d-web/BOARD-NOTES.md`；量測在 repo 外 `../review-board-graybox/verification.json`。

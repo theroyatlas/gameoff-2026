@@ -1,10 +1,10 @@
 # 共振桌：操作與驗證
 
-離線入口：`D:\Projects\Active\competitions\game-off-2026\g4-resonance\drafts\3d-web\dist-polish\index.html`。
+離線入口：`./drafts/3d-web/dist-polish/index.html`。
 
 按開始後，從下方黃銅發射座朝場內拖拉並放開；或方向鍵瞄準、空白鍵發射。Boss 歸零獲勝，怪物超過十隻失敗；沒有球用完的敗局條件。重來回到開始畫面。第一次操作啟動音效。
 
-規則、波次、傷害、種子與音效仍由共用 Game／Sound 提供，`D:\Projects\Active\competitions\game-off-2026\g4-resonance\src` 沒有修改。
+規則、波次、傷害、種子與音效仍由共用 Game／Sound 提供，`./src` 沒有修改。
 
 ## 球號策略（三行）
 
@@ -22,10 +22,10 @@
 
 ## 安全重現
 
-切至 `3d/polish`，在 `D:\Projects\Active\competitions\game-off-2026\g4-resonance` 執行 `npm test`、`npm run build:polish`、`npm run verify:polish`。
+切至 `3d/polish`，在 `.` 執行 `npm test`、`npm run build:polish`、`npm run verify:polish`。
 
-其餘檢查在 `D:\Projects\Active\competitions\game-off-2026\g4-resonance\drafts\3d-web` 執行 `node verify-polish-perf.mjs`、`node verify-polish-fallback.mjs`、`node verify-polish-quality.mjs`。效能量測獨立執行，不與其他瀏覽器驗證同時進行。
+其餘檢查在 `./drafts/3d-web` 執行 `node verify-polish-perf.mjs`、`node verify-polish-fallback.mjs`、`node verify-polish-quality.mjs`。效能量測獨立執行，不與其他瀏覽器驗證同時進行。
 
 只能用 `build:polish`；不要執行預設 build、bundle、build:parity 或其他輸出位置的建置。三個凍結 HTML 均不得寫入。
 
-截圖、影片、量測及原始輸入保存在 `D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\3d-polish`，透過本機 Git exclude 排除；新建置目錄列入 .gitignore，不提交大型產物。
+截圖、影片、量測及原始輸入保存在 `./artifacts/3d-polish`，透過本機 Git exclude 排除；新建置目錄列入 .gitignore，不提交大型產物。

@@ -27,9 +27,9 @@
 
 | 現有圖檔 | 建議說明文字 |
 |---|---|
-| `D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\motion\rep\夜光-shift.png` | 「SHIFT：留下的每一顆球，都可能接上這次共振。」建議主圖。 |
-| `D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\motion\rep\紙本-shift.png` | 「紙本風格：共振網串起場上的球，場邊留下連鎖紀錄。」 |
-| `D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\motion\rep\極簡-shift.png` | 「極簡風格：相變時整座場地換色，球的身份號碼仍然保留。」 |
+| `./artifacts/motion/rep/夜光-shift.png` | 「SHIFT：留下的每一顆球，都可能接上這次共振。」建議主圖。 |
+| `./artifacts/motion/rep/紙本-shift.png` | 「紙本風格：共振網串起場上的球，場邊留下連鎖紀錄。」 |
+| `./artifacts/motion/rep/極簡-shift.png` | 「極簡風格：相變時整座場地換色，球的身份號碼仍然保留。」 |
 
 ## AI 使用揭露（草稿）
 

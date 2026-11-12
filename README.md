@@ -1,37 +1,47 @@
-# Resonance
+# 共振桌 · Resonance
 
-用扇形下注發射方向，球透過碰撞累積共振、連鎖爆發與全場相變。規則見 SPEC.md，當次試玩範圍、量測與限制見 REPORT.md。
-
-## 開啟
-
-直接用 Microsoft Edge 開啟 `D:\Projects\Active\competitions\game-off-2026\g4-resonance\dist\index.html`。不需要網路或伺服器。
-
-開發與驗證：
-
-```powershell
-Set-Location 'D:\Projects\Active\competitions\game-off-2026\g4-resonance'
-npm run dev
-npm test
-npm run build
-npm run sim -- --label morning
-npm run smoke
-node scripts/motion.mjs
-```
-
-使用現有 Node.js、npm、Microsoft Edge 與 ffmpeg。測試及錄影只用本機 Edge，不下載瀏覽器；沒有執行時依賴。影片輸出至 `D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\motion`，影片不進版控。
+在手工桌遊風格的 14 格棋盤上擲骰走格、發射球，讓碰撞連成共振並擊破中央 Boss。
 
 ## 怎麼玩
 
-挑選夜光、紙本或極簡，按開始，從下方發射圈朝場內拖拉再放開，力道固定。
-亮圈越強越接近爆發，多球同時共振會自動相變；球停下後仍能被下一球撞醒。
-打空 Boss HP 獲勝，場上怪物超過十隻失敗；方向鍵與空白鍵也能操作，右上可靜音或重來。
+1. 按「開始」，再按「擲骰」；棋子自動順時針走格並結算效果。
+2. 每回合射 3 發。點擊球場，或拖拉後放開來瞄準發射；左右方向鍵瞄準，空白鍵擲骰／發射，也可用方向滑桿與「發射」按鈕。
+3. SURGE 喚醒球並增加震盪；TUNE 強化指定材質；繞過 START 可讓下一回合多射 1 發。EVENT 目前預留。
+4. 射完等待球停下（最多 6 秒），Boss 鐘增加 1；每 3 回合出現下一波怪物。
+5. Boss 血量歸零即勝利；怪物超過 10 隻即失敗。「重來」可用同一種子重新開始。
 
-## 結構
+## 本機執行
 
-- `D:\Projects\Active\competitions\game-off-2026\g4-resonance\src\config.ts`：規則參數。
-- `D:\Projects\Active\competitions\game-off-2026\g4-resonance\src\game.ts`：固定步長、種子亂數、物理、波次、相變與回放事件。
-- `D:\Projects\Active\competitions\game-off-2026\g4-resonance\src\main.ts`：三種風格、輸入與畫面回饋。
-- `D:\Projects\Active\competitions\game-off-2026\g4-resonance\src\audio.ts`：WebAudio 合成音效。
-- `D:\Projects\Active\competitions\game-off-2026\g4-resonance\scripts\balance-sim.ts`：直接執行同一個 Game，兩策略各 40 個種子，每兩秒一發。
+需要 Node.js 與 npm。在 repo 根目錄執行：
 
-相同種子、相同輸入角度與發射 tick 才能重現同一局；真人操作時間不同會造成物理分岔。視覺回饋不消耗遊戲亂數。SHIFT 期間以相同頻率結算，釋放後恢復球原本材質。
+```sh
+npm install
+npm --prefix drafts/3d-web install
+npm run dev
+```
+
+開啟終端顯示的本機網址。測試與正式建置：
+
+```sh
+npm test
+npm run build:main
+```
+
+正式產物為 `drafts/3d-web/dist-main/index.html`，可直接用支援 WebGL 的瀏覽器開啟；建置只寫入 `dist-main/`。音效由首次操作啟動，無外部素材或服務依賴。
+
+## 網址參數
+
+| 參數 | 功能 |
+| --- | --- |
+| 不帶參數、`?mode=board` | 正式棋盤模式 |
+| `?mode=realtime` | 即時模式；持續發射，按時間推進波次 |
+| `?ball=a` / `b` / `c` | 原木紅漆陶土／玻璃鋼黃銅（預設 b）／做舊材質 |
+| `?icon=a` / `b` / `c` | 細墨線（預設 a）／粗筆／印刷卡 |
+| `?light=a` / `b` / `c` | 集中暖光（預設 a）／柔和暖光／低角度暖光 |
+| `?ring=1` | 即時模式顯示外圈；棋盤模式外圈固定存在，包含 `ring=0` |
+
+參數可用 `&` 組合，例如 `?mode=realtime&ball=c&icon=b&light=b&ring=1`。種子從開始畫面輸入；相同種子與相同輸入時序可重現同一局。
+
+## 授權
+
+[MIT](LICENSE) © 2026 theroyatlas。

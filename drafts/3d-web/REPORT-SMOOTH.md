@@ -11,7 +11,7 @@ CPU 4×、新舊各三輪，同機相同操作流程。中位數：
 | 平靜 | 88.25 / 25.73 | 97.42 / 27.31 |
 | 相變 | 80.26 / 17.40 | 94.82 / 19.43 |
 
-兩段 1% low 中位數提高；相變平均中位數高於 65.9。所有正式樣本皆第 0 級、陰影開啟、像素比例 1。六輪全部數字、每一個 >50ms 間隔、逐幀診斷原因與推論邊界在 `D:\Projects\Active\competitions\game-off-2026\g4-resonance\drafts\3d-web\PERFORMANCE.md`，本機副本 `D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\3d-smooth\PERFORMANCE.md`。
+兩段 1% low 中位數提高；相變平均中位數高於 65.9。所有正式樣本皆第 0 級、陰影開啟、像素比例 1。六輪全部數字、每一個 >50ms 間隔、逐幀診斷原因與推論邊界在 `./drafts/3d-web/PERFORMANCE.md`，本機副本 `./artifacts/3d-smooth/PERFORMANCE.md`。
 
 ## 已查證：修正範圍
 
@@ -37,25 +37,25 @@ CPU 4×、新舊各三輪，同機相同操作流程。中位數：
 
 | 完整 Windows 路徑 | 開工 SHA-256 | 收工 SHA-256 |
 |---|---|---|
-| D:\Projects\Active\competitions\game-off-2026\g4-resonance\dist\index.html | 495c5d39242dcd6d317ca8812273c2e33b33a0b9d28bac864de8f0bec32a5a83 | 495c5d39242dcd6d317ca8812273c2e33b33a0b9d28bac864de8f0bec32a5a83 |
-| D:\Projects\Active\competitions\game-off-2026\g4-resonance\drafts\3d-web\dist\index.html | 2b6bc04b03331c77c919acd9de9f8229a01d204ab58aea3fbe723b2f386f008b | 2b6bc04b03331c77c919acd9de9f8229a01d204ab58aea3fbe723b2f386f008b |
-| D:\Projects\Active\competitions\game-off-2026\g4-resonance\drafts\3d-web\dist-parity\index.html | e146515bbab83ce7280b4f5d6cf68ceec2c030c3bbd4b8a03712d2a0a9a14dca | e146515bbab83ce7280b4f5d6cf68ceec2c030c3bbd4b8a03712d2a0a9a14dca |
-| D:\Projects\Active\competitions\game-off-2026\g4-resonance\drafts\3d-web\dist-polish\index.html | 2c7ed9b4f7c39ae3e93fae9d01bc8b3e7018f924574f34722453bcf3ff1a6db9 | 2c7ed9b4f7c39ae3e93fae9d01bc8b3e7018f924574f34722453bcf3ff1a6db9 |
+| ./dist/index.html | 495c5d39242dcd6d317ca8812273c2e33b33a0b9d28bac864de8f0bec32a5a83 | 495c5d39242dcd6d317ca8812273c2e33b33a0b9d28bac864de8f0bec32a5a83 |
+| ./drafts/3d-web/dist/index.html | 2b6bc04b03331c77c919acd9de9f8229a01d204ab58aea3fbe723b2f386f008b | 2b6bc04b03331c77c919acd9de9f8229a01d204ab58aea3fbe723b2f386f008b |
+| ./drafts/3d-web/dist-parity/index.html | e146515bbab83ce7280b4f5d6cf68ceec2c030c3bbd4b8a03712d2a0a9a14dca | e146515bbab83ce7280b4f5d6cf68ceec2c030c3bbd4b8a03712d2a0a9a14dca |
+| ./drafts/3d-web/dist-polish/index.html | 2c7ed9b4f7c39ae3e93fae9d01bc8b3e7018f924574f34722453bcf3ff1a6db9 | 2c7ed9b4f7c39ae3e93fae9d01bc8b3e7018f924574f34722453bcf3ff1a6db9 |
 
 ## 已查證：新產物與證據
 
-入口：`D:\Projects\Active\competitions\game-off-2026\g4-resonance\drafts\3d-web\dist-smooth\index.html`。
+入口：`./drafts/3d-web/dist-smooth/index.html`。
 
 SHA-256：`be355e0081647fd332141a77e4530cda93736ac663b80d0540e285627170652d`。
 
-- 桌面遊戲截圖：`D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\3d-smooth\dense-desktop.png`
-- 桌面相變截圖：`D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\3d-smooth\shift-desktop.png`
-- 桌面一致性截圖：`D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\3d-smooth\dist-smooth-desktop.png`
-- 手機一致性截圖：`D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\3d-smooth\dist-smooth-mobile.png`
-- 勝敗紀錄：`D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\3d-smooth\verify.json`
-- 六輪統計：`D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\3d-smooth\comparison.json`
-- 全部正式長幀：`D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\3d-smooth\formal-long-frames.json`
-- 降級與 PNG 雜湊：`D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\3d-smooth\visual-quality.json`
+- 桌面遊戲截圖：`./artifacts/3d-smooth/dense-desktop.png`
+- 桌面相變截圖：`./artifacts/3d-smooth/shift-desktop.png`
+- 桌面一致性截圖：`./artifacts/3d-smooth/dist-smooth-desktop.png`
+- 手機一致性截圖：`./artifacts/3d-smooth/dist-smooth-mobile.png`
+- 勝敗紀錄：`./artifacts/3d-smooth/verify.json`
+- 六輪統計：`./artifacts/3d-smooth/comparison.json`
+- 全部正式長幀：`./artifacts/3d-smooth/formal-long-frames.json`
+- 降級與 PNG 雜湊：`./artifacts/3d-smooth/visual-quality.json`
 
 所有 JSON、cpuprofile、trace、PNG、build 產物均不 commit。dist-smooth 按 dist-parity 慣例加入 .gitignore；本機 .git/info/exclude 也保留產物目錄，以便切回 main 後乾淨。程式、驗證腳本及文件才納入提交。最終 commit 與切回 main 的查核結果附在本機 REPORT.md 與最終回報。
 

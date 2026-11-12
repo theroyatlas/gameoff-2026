@@ -62,11 +62,11 @@
 - 完整回合驗證中引用的即時 90 局只是既有資料一致性核對，不是新跑即時模擬。
 - 其他檢查：npx tsc --noEmit、Node/Python 語法與 git diff --check 通過；src 僅 config.ts 的兩個 board 值改變，realtime-baseline.test.ts、src/game.ts 及 drafts/3d-web 來源未改
 - 整局驗證：PASS；Edge 157.0.4341.42；自然 lost，18 回合、57 發、終局 Boss HP 8341；console error=0、page error=0、外部請求=0；1280×720 無水平溢出，另通過 390×844 合成觸控、終局鎖定、重來與即時入口檢查
-- 建置：`D:\Projects\Active\competitions\game-off-2026\g4-resonance\drafts\3d-web\dist-board2\index.html`；SHA-256：`a8b7559a0ee1853f20fb2269957cc2ad4b9b9aafbe11731c00e45739d08c27d9`。
-- 截圖：`D:\Projects\Active\competitions\game-off-2026\review-board2\board2-desktop.png`；SHA-256：`47b883f87d08af4d8e1bf71a38f1e7f404d6abab660863dc055491975506a5d4`。
-- CSV：`D:\Projects\Active\competitions\game-off-2026\review-board2\runs-sweep2.csv`；540 筆資料＋1 列欄名；SHA-256：`df7f9003b948795e4dbf0140c8a600c790d2e54b75326139e3f8f227c903ad68`。
-- 完整逐局資料：`D:\Projects\Active\competitions\game-off-2026\review-board2` 下的 sweep2-<鍵>-<值>.json；雜湊記於 sweep2-summary.json。CSV、JSON、log 與截圖均在 repo 外，不 commit。
-- 本報告另複製至 `D:\Projects\Active\competitions\game-off-2026\review-board2\BOARD-SWEEP2.md`，切回 main 後仍可閱讀。
+- 建置：`./drafts/3d-web/dist-board2/index.html`；SHA-256：`a8b7559a0ee1853f20fb2269957cc2ad4b9b9aafbe11731c00e45739d08c27d9`。
+- 截圖：`../review-board2/board2-desktop.png`；SHA-256：`47b883f87d08af4d8e1bf71a38f1e7f404d6abab660863dc055491975506a5d4`。
+- CSV：`../review-board2/runs-sweep2.csv`；540 筆資料＋1 列欄名；SHA-256：`df7f9003b948795e4dbf0140c8a600c790d2e54b75326139e3f8f227c903ad68`。
+- 完整逐局資料：`../review-board2` 下的 sweep2-<鍵>-<值>.json；雜湊記於 sweep2-summary.json。CSV、JSON、log 與截圖均在 repo 外，不 commit。
+- 本報告另複製至 `../review-board2/BOARD-SWEEP2.md`，切回 main 後仍可閱讀。
 
 ## 已查證：資源、範圍與時間
 
@@ -82,23 +82,23 @@
 
 | 完整 Windows 路徑 | 開工 SHA-256 | 收尾核對 SHA-256 |
 |---|---|---|
-| `D:\Projects\Active\competitions\game-off-2026\g4-resonance\dist\index.html` | `495c5d39242dcd6d317ca8812273c2e33b33a0b9d28bac864de8f0bec32a5a83` | `495c5d39242dcd6d317ca8812273c2e33b33a0b9d28bac864de8f0bec32a5a83` |
-| `D:\Projects\Active\competitions\game-off-2026\g4-resonance\drafts\3d-web\dist\index.html` | `2b6bc04b03331c77c919acd9de9f8229a01d204ab58aea3fbe723b2f386f008b` | `2b6bc04b03331c77c919acd9de9f8229a01d204ab58aea3fbe723b2f386f008b` |
-| `D:\Projects\Active\competitions\game-off-2026\g4-resonance\drafts\3d-web\dist-parity\index.html` | `e146515bbab83ce7280b4f5d6cf68ceec2c030c3bbd4b8a03712d2a0a9a14dca` | `e146515bbab83ce7280b4f5d6cf68ceec2c030c3bbd4b8a03712d2a0a9a14dca` |
-| `D:\Projects\Active\competitions\game-off-2026\g4-resonance\drafts\3d-web\dist-polish\index.html` | `2c7ed9b4f7c39ae3e93fae9d01bc8b3e7018f924574f34722453bcf3ff1a6db9` | `2c7ed9b4f7c39ae3e93fae9d01bc8b3e7018f924574f34722453bcf3ff1a6db9` |
-| `D:\Projects\Active\competitions\game-off-2026\g4-resonance\drafts\3d-web\dist-smooth\index.html` | `be355e0081647fd332141a77e4530cda93736ac663b80d0540e285627170652d` | `be355e0081647fd332141a77e4530cda93736ac663b80d0540e285627170652d` |
-| `D:\Projects\Active\competitions\game-off-2026\g4-resonance\drafts\3d-web\dist-style1\index.html` | `95f7f23f36882b890c2e14d4900407c68844c81f7340ba5f0a8e815bc7458880` | `95f7f23f36882b890c2e14d4900407c68844c81f7340ba5f0a8e815bc7458880` |
-| `D:\Projects\Active\competitions\game-off-2026\g4-resonance\drafts\3d-web\dist-board\index.html` | `eb42325d409582076a9ae61d7bab7998c91f1945e40f195d6dc8a45ea96a5624` | `eb42325d409582076a9ae61d7bab7998c91f1945e40f195d6dc8a45ea96a5624` |
-| `D:\Projects\Active\competitions\game-off-2026\g4-resonance\drafts\3d-web\dist-perf\index.html` | `79c8c24a14a1d00431388a972921206b5bb08b5b0630041e646e12ac9d551eb4` | `79c8c24a14a1d00431388a972921206b5bb08b5b0630041e646e12ac9d551eb4` |
+| `./dist/index.html` | `495c5d39242dcd6d317ca8812273c2e33b33a0b9d28bac864de8f0bec32a5a83` | `495c5d39242dcd6d317ca8812273c2e33b33a0b9d28bac864de8f0bec32a5a83` |
+| `./drafts/3d-web/dist/index.html` | `2b6bc04b03331c77c919acd9de9f8229a01d204ab58aea3fbe723b2f386f008b` | `2b6bc04b03331c77c919acd9de9f8229a01d204ab58aea3fbe723b2f386f008b` |
+| `./drafts/3d-web/dist-parity/index.html` | `e146515bbab83ce7280b4f5d6cf68ceec2c030c3bbd4b8a03712d2a0a9a14dca` | `e146515bbab83ce7280b4f5d6cf68ceec2c030c3bbd4b8a03712d2a0a9a14dca` |
+| `./drafts/3d-web/dist-polish/index.html` | `2c7ed9b4f7c39ae3e93fae9d01bc8b3e7018f924574f34722453bcf3ff1a6db9` | `2c7ed9b4f7c39ae3e93fae9d01bc8b3e7018f924574f34722453bcf3ff1a6db9` |
+| `./drafts/3d-web/dist-smooth/index.html` | `be355e0081647fd332141a77e4530cda93736ac663b80d0540e285627170652d` | `be355e0081647fd332141a77e4530cda93736ac663b80d0540e285627170652d` |
+| `./drafts/3d-web/dist-style1/index.html` | `95f7f23f36882b890c2e14d4900407c68844c81f7340ba5f0a8e815bc7458880` | `95f7f23f36882b890c2e14d4900407c68844c81f7340ba5f0a8e815bc7458880` |
+| `./drafts/3d-web/dist-board/index.html` | `eb42325d409582076a9ae61d7bab7998c91f1945e40f195d6dc8a45ea96a5624` | `eb42325d409582076a9ae61d7bab7998c91f1945e40f195d6dc8a45ea96a5624` |
+| `./drafts/3d-web/dist-perf/index.html` | `79c8c24a14a1d00431388a972921206b5bb08b5b0630041e646e12ac9d551eb4` | `79c8c24a14a1d00431388a972921206b5bb08b5b0630041e646e12ac9d551eb4` |
 
 ## 已查證：重跑指令
 
 日後在同一 repo、已授權的本機環境重跑。請使用新的輸出目錄，工具拒絕覆蓋既有量測。
 
 ```powershell
-Set-Location -LiteralPath 'D:\Projects\Active\competitions\game-off-2026\g4-resonance'
+Set-Location -LiteralPath '.'
 git switch tune/board-sweep2
-$sweepOut = 'D:\Projects\Active\competitions\game-off-2026\review-board2-rerun'
+$sweepOut = '../review-board2-rerun'
 node --max-old-space-size=1536 tools/run-board-sweep2.mjs --output $sweepOut --budget-seconds 2100 --stop-at ((Get-Date).AddMinutes(35).ToString('o'))
 node --max-old-space-size=1536 tools/run-board-sweep2.mjs --output $sweepOut --extra-hp 280 --budget-seconds 2100 --stop-at ((Get-Date).AddMinutes(35).ToString('o'))
 node --max-old-space-size=1536 tools/run-board-sweep2.mjs --output $sweepOut --extra-hp 260 --budget-seconds 2100 --stop-at ((Get-Date).AddMinutes(35).ToString('o'))
@@ -116,7 +116,7 @@ git status --porcelain=v1
 ## 已查證：候選建置與瀏覽器重跑
 
 ```powershell
-Set-Location -LiteralPath 'D:\Projects\Active\competitions\game-off-2026\g4-resonance'
+Set-Location -LiteralPath '.'
 git switch tune/board-sweep2
 $env:NODE_OPTIONS='--max-old-space-size=1024'
 npx tsc --noEmit
@@ -124,8 +124,8 @@ npm --prefix drafts/3d-web run bundle -- --outDir dist-board2 --emptyOutDir
 node --max-old-space-size=768 tools/verify-board-sweep2-browser.mjs
 ```
 
-腳本用已安裝的 Playwright／Edge 開啟 `D:\Projects\Active\competitions\game-off-2026\g4-resonance\drafts\3d-web\dist-board2\index.html`，帶 `?mode=board`，viewport 設 1280×720。
-結果寫入 `D:\Projects\Active\competitions\game-off-2026\review-board2\sweep2-browser-verification.json`，以實際 DOM 擲骰／射擊、唯讀 boardEvidence.snapshot 觀測；必須 status=PASS、desktopFinal.game.status 為 won 或 lost，consoleErrors 與 pageErrors 皆空。
+腳本用已安裝的 Playwright／Edge 開啟 `./drafts/3d-web/dist-board2/index.html`，帶 `?mode=board`，viewport 設 1280×720。
+結果寫入 `../review-board2/sweep2-browser-verification.json`，以實際 DOM 擲骰／射擊、唯讀 boardEvidence.snapshot 觀測；必須 status=PASS、desktopFinal.game.status 為 won 或 lost，consoleErrors 與 pageErrors 皆空。
 腳本最多等待 10 分鐘，未改規則時間或終局狀態。瀏覽器採正弦掃角輸入，與勝率掃描 bot 不同；這一局驗證可操作與無錯誤，不混入 540 局勝率。
 T3 預覽初始化曾因 expression 尾端空白被拒絕，接著讀取未初始化狀態失敗；修正後仍約一秒一幀，130 秒牆鐘只推進約 30 秒模擬，故關閉預覽並改用 Edge。T3 未完成資料在 sweep2-preview-incomplete.json，不算整局通過；這兩次工具錯誤不冒充遊戲 console／page error。
 

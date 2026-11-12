@@ -137,8 +137,8 @@
 
 ## 重現與檔案
 
-工作目錄：D:\Projects\Active\competitions\game-off-2026\g4-resonance。只允許 npm run build:smooth，新產物為 D:\Projects\Active\competitions\game-off-2026\g4-resonance\drafts\3d-web\dist-smooth\index.html。
+工作目錄：.。只允許 npm run build:smooth，新產物為 ./drafts/3d-web/dist-smooth/index.html。
 
-量測工作目錄：D:\Projects\Active\competitions\game-off-2026\g4-resonance\drafts\3d-web。執行 node measure-smooth.mjs dist-polish baseline-1 等六次，順序見上文；診斷加 --diagnostic，再執行 node analyze-smooth.mjs <tag>。node verify-smooth-visual.mjs 做外觀與合成降級測試；npm run verify:smooth 做完整勝敗局。
+量測工作目錄：./drafts/3d-web。執行 node measure-smooth.mjs dist-polish baseline-1 等六次，順序見上文；診斷加 --diagnostic，再執行 node analyze-smooth.mjs <tag>。node verify-smooth-visual.mjs 做外觀與合成降級測試；npm run verify:smooth 做完整勝敗局。
 
-所有原始 JSON、cpuprofile、trace、PNG 均在 D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\3d-smooth，未 commit。diagnostic-before / diagnostic-after 是獨立 profiler run；baseline-1..3 / smooth-1..3 是正式 FPS。comparison.json 與 formal-long-frames.json 為衍生統計。
+所有原始 JSON、cpuprofile、trace、PNG 均在 ./artifacts/3d-smooth，未 commit。diagnostic-before / diagnostic-after 是獨立 profiler run；baseline-1..3 / smooth-1..3 是正式 FPS。comparison.json 與 formal-long-frames.json 為衍生統計。

@@ -1,74 +1,74 @@
 [
   {
-    "path": "D:\\Projects\\Active\\competitions\\game-off-2026\\g4-resonance\\src\\audio.ts",
+    "path": "./src/audio.ts",
     "sha256": "940b15ea0dd8fd15486bd18d61d15b37b868903496e52ff1e5d073eae6a8cb5b"
   },
   {
-    "path": "D:\\Projects\\Active\\competitions\\game-off-2026\\g4-resonance\\src\\config.ts",
+    "path": "./src/config.ts",
     "sha256": "9f9c8b035ba176b99ab752ebfb2a46bcf8ca101538b54a1572a040f6de02c3bf"
   },
   {
-    "path": "D:\\Projects\\Active\\competitions\\game-off-2026\\g4-resonance\\src\\env.d.ts",
+    "path": "./src/env.d.ts",
     "sha256": "65996936fbb042915f7b74a200fcdde7e410f32a669b1ab9597cfaa4b0faddb5"
   },
   {
-    "path": "D:\\Projects\\Active\\competitions\\game-off-2026\\g4-resonance\\src\\game.ts",
+    "path": "./src/game.ts",
     "sha256": "46b35bb2ad7f67e59172f0faf2f8a0b9638e066eb5b51110e146d8464a567af7"
   },
   {
-    "path": "D:\\Projects\\Active\\competitions\\game-off-2026\\g4-resonance\\src\\main.ts",
+    "path": "./src/main.ts",
     "sha256": "567658c6d7da86507c2ceee13f1ab3ecd32e6575d9748c9a6084c1fe0f3944bd"
   },
   {
-    "path": "D:\\Projects\\Active\\competitions\\game-off-2026\\g4-resonance\\src\\style.css",
+    "path": "./src/style.css",
     "sha256": "5d24298b9bfa88eb92d9014b9a24091794c9e0a7f6ef4468cba11efe20936ab2"
   },
   {
-    "path": "D:\\Projects\\Active\\competitions\\game-off-2026\\g4-resonance\\tests\\balance-sim.test.ts",
+    "path": "./tests/balance-sim.test.ts",
     "sha256": "300e44a14c71bdd77d6747c665f1d8d79ac97716fc922c1c98a974edb0f490fa"
   },
   {
-    "path": "D:\\Projects\\Active\\competitions\\game-off-2026\\g4-resonance\\tests\\game.test.ts",
+    "path": "./tests/game.test.ts",
     "sha256": "dbc3ae337c8ea7f76a7ab4d469e874a56f2f044bd6827b3503305e78325c3daa"
   },
   {
-    "path": "D:\\Projects\\Active\\competitions\\game-off-2026\\g4-resonance\\tests\\shift.test.ts",
+    "path": "./tests/shift.test.ts",
     "sha256": "3522e4ba89dcf0a47500268121410c6f751ed68c7d66dcf570548e78f01d9a6c"
   },
   {
-    "path": "D:\\Projects\\Active\\competitions\\game-off-2026\\g4-resonance\\scripts\\balance-sim.ts",
+    "path": "./scripts/balance-sim.ts",
     "sha256": "9cc7ee0a5a942f1e0b89dcb346035940c37bda602dd3a1ac66925f81b02d6e68"
   },
   {
-    "path": "D:\\Projects\\Active\\competitions\\game-off-2026\\g4-resonance\\scripts\\motion.mjs",
+    "path": "./scripts/motion.mjs",
     "sha256": "05343c0abaa5abd4ff7a1568fbb9670acf936b9ad115dc15ccefdd811371ddc2"
   },
   {
-    "path": "D:\\Projects\\Active\\competitions\\game-off-2026\\g4-resonance\\scripts\\run-balance.mjs",
+    "path": "./scripts/run-balance.mjs",
     "sha256": "a72b69e731c2be000ad6b64d4f5ece7d2824f5a58dfb891170b4c876e999065c"
   },
   {
-    "path": "D:\\Projects\\Active\\competitions\\game-off-2026\\g4-resonance\\scripts\\smoke.mjs",
+    "path": "./scripts/smoke.mjs",
     "sha256": "8fcf5de85e28f225ef7701d007417f058905c6cb06a7006a3435d9c82290ed25"
   },
   {
-    "path": "D:\\Projects\\Active\\competitions\\game-off-2026\\g4-resonance\\index.html",
+    "path": "./index.html",
     "sha256": "6e81f448ab395ea52b55044af8f136f435ed50f47c62ebe9f96c183149102c71"
   },
   {
-    "path": "D:\\Projects\\Active\\competitions\\game-off-2026\\g4-resonance\\package.json",
+    "path": "./package.json",
     "sha256": "cb79c837323d9200df6ffe85119f80db68812d3ecad1e25f1e6a792675bca3ec"
   },
   {
-    "path": "D:\\Projects\\Active\\competitions\\game-off-2026\\g4-resonance\\package-lock.json",
+    "path": "./package-lock.json",
     "sha256": "c85f36b0e1135635fa728fde3710a5bb987a04d116a087c68d2b6ad5f0d726e9"
   },
   {
-    "path": "D:\\Projects\\Active\\competitions\\game-off-2026\\g4-resonance\\vite.config.ts",
+    "path": "./vite.config.ts",
     "sha256": "482309fc2c5b708bb57cd4725925e6babf4e31293b4471ebd97fb7f4d947198a"
   },
   {
-    "path": "D:\\Projects\\Active\\competitions\\game-off-2026\\g4-resonance\\dist\\index.html",
+    "path": "./dist/index.html",
     "sha256": "495c5d39242dcd6d317ca8812273c2e33b33a0b9d28bac864de8f0bec32a5a83"
   }
 ]

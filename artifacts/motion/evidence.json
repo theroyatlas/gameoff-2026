@@ -2,7 +2,7 @@
   {
     "name": "夜光",
     "choice": "glow",
-    "video": "D:\\Projects\\Active\\competitions\\game-off-2026\\g4-resonance\\artifacts\\motion\\夜光.webm",
+    "video": "./artifacts/motion/夜光.webm",
     "seconds": 36.56,
     "errors": [],
     "externalRequests": [],
@@ -410,7 +410,7 @@
   {
     "name": "紙本",
     "choice": "paper",
-    "video": "D:\\Projects\\Active\\competitions\\game-off-2026\\g4-resonance\\artifacts\\motion\\紙本.webm",
+    "video": "./artifacts/motion/紙本.webm",
     "seconds": 36.64,
     "errors": [],
     "externalRequests": [],
@@ -789,7 +789,7 @@
   {
     "name": "極簡",
     "choice": "minimal",
-    "video": "D:\\Projects\\Active\\competitions\\game-off-2026\\g4-resonance\\artifacts\\motion\\極簡.webm",
+    "video": "./artifacts/motion/極簡.webm",
     "seconds": 36.64,
     "errors": [],
     "externalRequests": [],

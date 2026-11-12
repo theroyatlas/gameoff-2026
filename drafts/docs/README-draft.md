@@ -14,22 +14,22 @@
 
 已建置的本機遊戲可直接以 Microsoft Edge 開啟：
 
-`D:\Projects\Active\competitions\game-off-2026\g4-resonance\dist\index.html`
+`./dist/index.html`
 
 以下是日後解除試玩凍結後使用的建置說明。本輪只記錄，不執行，也不覆蓋現有成品。
 
 需求：支援 Vite 7 的 Node.js（20.19+ 或 22.12+）與 npm。下載套件時需要網路，建置完成的 HTML 不需要網路。
 
 ```powershell
-Set-Location 'D:\Projects\Active\competitions\game-off-2026\g4-resonance'
+Set-Location '.'
 npm ci
 npm test
 npm run build
 ```
 
-建置產物位於 `D:\Projects\Active\competitions\game-off-2026\g4-resonance\dist\index.html`。開發時執行 `npm run dev`；冒煙測試為 `npm run smoke`，使用本機 Microsoft Edge，不需下載測試瀏覽器。
+建置產物位於 `./dist/index.html`。開發時執行 `npm run dev`；冒煙測試為 `npm run smoke`，使用本機 Microsoft Edge，不需下載測試瀏覽器。
 
-物理與規則使用固定時間步長；相同種子、發射 tick 和角度才會重現同一局。參數集中於 `D:\Projects\Active\competitions\game-off-2026\g4-resonance\src\config.ts`。
+物理與規則使用固定時間步長；相同種子、發射 tick 和角度才會重現同一局。參數集中於 `./src/config.ts`。
 
 ## AI 使用
 

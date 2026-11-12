@@ -4,7 +4,7 @@
 
 ## 怎麼開
 
-用 Microsoft Edge 直接開啟 `D:\Projects\Active\competitions\game-off-2026\g4-resonance\dist\index.html`，不需網路或伺服器。
+用 Microsoft Edge 直接開啟 `./dist/index.html`，不需網路或伺服器。
 
 ## 怎麼玩
 
@@ -53,7 +53,7 @@
 
 前一分鐘不發射也只出現四隻怪物，已由單元測試驗證；這不是靠早期免敗開關掩蓋怪物超量。後半段平均怪物數上升，後期仍可能被爆發清場，因此不是每一刻單調增加。
 
-完整資料：`D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\balance-morning.json`。
+完整資料：`./artifacts/balance-morning.json`。
 
 ## 已查證：驗收結果
 
@@ -79,18 +79,18 @@
 
 每支影片由本機 ffmpeg 取 12 張，拼成 4×3 PNG。三張聯絡表與三種風格桌面／手機截圖均已檢視，看到撞擊粒子、點燃線、相變前後配色與連線、場邊回放。短暫停格及震動節奏需看片，靜態圖不能證明時間感。
 
-- `D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\motion\夜光.webm`
-- `D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\motion\夜光-sheet.png`
-- `D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\motion\紙本.webm`
-- `D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\motion\紙本-sheet.png`
-- `D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\motion\極簡.webm`
-- `D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\motion\極簡-sheet.png`
+- `./artifacts/motion/夜光.webm`
+- `./artifacts/motion/夜光-sheet.png`
+- `./artifacts/motion/紙本.webm`
+- `./artifacts/motion/紙本-sheet.png`
+- `./artifacts/motion/極簡.webm`
+- `./artifacts/motion/極簡-sheet.png`
 
-錄影事件摘要：`D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\motion\evidence.json`。影片不進版控，聯絡表與驗證摘要進版控。
+錄影事件摘要：`./artifacts/motion/evidence.json`。影片不進版控，聯絡表與驗證摘要進版控。
 
 ### 視覺檢查
 
-按 impeccable audit 做一輪桌面／窄畫面檢查，再修正紙本與極簡的外圍主題色，以及極簡相變球號對比，重新錄影確認。偵測器的平坦字級警告經瀏覽器查證為誤報：h1 24px、h2 34px。詳見 `D:\Projects\Active\competitions\game-off-2026\g4-resonance\docs\VISUAL-AUDIT.md`。
+按 impeccable audit 做一輪桌面／窄畫面檢查，再修正紙本與極簡的外圍主題色，以及極簡相變球號對比，重新錄影確認。偵測器的平坦字級警告經瀏覽器查證為誤報：h1 24px、h2 34px。詳見 `./docs/VISUAL-AUDIT.md`。
 
 ## 已知問題與未達標
 

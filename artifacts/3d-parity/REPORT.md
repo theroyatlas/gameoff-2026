@@ -4,11 +4,11 @@
 
 ## 怎麼開
 
-以 Microsoft Edge 直接開啟 `D:\Projects\Active\competitions\game-off-2026\g4-resonance\drafts\3d-web\dist-parity\index.html`。不需伺服器或網路。
+以 Microsoft Edge 直接開啟 `./drafts/3d-web/dist-parity/index.html`。不需伺服器或網路。
 
 按「開始」，從下方發射座朝場內拖拉後放開；左右方向鍵瞄準、空白鍵發射。Boss 歸零獲勝，怪物超過十隻失敗。「重來」回到開始畫面；種子相同且輸入 tick 相同可重現。右上可靜音。
 
-安全重現：切至 `3d/parity`，在 `D:\Projects\Active\competitions\game-off-2026\g4-resonance` 依序執行 `npm test`、`npm run build:parity`、`npm run verify:parity`。禁止執行預設 `build`／`bundle`。節流測試在 `D:\Projects\Active\competitions\game-off-2026\g4-resonance\drafts\3d-web` 執行 `node verify-parity-perf.mjs`；相容性測試執行 `node verify-parity-compat.mjs`。
+安全重現：切至 `3d/parity`，在 `.` 依序執行 `npm test`、`npm run build:parity`、`npm run verify:parity`。禁止執行預設 `build`／`bundle`。節流測試在 `./drafts/3d-web` 執行 `node verify-parity-perf.mjs`；相容性測試執行 `node verify-parity-compat.mjs`。
 
 ## 已查證：完成範圍
 
@@ -18,7 +18,7 @@
 - 球號為面向相機的標籤，以 CSS 螢幕尺寸保底；細黃環表示接近共振，雙青環表示已共振。相變狀態使用深底 HTML 牌，不受粒子或鏡頭微震遮擋。
 - 傷害字由世界座標投影成螢幕位置，再移到怪物血條上方。手機傷害文字至少 14px。可讀性採螢幕尺寸保底、提高狀態牌層級與傷害字上移的做法。
 - 回放 HTML 小卡直接讀取 Game.replays：層數、參與球號、擊殺與 Boss 傷害；桌面右側，手機場地下方。球號序列是事件首次參與順序，不代表唯一因果路徑。
-- 直接 import 共用 Sound，沒有複製音效或修改 `D:\Projects\Active\competitions\game-off-2026\g4-resonance\src`。第一次手勢才建立 AudioContext，支援靜音。
+- 直接 import 共用 Sound，沒有複製音效或修改 `./src`。第一次手勢才建立 AudioContext，支援靜音。
 - 開始、種子、Boss 血條、波次、壓力升級、下一球、勝負與重來。保留自動降畫質與 WebGL 退回。
 
 流程：ENTRY v0.14、T-CREATIVE-20 v0.3，沿用 three.js、WebAudio、Playwright、ffmpeg。使用者已指定木頭／黃銅方向，沒有另選視覺方向。codebase-memory 索引為非即時資料，結構查詢後以實際原始碼逐檔確認。
@@ -31,11 +31,11 @@
 - 完整初始 snapshot 與重來後 snapshot 深度相等；球、怪物視覺、粒子、傷害字、事件計數與回放均清空。再次開始後鍵盤成功發射一球。
 - 一般流程 console error 0、page error 0、外部 HTTP(S) 請求 0。音訊正常啟動且產生聲部；靜音按鈕狀態斷言通過。
 - 手機為 Edge 390×844 模擬視窗及 CDP 合成觸控，第 29 發自然相變；沒有水平溢出。不是實體手機測試。
-- 原始狀態、輸入 tick、事件與重置證據：`D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\3d-parity\edge.json`。發射策略前 32 發約每 0.8 秒，之後每 2 秒；角度為 −π/2 + sin(發射序號) × 0.6。瀏覽器負載會改變實際輸入 tick，沒有把離線試算視為同一局。
+- 原始狀態、輸入 tick、事件與重置證據：`./artifacts/3d-parity/edge.json`。發射策略前 32 發約每 0.8 秒，之後每 2 秒；角度為 −π/2 + sin(發射序號) × 0.6。瀏覽器負載會改變實際輸入 tick，沒有把離線試算視為同一局。
 
 ## 影像
 
-目錄：`D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\3d-parity`。
+目錄：`./artifacts/3d-parity`。
 
 - `start-desktop.png`、`shift-desktop.png`、`outcome-desktop.png`：1280px 寬。
 - `start-mobile.png`：390×844；`shift-mobile.png`：390px 寬完整頁面。
@@ -93,18 +93,18 @@
 
 降級紀錄：5.6833 秒關陰影、7.8667 秒解析度降為 0.75、16.9333 秒進入效果減量；最終陰影關閉、renderer／composer pixel ratio 皆 0.75、特效上限 24。正常量測 console／page error 0、外部請求 0。
 
-原始幀與設定：`D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\3d-parity\cpu-4x.json`；摘要 `D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\3d-parity\performance.json`。
+原始幀與設定：`./artifacts/3d-parity/cpu-4x.json`；摘要 `./artifacts/3d-parity/performance.json`。
 
 ## 凍結與交付雜湊
 
-建置入口：`D:\Projects\Active\competitions\game-off-2026\g4-resonance\drafts\3d-web\dist-parity\index.html`
+建置入口：`./drafts/3d-web/dist-parity/index.html`
 
 SHA-256：`e146515bbab83ce7280b4f5d6cf68ceec2c030c3bbd4b8a03712d2a0a9a14dca`
 
 | 凍結檔案 | 開工 SHA-256 | 收工 SHA-256 |
 |---|---|---|
-| D:\Projects\Active\competitions\game-off-2026\g4-resonance\dist\index.html | 495c5d39242dcd6d317ca8812273c2e33b33a0b9d28bac864de8f0bec32a5a83 | 495c5d39242dcd6d317ca8812273c2e33b33a0b9d28bac864de8f0bec32a5a83 |
-| D:\Projects\Active\competitions\game-off-2026\g4-resonance\drafts\3d-web\dist\index.html | 2b6bc04b03331c77c919acd9de9f8229a01d204ab58aea3fbe723b2f386f008b | 2b6bc04b03331c77c919acd9de9f8229a01d204ab58aea3fbe723b2f386f008b |
+| ./dist/index.html | 495c5d39242dcd6d317ca8812273c2e33b33a0b9d28bac864de8f0bec32a5a83 | 495c5d39242dcd6d317ca8812273c2e33b33a0b9d28bac864de8f0bec32a5a83 |
+| ./drafts/3d-web/dist/index.html | 2b6bc04b03331c77c919acd9de9f8229a01d204ab58aea3fbe723b2f386f008b | 2b6bc04b03331c77c919acd9de9f8229a01d204ab58aea3fbe723b2f386f008b |
 
 沒有執行會寫入上述兩個 dist 的命令。dist-parity 已列入分支 .gitignore；另以本機 .git/info/exclude 保留交付輸出與證據，切回 main 時不將它們顯示為未追蹤修改。影片不進版控。
 
@@ -112,6 +112,6 @@ SHA-256：`e146515bbab83ce7280b4f5d6cf68ceec2c030c3bbd4b8a03712d2a0a9a14dca`
 
 `node verify-parity-compat.mjs` 通過：禁用 WebGL、renderer 建立例外、context 遺失三種情境皆顯示可操作退回連結，桌面與 390px 無水平溢出；實際開啟凍結的 2D 成品並以鍵盤發射一球。page error 全為 0。前兩種故障注入有 three.js 預期的 console 診斷，未把它們算成一般流程的零錯誤聲明。
 
-另以 40ms rAF 排程延遲驗證降級 1→2→3、陰影關閉、renderer／composer ratio 0.75、效果上限 24，並成功鍵盤發射 12 球。這是功能測試，不列入 FPS 表。證據為 `D:\Projects\Active\competitions\game-off-2026\g4-resonance\artifacts\3d-parity\compatibility.json`。
+另以 40ms rAF 排程延遲驗證降級 1→2→3、陰影關閉、renderer／composer ratio 0.75、效果上限 24，並成功鍵盤發射 12 球。這是功能測試，不列入 FPS 表。證據為 `./artifacts/3d-parity/compatibility.json`。
 
 P1 效能：CPU 4 倍節流平靜段平均 35.77 FPS，未達穩定 45 FPS；需另做 CPU/GPU profiler 才能判定瓶頸。P2 可讀性：密集球號尚無避讓。這些限制保留於報告，停止視覺擴張。

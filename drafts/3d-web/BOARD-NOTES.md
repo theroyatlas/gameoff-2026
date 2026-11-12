@@ -8,9 +8,9 @@
 
 ## 入口與建置
 
-- 規則：`D:\Projects\Active\competitions\game-off-2026\g4-resonance\src\game.ts`、`D:\Projects\Active\competitions\game-off-2026\g4-resonance\src\board.ts`、`D:\Projects\Active\competitions\game-off-2026\g4-resonance\src\config.ts`。
-- 畫面：`D:\Projects\Active\competitions\game-off-2026\g4-resonance\drafts\3d-web\board-ring.ts` 與同目錄的 `board-ring.css`。獨立灰盒，不載入美術素材；共用 three.js 與本機生成音效。
-- 在 `D:\Projects\Active\competitions\game-off-2026\g4-resonance\drafts\3d-web` 執行 `npm run build:board`，只輸出 `D:\Projects\Active\competitions\game-off-2026\g4-resonance\drafts\3d-web\dist-board\index.html`。此目錄已忽略，不提交產物。
+- 規則：`./src/game.ts`、`./src/board.ts`、`./src/config.ts`。
+- 畫面：`./drafts/3d-web/board-ring.ts` 與同目錄的 `board-ring.css`。獨立灰盒，不載入美術素材；共用 three.js 與本機生成音效。
+- 在 `./drafts/3d-web` 執行 `npm run build:board`，只輸出 `./drafts/3d-web/dist-board/index.html`。此目錄已忽略，不提交產物。
 - 同一個 HTML 帶 `?mode=board` 為棋盤版，無參數為即時版。可離線開啟，不需要伺服器或外部服務。
 - `entry.ts` 選擇呈現入口；`main.ts` 只增加 `startRealtime()` 函式包覆的兩行，內容保持原樣，降低與美術分支的合併衝突。
 - 工作流採用 ENTRY v0.14、W-TASK-001 v0.1 的有界驗收；工具索引 v0.22 與 T-CREATIVE-20 的 three.js 列適用於既有 WebGL 管線，因此不新增引擎或依賴。
@@ -67,7 +67,7 @@
 - 根目錄執行 `npm test`：棋盤規則、完整一局確定性、所有既有測試，以及固定 seed 直接與不可變 `84d6550ea25a710cb8a65ee8a1a13f4ff3ab5b94` 規則比較完整快照。基準由 `git show` 讀取，不從候選重新產生預期值。
 - 根目錄執行 `npx tsc --noEmit` 檢查共用規則與測試；3D 沿用既有 Vite TypeScript 轉譯管線，未增裝 three.js 型別套件。
 - 3D 目錄執行 `npm run verify:board`：離線 Edge 實際按鈕／鍵盤完整遊玩至勝敗、重來、無參數即時入口、390×844 合成觸控發射與取消，以及 console／page error／外部請求檢查。
-- 量測與 1280×720、390×844、SURGE 截圖輸出至 repo 外 `D:\Projects\Active\competitions\game-off-2026\review-board-graybox\`，不提交。
+- 量測與 1280×720、390×844、SURGE 截圖輸出至 repo 外 `../review-board-graybox/`，不提交。
 - 本次結果：8 個測試檔、73 個測試通過；固定 seed 整局 12 回合、38 發、Boss 鐘 12，以怪物超量失敗收局。console error、page error、外部請求皆為 0。這是可執行驗收，不是勝率或手感評分。
 - 已做 impeccable 技術檢查與桌面／手機合併視覺檢查；集中修正頁底背景、手機滑桿 44px 觸控高度與格名字級、棋子遮字。機械檢查的色票／字級差異屬本次明確指定的灰盒例外，不修改 DESIGN.md。
 

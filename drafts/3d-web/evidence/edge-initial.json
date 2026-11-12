@@ -1,7 +1,7 @@
 {
   "browser": "157.0.4341.42",
   "channel": "msedge",
-  "url": "file:///D:/Projects/Active/competitions/game-off-2026/g4-resonance/drafts/3d-web/dist/index.html",
+  "url": "./drafts/3d-web/dist/index.html",
   "renderer": {
     "vendor": "Google Inc. (NVIDIA)",
     "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5060 Ti (0x00002D04) Direct3D11 vs_5_0 ps_5_0, D3D11)"
