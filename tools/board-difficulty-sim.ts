@@ -1,24 +1,12 @@
 import { CONFIG as C } from '../src/config';
-import { Game } from '../src/game';
-import { aim, ObservedGame, quantiles, simulate, type Bot } from './difficulty-sim';
+import { ObservedGame, quantiles, simulate } from './difficulty-sim';
+import { boardAim, type Bot } from './bot-aim';
 
 export const MODES = ['realtime', 'board'] as const;
 export type Mode = typeof MODES[number];
 const shotTicks = Math.round(2 / C.dt);
 
-// TUNE 只調整既有 greedy 候選的優先順序；其餘策略直接重用來源函式。
-export function boardAim(game: Game, bot: Bot, random: () => number) {
-  const tune = game.board?.tuneMaterial;
-  if (bot !== 'greedy' || tune == null) return aim(game, bot, random);
-  const candidates = game.balls.filter(b => b.material === tune && b.y < C.launcher.y - 20
-    && (b.resonant || game.balls.some(other => other.id !== b.id
-      && Math.hypot(other.x - b.x, other.y - b.y) <= 4 * C.ball.radius)));
-  candidates.sort((a, b) => Math.hypot(a.x - C.launcher.x, a.y - C.launcher.y)
-    - Math.hypot(b.x - C.launcher.x, b.y - C.launcher.y) || a.id - b.id);
-  const target = candidates[0];
-  return target ? Math.max(-Math.PI + .2, Math.min(-.2,
-    Math.atan2(target.y - C.launcher.y, target.x - C.launcher.x))) : aim(game, bot, random);
-}
+export { boardAim } from './bot-aim';
 
 export function simulateBoard(seed: number, bot: Bot, guard = () => {}) {
   const game = new ObservedGame(seed, 'board');

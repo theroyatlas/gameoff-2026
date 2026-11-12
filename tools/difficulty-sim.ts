@@ -5,8 +5,8 @@ import { resolve } from 'node:path';
 import { CONFIG as C } from '../src/config';
 import { Game } from '../src/game';
 
-export const BOTS = ['random', 'greedy', 'lazy'] as const;
-export type Bot = typeof BOTS[number];
+import { aim, BOTS, type Bot } from './bot-aim';
+export { aim, BOTS, type Bot } from './bot-aim';
 const secondTicks = Math.round(1 / C.dt);
 const shotTicks = Math.round(2 / C.dt);
 const limitTicks = Math.round(600 / C.dt);
@@ -55,17 +55,6 @@ export function quantiles(values: number[]) {
   return { n: values.length, p10: q(.1), median: q(.5), p90: q(.9) };
 }
 
-export function aim(game: Game, bot: Bot, random: () => number) {
-  if (bot === 'lazy') return -Math.PI / 2;
-  // 和鍵盤可選方向一致；散射仍交由 Game.fire 的獨立 RNG 決定。
-  if (bot === 'random') return -Math.PI + .2 + random() * (Math.PI - .4);
-  const candidates = game.balls.filter(b => b.y < C.launcher.y - 20).filter(b =>
-    b.resonant || game.balls.some(other => other.id !== b.id && Math.hypot(other.x - b.x, other.y - b.y) <= 4 * C.ball.radius));
-  candidates.sort((a, b) => Math.hypot(a.x - C.launcher.x, a.y - C.launcher.y)
-    - Math.hypot(b.x - C.launcher.x, b.y - C.launcher.y) || a.id - b.id);
-  const target = candidates[0] ?? game.boss;
-  return Math.max(-Math.PI + .2, Math.min(-.2, Math.atan2(target.y - C.launcher.y, target.x - C.launcher.x)));
-}
 
 type Bin = { from: number; to: number; ticks: number; monsterSum: number; monsterMax: number; bossDamage: number; bursts: number; deepBursts: number };
 export function simulate(seed: number, bot: Bot, guard = () => {}) {

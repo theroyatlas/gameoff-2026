@@ -17,6 +17,7 @@ import { applyUiSkin } from './ui-skins';
 import { buildCage, type Cage } from './cage';
 import { createEventReveal, faceSheet } from './event-card-art';
 import { EVENT_CARDS } from '../../src/event-cards';
+import { closeupView, aimFan } from './closeup';
 
 const phaseNames: Record<BoardPhase, string> = {
   roll: '等待擲骰', rolling: '擲骰中', moving: '自動走格', effect: '格子效果', shooting: '瞄準與射擊', settling: '等待球停下',
@@ -79,6 +80,8 @@ export function startBoard() {
   const camTarget = new THREE.Vector3(0, -.35, .5), camBase = new THREE.Vector3(), lookNow = new THREE.Vector3();
   let elevation = 45 * Math.PI / 180; // resize 的 fit 會依寬高比重新設定。
   let shot = params.get('cam');
+  const aimHint = document.createElement('p'); aimHint.id = 'board-closeup-aim'; aimHint.hidden = true;
+  aimHint.setAttribute('aria-live', 'polite'); stage.append(aimHint);
   let inspectMode = false, inspectedId: number | null = null, legacyDensity = false;
   let visibleTagCount = 0, visibleLinkCount = 0;
   const L = LIGHTS[choice.light];
@@ -146,6 +149,13 @@ export function startBoard() {
   const launcher = mesh(new THREE.CylinderGeometry(.26, .28, .14, 28), wood, 0, .04, (C.launcher.y - 340) * .01);
   mesh(new THREE.TorusGeometry(.27, .014, 6, 32), new THREE.MeshStandardMaterial({ color: TOKENS.brassEdge, metalness: .8, roughness: .4 }), 0, .11, (C.launcher.y - 340) * .01).rotation.x = Math.PI / 2;
   const aimLine = new THREE.Line(new THREE.BufferGeometry(), new THREE.LineBasicMaterial({ color: TOKENS.ochre })); scene.add(aimLine);
+  const fanGeometry = new THREE.BufferGeometry();
+  fanGeometry.setAttribute('position', new THREE.Float32BufferAttribute(new Array(9).fill(0), 3));
+  const fan = new THREE.Mesh(fanGeometry, new THREE.MeshBasicMaterial({ color: TOKENS.ochre,
+    side: THREE.DoubleSide, transparent: true, opacity: .16, depthWrite: false,
+    clippingPlanes: [new THREE.Plane(new THREE.Vector3(1, 0, 0), 4), new THREE.Plane(new THREE.Vector3(-1, 0, 0), 4),
+      new THREE.Plane(new THREE.Vector3(0, 0, 1), 3.4), new THREE.Plane(new THREE.Vector3(0, 0, -1), 3.4)] }));
+  fan.visible = false; scene.add(fan); renderer.localClippingEnabled = true;
   const ballGeometry = new THREE.SphereGeometry(C.ball.radius * .01, 32, 24);
   const ringGeometry = new THREE.TorusGeometry(.20, .02, 6, 32);
   const resonanceMaterial = new THREE.MeshBasicMaterial({ color: colors.resonance });
@@ -204,7 +214,7 @@ export function startBoard() {
   function inspectAt(e: PointerEvent) {
     let best = 24, found: number | null = null;
     for (const b of game.balls) {
-      const p = project(b.x, b.y, .14), d = Math.hypot(p.x - e.clientX, p.y - e.clientY);
+      const p = project(b.x, b.y, .14 * closeupView(shot).ballScale), d = Math.hypot(p.x - e.clientX, p.y - e.clientY);
       if (d < best) { best = d; found = b.id; }
     }
     inspectedId = found;
@@ -270,9 +280,10 @@ export function startBoard() {
     elevation = (narrow ? 58 : 45) * Math.PI / 180; camera.fov = narrow ? 34 : 30; camera.aspect = aspect;
     camTarget.set(0, -.35, narrow ? .3 : .5);
     const dir = new THREE.Vector3(0, Math.sin(elevation), Math.cos(elevation));
-    const close = shot === 'field';
+    const view = closeupView(shot), close = shot === 'field' || view.close;
     if (close) camTarget.set(0, 0, 0);
-    const corners = close ? [-4.15, 4.15].flatMap(x => [-.15, .65].flatMap(y => [-3.55, 3.55].map(z => new THREE.Vector3(x, y, z)))) : fitCorners;
+    const crop = view.cropped && narrow ? .7 : 1;
+    const corners = close ? [-view.halfWidth * crop, view.halfWidth * crop].flatMap(x => [-.15, .65].flatMap(y => [-view.halfDepth * crop, view.halfDepth * crop].map(z => new THREE.Vector3(x, y, z)))) : fitCorners;
     let lo = 4, hi = 80;
     for (let i = 0; i < 26; i++) {
       const mid = (lo + hi) / 2; camera.position.copy(camTarget).addScaledVector(dir, mid); camera.lookAt(camTarget);
@@ -456,7 +467,8 @@ export function startBoard() {
     }
     function projectWorld(x: number, y: number, z: number) { const p = new THREE.Vector3(x, y, z).project(camera); return { x: (p.x + 1) * rect.width / 2, y: (1 - p.y) * rect.height / 2 }; }
     // 球：號碼印在球上；螢幕上的球小於 22 px 時，另補一張小紙籤在右上，不蓋住球。
-    const r = C.ball.radius * .01, edge = projectWorld(r, .14, 0), center = projectWorld(0, .14, 0), diameter = Math.abs(edge.x - center.x) * 2;
+    const view = closeupView(shot), r = C.ball.radius * .01 * view.ballScale;
+    const edge = projectWorld(r, r, 0), center = projectWorld(0, r, 0), diameter = Math.abs(edge.x - center.x) * 2;
     const needTag = diameter < 22; ballPx = Math.round(diameter * 10) / 10;
     // 只保留最近三球、被查看的球與少量共振球；紙籤按螢幕距離避讓。
     const recent = new Set(game.balls.slice(-3).map(b => b.id));
@@ -465,7 +477,7 @@ export function startBoard() {
     const tagIds = new Set<number>(), tagPositions: { x: number; y: number }[] = [];
     for (const b of priority) {
       if (b.id !== inspectedId && (!needTag || (!recent.has(b.id) && !b.resonant))) continue;
-      const p = projectWorld(W(b.x) + r * .9, .14 + r * 1.2, Z(b.y) - r * .2);
+      const p = projectWorld(W(b.x) + r * .9, r * 2.2, Z(b.y) - r * .2);
       if (p.x < 10 || p.x > rect.width - 20 || p.y < 16 || p.y > rect.height - 12) continue;
       if (tagIds.size >= (rect.width < 600 ? 6 : 10) || tagPositions.some(q => Math.abs(p.x - q.x) < 24 && Math.abs(p.y - q.y) < 22)) continue;
       tagIds.add(b.id); tagPositions.push(p);
@@ -473,9 +485,10 @@ export function startBoard() {
     visibleTagCount = 0;
     for (const b of game.balls) {
       const item = balls.get(b.id) ?? addBall(b), x = W(b.x), z = Z(b.y);
-      item.sphere.position.set(x, .14, z); item.ring.position.set(x, .025, z); item.ring.visible = b.resonant;
+      item.sphere.position.set(x, r, z); item.sphere.scale.setScalar(view.ballScale);
+      item.ring.position.set(x, .025, z); item.ring.scale.setScalar(view.ballScale); item.ring.visible = b.resonant;
       item.label.hidden = legacyDensity ? !needTag : !tagIds.has(b.id);
-      if (!item.label.hidden) { visibleTagCount++; const p = projectWorld(x + r * .9, .14 + r * 1.2, z - r * .2); item.label.style.transform = `translate(${p.x + 6}px,${p.y - 6}px) translate(-50%,-50%)`; }
+      if (!item.label.hidden) { visibleTagCount++; const p = projectWorld(x + r * .9, r * 2.2, z - r * .2); item.label.style.transform = `translate(${p.x + 6}px,${p.y - 6}px) translate(-50%,-50%)`; }
     }
     for (const [id, item] of balls) if (!game.balls.some(b => b.id === id)) { scene.remove(item.sphere, item.ring); item.label.remove(); balls.delete(id); }
     // 毛線：球在爆發半徑內的最近兩顆之間牽線；有一端已共振就亮，相變期全亮。
@@ -535,9 +548,21 @@ export function startBoard() {
     const shifting = game.phase === 'active', warning = game.phase === 'warning';
     coreLight.intensity = shifting ? 6 : warning ? 2.2 : .3; core.scale.setScalar(reduced ? 1 : 1 + .08 * Math.sin(now * 3));
     light.intensity = L.intensity * SPOT_GAIN * (shifting ? .8 : 1);
-    aimLine.visible = shooting;
+    aimLine.visible = shooting && !view.close;
     const lz = Z(C.launcher.y);
     aimLine.geometry.setFromPoints([new THREE.Vector3(0, .12, lz), new THREE.Vector3(Math.cos(angle) * 1.2, .12, lz + Math.sin(angle) * 1.2)]);
+    fan.visible = shooting && view.close;
+    if (fan.visible) {
+      const attribute = fanGeometry.getAttribute('position');
+      (attribute.array as Float32Array).set(aimFan(angle, C.launcher.coneHalfAngle, 0, lz));
+      attribute.needsUpdate = true; fanGeometry.computeBoundingSphere();
+    }
+    aimHint.hidden = !shooting || !view.close;
+    if (!aimHint.hidden) {
+      const from = project(C.launcher.x, C.launcher.y), to = project(C.launcher.x + Math.cos(angle) * 100, C.launcher.y + Math.sin(angle) * 100);
+      const arrow = to.x < from.x - 8 ? '↖' : to.x > from.x + 8 ? '↗' : '↑';
+      aimHint.textContent = `${arrow} 發射方向 ${Math.round(angle * 180 / Math.PI)}° · 扇形為散射範圍${view.cropped ? '（發射口在近景外）' : ''}`;
+    }
     launcher.rotation.y = -angle;
     scene.background = new THREE.Color(shifting ? TOKENS.bgShift : TOKENS.bgIdle);
     composer.render();
@@ -551,9 +576,9 @@ export function startBoard() {
   // ?lab=1：截圖腳本用。用固定角度、固定節奏推進同一個 seed，讓各版本的球位完全相同。只呼叫公開的規則操作。
   if (params.get('lab') === '1') Object.assign(window, { boardLab: {
     // 僅供同盤面呈現對照：保留原本「全紙籤／全毛線」邏輯，不改規則或時間。
-    presentation(options: { legacyDensity?: boolean; camera?: 'table' | 'field' }) {
+    presentation(options: { legacyDensity?: boolean; camera?: 'table' | 'field' | 'fieldA' | 'fieldB' }) {
       if (options.legacyDensity !== undefined) legacyDensity = options.legacyDensity;
-      if (options.camera) { shot = options.camera === 'field' ? 'field' : null; resize(); }
+      if (options.camera) { shot = options.camera === 'table' ? null : options.camera; resize(); }
       render();
       return { visibleTagCount, visibleLinkCount, ballPx, camera: shot ?? 'table' };
     },

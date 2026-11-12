@@ -3,7 +3,7 @@ import { createServer } from 'vite';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 const root = resolve(import.meta.dirname, '..');
-const out = resolve(root, '../review-event-cards');
+const out = resolve(root, process.argv[4] ?? '../review-event-cards');
 const label = process.argv[2] ?? 'events';
 const growth = Number(process.argv[3] ?? 260);
 await mkdir(out, { recursive: true });

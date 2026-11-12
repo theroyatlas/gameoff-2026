@@ -60,3 +60,16 @@ date: 2026-11-12
 - Node 的逐 tick 輸入紀錄直接移到 Edge 未完全對齊；本輪在 18037 tick 提早回合結束，原紀錄下一個操作在 18102。原因尚未定位，不能把同執行環境重現外推成跨執行環境逐位一致。
 
 證據：repo 同層 `../review-event-cards/csv-recount.json`、`capture.json`、`browser-fixed-input.json`、`cross-runtime-replay-attempt.log`。
+
+## 跨執行環境重播的浮點邊界
+
+status: verified-local
+promote: yes
+date: 2026-11-12
+
+- 上述事件卡的 18037／18102 問題已定位：20261113／lazy 的第一個不同是 tick 8412，SURGE 喚醒球 #3 的 `Math.sin` 差 1 ULP，y 速度差約 5.68e-14。相同 seed 與 tick 輸入不足以保證不同引擎版本的浮點軌跡逐位相同。
+- 先比較逐 tick 摘要，再保存第一分歧前後的完整狀態與原始運算參數。最後停住的 tick 可能只是下游症狀：回合提早結束後規則時鐘不前進，重播器等不到另一環境的下一筆輸入。
+- 小浮點差不等於小結果差。Node／Edge 各跑相同 10 seeds × 3 bots，9/30 組勝負不同，雖然總勝局只差 8 對 7。必須同時報總體勝率與配對分歧率。
+- 視覺變體應在相同盤面上比對；預設與凍結建置做 PNG 位元組比對，規則層用完整快照比對，兩種證據分開保留。
+
+證據：`D:\Projects\Active\competitions\game-off-2026\review-closeup-ab\DETERMINISM.md`、`runtime-comparison.json`、`cross-runtime-bots.csv`、`capture.json`、`browser-verification.json`。
