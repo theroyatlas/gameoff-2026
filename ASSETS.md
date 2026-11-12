@@ -31,9 +31,9 @@
 | `artifacts/motion/紙本-sheet.png` | PNG 圖片 | 自製遊戲錄影經 ffmpeg 取格拼圖；`scripts/motion.mjs` | MIT |
 | `artifacts/smoke-desktop.png` | PNG 圖片 | 自製 Canvas 遊戲之 Playwright／Edge 截圖；`scripts/smoke.mjs` | MIT |
 | `artifacts/smoke-mobile.png` | PNG 圖片 | 自製 Canvas 遊戲之 Playwright／Edge 截圖；`scripts/smoke.mjs` | MIT |
-| `concepts/3d/01-miniature.png` | PNG 圖片 | Codex 內建生圖工具 imagegen；使用者確認，提示詞見同名 `.txt`，commit `b0a57ec` | MIT |
-| `concepts/3d/02-abyss.png` | PNG 圖片 | Codex 內建生圖工具 imagegen；使用者確認，提示詞見同名 `.txt`，commit `b0a57ec` | MIT |
-| `concepts/3d/03-cosmic.png` | PNG 圖片 | Codex 內建生圖工具 imagegen；使用者確認，提示詞見同名 `.txt`，commit `b0a57ec` | MIT |
+| `concepts/3d/01-miniature.png` | PNG 圖片 | Codex 內建生圖工具 imagegen；提示詞見同名 `.txt`，commit `b0a57ec` | MIT |
+| `concepts/3d/02-abyss.png` | PNG 圖片 | Codex 內建生圖工具 imagegen；提示詞見同名 `.txt`，commit `b0a57ec` | MIT |
+| `concepts/3d/03-cosmic.png` | PNG 圖片 | Codex 內建生圖工具 imagegen；提示詞見同名 `.txt`，commit `b0a57ec` | MIT |
 | `concepts/3d/blender/miniature-hero.png` | PNG 圖片 | Blender 4.4 EEVEE 渲染自製場景；`concepts/3d/blender/scene.py`，commit `b0a57ec` | MIT |
 | `concepts/3d/blender/miniature-wide.png` | PNG 圖片 | Blender 4.4 EEVEE 渲染自製場景；`concepts/3d/blender/scene.py`，commit `b0a57ec` | MIT |
 | `concepts/3d/compare.png` | PNG 圖片 | 上述三張 Codex imagegen 圖的比較拼圖；圖面逐一對照、同屬 commit `b0a57ec`；拼接工具未記錄 | MIT |
@@ -42,24 +42,26 @@
 | `drafts/3d-web/shots/sheet.png` | PNG 圖片 | 自製遊戲錄影經 ffmpeg 取格拼圖；`drafts/3d-web/verify.mjs` | MIT |
 | `drafts/3d-web/shots/shift.png` | PNG 圖片 | 自製 three.js 遊戲之 Playwright／Edge 截圖；`drafts/3d-web/verify.mjs`、`capture-calm.mjs` | MIT |
 
+三張 Codex 生成的概念圖以 MIT 提供；AI 生成的內容在部分地區可能不受著作權保護。
+
 ## 已移除
 
-沒有查出來源不明的保留素材。以下 15 張是使用者指定不公開的主題草稿，隨 `directions/` 整個資料夾以 `git rm` 移除；不是以來源不明為由移除。來源可由 commit `a65dfa6` 的目錄歷史及 `directions/verify.mjs` 核對。下表路徑為刪除前的 repo 相對位置。
+沒有查出來源不明的保留素材。以下 15 張是放棄的主題草稿，正式版不用，隨 `directions/` 整個資料夾以 `git rm` 移除，較早的 commit 裡仍看得到；不是以來源不明為由移除。來源可由 commit `a65dfa6` 的目錄歷史及 `directions/verify.mjs` 核對。下表路徑為刪除前的 repo 相對位置。
 
 | 路徑 | 類型 | 來源 | 授權 | 移除原因 |
 | --- | --- | --- | --- | --- |
-| `directions/shots/a-chorus-calm.png` | PNG 圖片 | 自製 HTML 主題草稿的瀏覽器截圖 | MIT（本專案） | 使用者指定不公開 |
-| `directions/shots/a-chorus-chain.png` | PNG 圖片 | 自製 HTML 主題草稿的瀏覽器截圖 | MIT（本專案） | 使用者指定不公開 |
-| `directions/shots/a-chorus-mobile.png` | PNG 圖片 | 自製 HTML 主題草稿的瀏覽器截圖 | MIT（本專案） | 使用者指定不公開 |
-| `directions/shots/a-chorus-phase.png` | PNG 圖片 | 自製 HTML 主題草稿的瀏覽器截圖 | MIT（本專案） | 使用者指定不公開 |
-| `directions/shots/b-fireflies-calm.png` | PNG 圖片 | 自製 HTML 主題草稿的瀏覽器截圖 | MIT（本專案） | 使用者指定不公開 |
-| `directions/shots/b-fireflies-chain.png` | PNG 圖片 | 自製 HTML 主題草稿的瀏覽器截圖 | MIT（本專案） | 使用者指定不公開 |
-| `directions/shots/b-fireflies-flash.png` | PNG 圖片 | 自製 HTML 主題草稿的瀏覽器截圖 | MIT（本專案） | 使用者指定不公開 |
-| `directions/shots/b-fireflies-mobile.png` | PNG 圖片 | 自製 HTML 主題草稿的瀏覽器截圖 | MIT（本專案） | 使用者指定不公開 |
-| `directions/shots/b-fireflies-phase.png` | PNG 圖片 | 自製 HTML 主題草稿的瀏覽器截圖 | MIT（本專案） | 使用者指定不公開 |
-| `directions/shots/c-crew-calm.png` | PNG 圖片 | 自製 HTML 主題草稿的瀏覽器截圖 | MIT（本專案） | 使用者指定不公開 |
-| `directions/shots/c-crew-chain.png` | PNG 圖片 | 自製 HTML 主題草稿的瀏覽器截圖 | MIT（本專案） | 使用者指定不公開 |
-| `directions/shots/c-crew-mobile.png` | PNG 圖片 | 自製 HTML 主題草稿的瀏覽器截圖 | MIT（本專案） | 使用者指定不公開 |
-| `directions/shots/c-crew-phase.png` | PNG 圖片 | 自製 HTML 主題草稿的瀏覽器截圖 | MIT（本專案） | 使用者指定不公開 |
-| `directions/shots/selection-desktop.png` | PNG 圖片 | 自製 HTML 主題草稿的瀏覽器截圖 | MIT（本專案） | 使用者指定不公開 |
-| `directions/shots/selection-mobile.png` | PNG 圖片 | 自製 HTML 主題草稿的瀏覽器截圖 | MIT（本專案） | 使用者指定不公開 |
+| `directions/shots/a-chorus-calm.png` | PNG 圖片 | 自製 HTML 主題草稿的瀏覽器截圖 | MIT（本專案） | 放棄的草稿 |
+| `directions/shots/a-chorus-chain.png` | PNG 圖片 | 自製 HTML 主題草稿的瀏覽器截圖 | MIT（本專案） | 放棄的草稿 |
+| `directions/shots/a-chorus-mobile.png` | PNG 圖片 | 自製 HTML 主題草稿的瀏覽器截圖 | MIT（本專案） | 放棄的草稿 |
+| `directions/shots/a-chorus-phase.png` | PNG 圖片 | 自製 HTML 主題草稿的瀏覽器截圖 | MIT（本專案） | 放棄的草稿 |
+| `directions/shots/b-fireflies-calm.png` | PNG 圖片 | 自製 HTML 主題草稿的瀏覽器截圖 | MIT（本專案） | 放棄的草稿 |
+| `directions/shots/b-fireflies-chain.png` | PNG 圖片 | 自製 HTML 主題草稿的瀏覽器截圖 | MIT（本專案） | 放棄的草稿 |
+| `directions/shots/b-fireflies-flash.png` | PNG 圖片 | 自製 HTML 主題草稿的瀏覽器截圖 | MIT（本專案） | 放棄的草稿 |
+| `directions/shots/b-fireflies-mobile.png` | PNG 圖片 | 自製 HTML 主題草稿的瀏覽器截圖 | MIT（本專案） | 放棄的草稿 |
+| `directions/shots/b-fireflies-phase.png` | PNG 圖片 | 自製 HTML 主題草稿的瀏覽器截圖 | MIT（本專案） | 放棄的草稿 |
+| `directions/shots/c-crew-calm.png` | PNG 圖片 | 自製 HTML 主題草稿的瀏覽器截圖 | MIT（本專案） | 放棄的草稿 |
+| `directions/shots/c-crew-chain.png` | PNG 圖片 | 自製 HTML 主題草稿的瀏覽器截圖 | MIT（本專案） | 放棄的草稿 |
+| `directions/shots/c-crew-mobile.png` | PNG 圖片 | 自製 HTML 主題草稿的瀏覽器截圖 | MIT（本專案） | 放棄的草稿 |
+| `directions/shots/c-crew-phase.png` | PNG 圖片 | 自製 HTML 主題草稿的瀏覽器截圖 | MIT（本專案） | 放棄的草稿 |
+| `directions/shots/selection-desktop.png` | PNG 圖片 | 自製 HTML 主題草稿的瀏覽器截圖 | MIT（本專案） | 放棄的草稿 |
+| `directions/shots/selection-mobile.png` | PNG 圖片 | 自製 HTML 主題草稿的瀏覽器截圖 | MIT（本專案） | 放棄的草稿 |
