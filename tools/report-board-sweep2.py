@@ -80,7 +80,7 @@ for row in json.loads((out / 'sweep2-frozen-start.json').read_text(encoding='utf
 lines += ['', '## 已查證：重跑指令', '',
           '日後在同一 repo、已授權的本機環境重跑。請使用新的輸出目錄，工具拒絕覆蓋既有量測。', '',
           '```powershell', f"Set-Location -LiteralPath '{ROOT}'", 'git switch tune/board-sweep2',
-          "$sweepOut = 'D:\\Projects\\Active\\competitions\\game-off-2026\\review-board2-rerun'",
+          "$sweepOut = '../review-board2-rerun'",
           "node --max-old-space-size=1536 tools/run-board-sweep2.mjs --output $sweepOut --budget-seconds 2100 --stop-at ((Get-Date).AddMinutes(35).ToString('o'))"]
 for group in data['groups'][4:]:
     lines.append(f"node --max-old-space-size=1536 tools/run-board-sweep2.mjs --output $sweepOut --extra-hp {group['value']} --budget-seconds 2100 --stop-at ((Get-Date).AddMinutes(35).ToString('o'))")
