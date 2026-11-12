@@ -12,6 +12,11 @@ import { BoardAudio } from './board-audio';
 import { createYarn, createPulses, type YarnLink } from './yarn';
 import { classifyImpact, impactStrength, COMBO_WINDOW_SECONDS, tallyStep, landingZoom, punchScale } from './juice';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { readArt } from './art-round2';
+import { applyUiSkin } from './ui-skins';
+import { buildCage, type Cage } from './cage';
+import { createEventReveal, faceSheet } from './event-card-art';
+import { EVENT_CARDS } from '../../src/event-cards';
 
 const phaseNames: Record<BoardPhase, string> = {
   roll: '等待擲骰', rolling: '擲骰中', moving: '自動走格', effect: '格子效果', shooting: '瞄準與射擊', settling: '等待球停下',
@@ -51,6 +56,9 @@ export function startBoard() {
   const realtimeURL = new URL(location.href); realtimeURL.searchParams.set('mode', 'realtime');
   get<HTMLAnchorElement>('board-realtime').href = realtimeURL.href;
   const choice = readChoice(location.search);
+  // 美術第二輪的三組（?ui=、?cage=、?card=）；不加參數時維持改版前的畫面。
+  const art = readArt(location.search);
+  if (art.ui) applyUiSkin(art.ui);
   const canvas = get<HTMLCanvasElement>('board-scene'), stage = get('board-stage'), labels = get('board-labels');
   const roll = get<HTMLButtonElement>('board-roll'), fire = get<HTMLButtonElement>('board-fire');
   const aim = get<HTMLInputElement>('board-angle'), seed = get<HTMLInputElement>('board-seed');
@@ -58,6 +66,7 @@ export function startBoard() {
   const params = new URLSearchParams(location.search);
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches || params.get('motion') === 'reduce';
   const audio = new BoardAudio(choice.ball === 'a' ? 'wood' : 'shiny'), sound = audio;
+  audio.cageStyle = art.cage;
   let renderer: THREE.WebGLRenderer;
   try { renderer = new THREE.WebGLRenderer({ canvas, antialias: true }); }
   catch { get('board-failure').hidden = false; return; }
@@ -141,7 +150,7 @@ export function startBoard() {
   const ringGeometry = new THREE.TorusGeometry(.20, .02, 6, 32);
   const resonanceMaterial = new THREE.MeshBasicMaterial({ color: colors.resonance });
   const balls = new Map<number, { sphere: THREE.Mesh; ring: THREE.Mesh; label: HTMLElement }>();
-  const monsters = new Map<number, THREE.Mesh>();
+  const monsters = new Map<number, THREE.Object3D>(), cages = new Map<number, Cage>();
   const monsterGeometry = new THREE.IcosahedronGeometry(.26, 0), monsterMaterial = new THREE.MeshStandardMaterial({ color: TOKENS.brassEdge, metalness: .75, roughness: .35, wireframe: true });
   const effectGeometry = new THREE.TorusGeometry(1, .012, 5, 64);
   const effects = new Map<object, THREE.Mesh>();
@@ -151,6 +160,11 @@ export function startBoard() {
   const tally = document.createElement('div'); tally.id = 'board-tally'; tally.setAttribute('aria-hidden', 'true'); tally.hidden = true;
   tally.innerHTML = '<span class="tally-chain"></span><strong class="tally-value"></strong>'; stage.append(tally);
   const stamp = document.createElement('div'); stamp.id = 'board-stamp'; stamp.setAttribute('aria-hidden', 'true'); stamp.hidden = true; stage.append(stamp);
+  // 事件卡卡面（?card=）：抽到時翻卡展示，最近一張的卡面留在操作區文字卡旁。
+  const cardSlot = document.createElement('canvas'); cardSlot.id = 'board-card-face'; cardSlot.hidden = true; cardSlot.setAttribute('aria-hidden', 'true');
+  const reveal = art.card ? createEventReveal({ variant: art.card, audio, reduced, stage, slot: cardSlot, values: C.board.events, materialName: m => C.materials[m].name }) : null;
+  if (art.card) { const row = document.createElement('div'); row.className = 'board-card-row'; const cardText = get('board-card'); cardText.before(row); row.append(cardSlot, cardText); }
+  let lastCards = 0, cardReveals = 0;
   let seen = new WeakSet<object>(), previous = performance.now(), accumulator = 0, angle = -Math.PI / 2;
   let drag: number | null = null, stopped = false, frameCount = 0, lastDie = 0;
   // 回饋狀態：連鎖音階、累加數字、落格放大、棋子跳格、骰子翻滾。全部只讀規則狀態。
@@ -229,7 +243,8 @@ export function startBoard() {
   });
   function resetVisuals() {
     for (const item of balls.values()) { scene.remove(item.sphere, item.ring); (item.sphere.material as THREE.MeshPhysicalMaterial).map?.dispose(); (item.sphere.material as THREE.Material).dispose(); item.label.remove(); } balls.clear();
-    for (const item of monsters.values()) scene.remove(item); monsters.clear();
+    for (const item of monsters.values()) scene.remove(item); monsters.clear(); cages.clear();
+    reveal?.reset(); lastCards = 0;
     for (const item of effects.values()) { scene.remove(item); (item.material as THREE.Material).dispose(); } effects.clear();
     for (const f of floaters) f.el.remove(); floaters.length = 0;
     seen = new WeakSet(); drag = null; accumulator = 0; previous = performance.now(); setAngle(-Math.PI / 2);
@@ -330,7 +345,10 @@ export function startBoard() {
     if (e.kind === 'ignite' && e.fromX !== undefined && e.fromY !== undefined) { pulses.emit(W(e.fromX), Z(e.fromY!), W(e.x), Z(e.y), 1, now); return; }
     if (e.kind === 'damage') {
       juice.total += e.value; if (now - juice.lastBurst > COMBO_WINDOW_SECONDS) juice.lastBurst = now - COMBO_WINDOW_SECONDS + .5;
-      juice.slammed = false; floater(`−${e.value}`, 'board-float-damage', W(e.x), Z(e.y), .6, .8); return;
+      juice.slammed = false; floater(`−${e.value}`, 'board-float-damage', W(e.x), Z(e.y), .6, .8);
+      // 怪物籠被打到時縮一下再彈回（只有新籠子三版）。
+      if (cages.size) { let best: Cage | null = null, d = Infinity; for (const m of game.monsters) { const dd = Math.hypot(m.x - e.x, m.y - e.y); if (dd < d && dd < m.radius + C.ball.radius * 3) { d = dd; best = cages.get(m.id) ?? null; } } best?.jolt(now); }
+      return;
     }
     if ((e.kind === 'resonate' || e.kind === 'release') && effects.size < 32) {
       const ring = mesh(effectGeometry, new THREE.MeshBasicMaterial({ color: colors.resonance, transparent: true, opacity: .6 }), W(e.x), .04, Z(e.y));
@@ -361,6 +379,12 @@ export function startBoard() {
       }
     }
     juice.landed = board.landed; juice.lastPhase = board.phase;
+    // 新抽到的事件卡：從那張 EVENT 格飛起來翻開。
+    if (board.cards.length > lastCards) {
+      lastCards = board.cards.length;
+      if (reveal) { const drawn = board.cards.at(-1)!, r = canvas.getBoundingClientRect(), p = new THREE.Vector3(positions[board.position][0], -.2, positions[board.position][1]).project(camera);
+        reveal.start(drawn, now, { x: r.left + (p.x + 1) * r.width / 2, y: r.top + (1 - p.y) * r.height / 2 }); cardReveals++; }
+    }
   }
   const hop = new THREE.Vector3(), cardWorld = new THREE.Vector3(), basePos = new THREE.Vector3();
   function render() {
@@ -369,6 +393,8 @@ export function startBoard() {
     text('board-phase', game.status === 'ready' ? '準備開始' : game.status === 'won' ? '勝利' : game.status === 'lost' ? '失敗' : phaseNames[board.phase]);
     text('board-turn', `回合 ${board.turn}`); text('board-shots', `剩餘 ${board.shotsLeft} 發`); text('board-clock', `Boss 鐘 ${board.bossClock}`);
     text('board-banner', banner()); text('board-die', `骰子 ${board.die || '—'}`);
+    const bannerKind = game.status === 'playing' && board.landed && board.phase !== 'roll' ? C.board.tiles[board.position].kind : '';
+    if (get('board-banner').dataset.kind !== bannerKind) get('board-banner').dataset.kind = bannerKind;
     text('board-position', `${String(board.position).padStart(2, '0')} ${C.board.tiles[board.position].kind}`);
     text('board-next', `下一球：${C.materials[game.nextMaterial].name} · 留場 ${game.balls.length} 顆`);
     text('board-wave', `第 ${game.wave} 波 · ${(game.wave + 1) * C.board.waveEveryTurns - board.bossClock} 回合後下一波`);
@@ -466,11 +492,16 @@ export function startBoard() {
     }
     visibleLinkCount = links.length;
     yarn.set(links); yarn.animate(now, reduced, game.phase === 'active' ? 1.4 : 1); pulses.update(now, reduced);
-    for (const [id, item] of monsters) if (!game.monsters.some(m => m.id === id)) { scene.remove(item); monsters.delete(id); }
+    for (const [id, item] of monsters) if (!game.monsters.some(m => m.id === id)) { scene.remove(item); monsters.delete(id); cages.delete(id); }
     for (const m of game.monsters) {
-      if (!monsters.has(m.id)) monsters.set(m.id, mesh(monsterGeometry, monsterMaterial, W(m.x), .23, Z(m.y)));
-      const cage = monsters.get(m.id)!; if (!reduced) cage.rotation.y = now * .4 + m.id;
+      if (!monsters.has(m.id)) {
+        if (art.cage) { const cage = buildCage(art.cage, m.id); cage.group.position.set(W(m.x), -.03, Z(m.y)); scene.add(cage.group); monsters.set(m.id, cage.group); cages.set(m.id, cage); }
+        else monsters.set(m.id, mesh(monsterGeometry, monsterMaterial, W(m.x), .23, Z(m.y)));
+      }
+      const cage = cages.get(m.id);
+      if (cage) cage.update(now, reduced); else if (!reduced) monsters.get(m.id)!.rotation.y = now * .4 + m.id;
     }
+    reveal?.update(now);
     for (const [key, ring] of effects) {
       const e = key as typeof game.effects[number], age = (game.tick - e.tick) / C.feedback.lifetimeTicks;
       if (age >= 1) { scene.remove(ring); (ring.material as THREE.Material).dispose(); effects.delete(key); continue; }
@@ -514,7 +545,7 @@ export function startBoard() {
   }
   // 驗收只讀取真實規則與投影；遊戲操作仍走 DOM 輸入。
   Object.assign(window, { boardEvidence: {
-    snapshot: () => ({ game: game.snapshot(), frameCount, visual: { choice, ring: true, reduced, cards: tiles.map(t => ({ index: t.index, kind: t.kind, x: t.mesh.position.x, z: t.mesh.position.z, highlighted: t.top.emissiveIntensity > 0 })), pawn: { x: pawn.position.x, z: pawn.position.z }, die: lastDie, yarn: yarn.core.count, ballPx, ballTags: !!game.balls.length && ballPx < 22, camera: { fov: camera.fov, elevation: elevation * 180 / Math.PI } }, renderedBalls: balls.size, renderedMonsters: monsters.size, drawCalls: renderer.info.render.calls, audio: audio.context?.state ?? 'not-started', sounds: { played: audio.played, log: audio.log.slice(-60) }, juice: { bursts: juice.bursts, maxStep: juice.maxStep, floaters: juice.damageNumbers, slams: juice.slams } }),
+    snapshot: () => ({ game: game.snapshot(), frameCount, visual: { choice, art, cardReveals, cages: cages.size, ring: true, reduced, cards: tiles.map(t => ({ index: t.index, kind: t.kind, x: t.mesh.position.x, z: t.mesh.position.z, highlighted: t.top.emissiveIntensity > 0 })), pawn: { x: pawn.position.x, z: pawn.position.z }, die: lastDie, yarn: yarn.core.count, ballPx, ballTags: !!game.balls.length && ballPx < 22, camera: { fov: camera.fov, elevation: elevation * 180 / Math.PI } }, renderedBalls: balls.size, renderedMonsters: monsters.size, drawCalls: renderer.info.render.calls, audio: audio.context?.state ?? 'not-started', sounds: { played: audio.played, log: audio.log.slice(-60), kinds: [...audio.kinds].sort() }, juice: { bursts: juice.bursts, maxStep: juice.maxStep, floaters: juice.damageNumbers, slams: juice.slams } }),
     project,
   } });
   // ?lab=1：截圖腳本用。用固定角度、固定節奏推進同一個 seed，讓各版本的球位完全相同。只呼叫公開的規則操作。
@@ -535,9 +566,24 @@ export function startBoard() {
         game.step();
       }
       for (let i = 0; i < 2000 && game.status === 'playing'; i++) { if (game.board!.phase === 'roll') break; game.step(); }
-      seen = new WeakSet(game.effects); juice.lastPos = game.board!.position; juice.hopFrom = juice.lastPos; juice.landed = game.board!.landed; juice.lastPhase = game.board!.phase; juice.lastLaps = game.board!.laps;
-      return { shots: game.shots, balls: game.balls.length, phase: game.board!.phase, resonant: game.balls.filter(b => b.resonant).length };
+      seen = new WeakSet(game.effects); lastCards = game.board!.cards.length; if (lastCards) reveal?.show(game.board!.cards.at(-1)!); juice.lastPos = game.board!.position; juice.hopFrom = juice.lastPos; juice.landed = game.board!.landed; juice.lastPhase = game.board!.phase; juice.lastLaps = game.board!.laps;
+      return { shots: game.shots, balls: game.balls.length, phase: game.board!.phase, resonant: game.balls.filter(b => b.resonant).length, monsters: game.monsters.length };
     },
+    /**
+     * 僅供三版並排截圖：把累加數字或抽卡展示停在固定的一刻。只改呈現狀態，不改規則、RNG 或遊戲時鐘。
+     * card.index 是 EVENT_CARDS 的順序；t 是抽卡時間表上的秒數。
+     */
+    preview(options: { tally?: { chain: number; value: number }; card?: { index: number; t: number; material?: number; target?: number } }) {
+      if (options.tally) { Object.assign(juice, { total: options.tally.value, shown: options.tally.value, step: options.tally.chain - 1, slammed: true, hideAt: Infinity, punchAt: -99, lastBurst: -99 }); tally.classList.add('tally-slam'); }
+      if (options.card && reveal) {
+        const card = EVENT_CARDS[options.card.index], r = canvas.getBoundingClientRect(), tile = C.board.tiles.findIndex(t => t.kind === 'EVENT');
+        const p = new THREE.Vector3(positions[tile][0], -.2, positions[tile][1]).project(camera);
+        reveal.freeze({ id: card.id, name: card.name, material: options.card.material ?? 1, targetBallId: options.card.target }, options.card.t, { x: r.left + (p.x + 1) * r.width / 2, y: r.top + (1 - p.y) * r.height / 2 });
+      }
+      render(); return { tallyVisible: !tally.hidden, cardActive: reveal?.active ?? false };
+    },
+    /** 卡面特寫：回傳某一版六張卡的 PNG data URL（程式繪製）。 */
+    faces(variant: 'a' | 'b' | 'c') { return faceSheet(variant, EVENT_CARDS, C.board.events, C.materials[1].name).map(c => c.toDataURL('image/png')); },
   } });
   function frame(now: number) {
     if (stopped) return; requestAnimationFrame(frame);

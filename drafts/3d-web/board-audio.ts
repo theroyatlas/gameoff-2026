@@ -26,6 +26,8 @@ export class BoardAudio {
   context?: AudioContext; master?: GainNode; dry?: GainNode; wet?: GainNode; noise?: AudioBuffer;
   muted = false; voices = 0; played = 0; log: string[] = [];
   private lastImpact = 0; private impactsThisFrame = 0;
+  /** 怪物籠的材質聲（?cage=a|b|c）；null 維持原本的籠聲。 */
+  cageStyle: 'a' | 'b' | 'c' | null = null;
   constructor(private ballFamily: 'shiny' | 'wood' = 'shiny') {}
   unlock() {
     if (!this.context) {
@@ -55,7 +57,8 @@ export class BoardAudio {
       for (let i = 0; i < length; i++) { s = (Math.imul(s, 1103515245) + 12345) >>> 0; d[i] = (s / 2147483648 - 1) * (1 - i / length) ** decay; } }
     return buffer;
   }
-  private ready() { return !!(this.context && this.master && !this.muted && this.voices < 40); }
+  /** priority：抽卡那一串聲音是玩家等著聽的回饋，密集撞擊佔滿 40 聲時仍保留額外 24 聲給它。 */
+  private ready(priority = false) { return !!(this.context && this.master && !this.muted && this.voices < (priority ? 64 : 40)); }
   /** 一個聲部的出口：音量包絡 → 左右定位 → 乾／濕兩路。 */
   private out(start: number, end: number, pan = 0, wet = 1) {
     const ctx = this.context!, gain = ctx.createGain(), panner = ctx.createStereoPanner();
@@ -82,7 +85,9 @@ export class BoardAudio {
     out.gain.setValueAtTime(.0001, start); out.gain.linearRampToValueAtTime(peak, start + .002); out.gain.exponentialRampToValueAtTime(.0001, end);
     src.connect(biquad); biquad.connect(out); src.start(start, (start * 7.13) % .9); src.stop(end + .02);
   }
-  private note(name: string) { this.log.push(name); if (this.log.length > 200) this.log.shift(); }
+  /** 驗收用：出現過的聲音種類（去掉數字尾碼）。 */
+  kinds = new Set<string>();
+  private note(name: string) { this.kinds.add(name.replace(/-\d+$/, '')); this.log.push(name); if (this.log.length > 200) this.log.shift(); }
 
   /** 骰子在手裡搖：六下骨頭互敲，間隔越來越短。 */
   diceShake() {
@@ -155,6 +160,17 @@ export class BoardAudio {
       voice(matA, .35);
     } else if (kind === 'dome') {
       this.tone(2900 * detune, t, .5, gain * .35, { pan, wet: 1.3 }); this.tone(4630 * detune, t, .25, gain * .18, { pan, wet: 1.3 }); voice(matA, .6);
+    } else if (kind === 'cage' && this.cageStyle === 'a') {
+      // 鐵絲籠：細鐵絲被敲到的「叮」，兩個不成整數比的泛音拖長一點，加焊點的金屬接觸聲。
+      this.tone(1480 * detune, t, .42, gain * .32, { type: 'triangle', pan, wet: 1.1 }); this.tone(3870 * detune, t, .2, gain * .12, { pan, wet: 1.1 });
+      this.tone(620 * detune, t, .16, gain * .2, { pan }); this.hiss(t, .012, gain * .5, { type: 'highpass', f: 6000 }, pan, .3); voice(matA, .45);
+    } else if (kind === 'cage' && this.cageStyle === 'b') {
+      // 毛線籠：毛線吃掉高頻，只剩悶悶的「噗」和木樁的低頻。
+      this.hiss(t, .07 + k * .04, gain * 1.1, { type: 'lowpass', f: 700 + k * 500 }, pan, .4); this.tone(165 * detune, t, .1, gain * .6, { to: 110, pan, wet: .4 }); voice(matA, .3);
+    } else if (kind === 'cage' && this.cageStyle === 'c') {
+      // 紙燈籠：紙板被撞的「啪」加兩下紙張抖動的沙沙聲。
+      this.hiss(t, .03, gain * 1.2, { type: 'bandpass', f: 2400, q: 1.2 }, pan, .5); this.tone(240 * detune, t, .06, gain * .5, { to: 160, pan });
+      [.035, .07].forEach((dt, i) => this.hiss(t + dt, .025, gain * (.45 - i * .15), { type: 'bandpass', f: 3600 - i * 600, q: 2 }, pan, .5)); voice(matA, .45);
     } else if (kind === 'cage') {
       this.tone(410 * detune, t, .18, gain * .5, { type: 'triangle', pan }); this.tone(1130 * detune, t, .12, gain * .25, { type: 'square', pan }); voice(matA, .5);
     } else { voice(matA, .75); voice(matB ?? matA, .6); }
@@ -179,6 +195,35 @@ export class BoardAudio {
     if (!this.ready()) return; const t = this.context!.currentTime; this.note('slam');
     this.tone(98, t, .3, .45, { to: 55 }); this.hiss(t, .09, .25, { type: 'lowpass', f: 1800 });
     if (size >= 3) this.tone(784, t + .02, .5, .1, { type: 'triangle', wet: 1.4 });
+  }
+  /**
+   * 抽事件卡：卡從牌堆抽出來的紙張摩擦聲，加一段往上爬的期待音。
+   * 卡的材質決定摩擦聲：a 手繪紙卡較軟、b 印刷卡較脆、c 木牌是木頭滑過桌面。
+   */
+  cardDraw(variant: 'a' | 'b' | 'c') {
+    if (!this.ready(true)) return; const t = this.context!.currentTime; this.note(`card-draw-${variant}`);
+    if (variant === 'c') { this.hiss(t, .22, .16, { type: 'bandpass', f: 500, q: 2, to: 900 }); this.tone(130, t, .2, .12, { type: 'triangle', to: 150 }); }
+    else this.hiss(t, .2, variant === 'b' ? .2 : .16, { type: 'bandpass', f: variant === 'b' ? 1800 : 1100, q: 1.4, to: variant === 'b' ? 4200 : 2800 });
+    // 期待：兩個聲部往上滑，翻面前停在屬音。
+    this.tone(392, t + .05, .42, .07, { type: 'triangle', to: 587, wet: 1.2 }); this.tone(784, t + .1, .36, .03, { to: 1175, wet: 1.2 });
+  }
+  /** 翻面：一記短促的「啪」；木牌是兩下木頭輕敲。 */
+  cardFlip(variant: 'a' | 'b' | 'c') {
+    if (!this.ready(true)) return; const t = this.context!.currentTime; this.note(`card-flip-${variant}`);
+    if (variant === 'c') { this.tone(980, t, .05, .2, { type: 'triangle', to: 820 }); this.tone(1240, t + .045, .04, .12, { type: 'triangle' }); this.hiss(t, .02, .2, { type: 'bandpass', f: 1800, q: 3 }); }
+    else { this.hiss(t, .035, variant === 'b' ? .34 : .26, { type: 'highpass', f: variant === 'b' ? 3200 : 2200 }); this.hiss(t + .004, .05, .18, { type: 'bandpass', f: 900, q: 1.5 }); this.tone(170, t, .06, .18, { to: 120 }); }
+  }
+  /** 蓋章：橡皮章壓到紙上的悶響；木牌版是黃銅印壓進木頭，多一個金屬泛音。 */
+  cardStamp(variant: 'a' | 'b' | 'c') {
+    if (!this.ready(true)) return; const t = this.context!.currentTime; this.note(`card-stamp-${variant}`);
+    this.tone(140, t, .18, .55, { to: 58 }); this.hiss(t, .07, .32, { type: 'lowpass', f: 1300 }); this.hiss(t, .012, .2, { type: 'bandpass', f: 2600, q: 1 });
+    if (variant === 'c') this.tone(1660, t + .005, .35, .07, { type: 'triangle', wet: 1.2 });
+  }
+  /** 獎勵：依卡號換主音的上行琶音（大調五聲），最後一個音拉長並帶八度泛音。 */
+  cardReward(index: number) {
+    if (!this.ready(true)) return; const t = this.context!.currentTime; this.note(`card-reward-${index}`);
+    const root = 523.25 * 2 ** ([0, 2, 4, 7, 9, 12][Math.max(0, index) % 6] / 12);
+    [0, 4, 7, 12].forEach((semi, i) => { const f = root * 2 ** (semi / 12), last = i === 3; this.tone(f, t + i * .06, last ? .6 : .2, last ? .16 : .12, { type: 'triangle', pan: -.3 + i * .2, wet: 1.3 }); if (last) this.tone(f * 2, t + i * .06, .4, .05, { wet: 1.5 }); });
   }
   /** 規則的其他效果：發射、相變、怪物、波次。 */
   play(e: Effect, shifted: boolean) {

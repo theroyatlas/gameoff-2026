@@ -78,7 +78,7 @@ export function cardGeometry(w: number, d: number, index: number) {
 }
 
 /** 紙面：米白底、短纖維與幾塊淡色吸墨斑。 */
-function paperBase(x: CanvasRenderingContext2D, w: number, h: number, seed: number, tone = css(TOKENS.paper)) {
+export function paperBase(x: CanvasRenderingContext2D, w: number, h: number, seed: number, tone = css(TOKENS.paper)) {
   x.fillStyle = tone; x.fillRect(0, 0, w, h); const r = lcg(seed);
   for (let i = 0; i < 26; i++) { const g = x.createRadialGradient(r() * w, r() * h, 0, r() * w, r() * h, 40 + r() * 120); g.addColorStop(0, 'rgba(160,130,90,.07)'); g.addColorStop(1, 'rgba(160,130,90,0)'); x.fillStyle = g; x.fillRect(0, 0, w, h); }
   const fibers = Math.round(w * h / 300);
@@ -94,8 +94,8 @@ export const STROKES: Record<IconStyle, { width: number; tremor: number; wavelen
   b: { width: 7, tremor: 1.5, wavelength: 70, cap: 'round', passes: 2, plateOffset: 1.5, inkDrop: true },
   c: { width: 5, tremor: .4, wavelength: 90, cap: 'butt', passes: 1, plateOffset: 3, inkDrop: false },
 };
-type Pt = [number, number];
-function handPath(x: CanvasRenderingContext2D, pts: Pt[], color: string, style: IconStyle, scale = 1, phase = 0) {
+export type Pt = [number, number];
+export function handPath(x: CanvasRenderingContext2D, pts: Pt[], color: string, style: IconStyle, scale = 1, phase = 0) {
   const s = STROKES[style], dense: Pt[] = [];
   for (let i = 0; i < pts.length - 1; i++) { const [ax, ay] = pts[i], [bx, by] = pts[i + 1], n = Math.max(2, Math.ceil(Math.hypot(bx - ax, by - ay) / 3)); for (let j = 0; j < n; j++) dense.push([ax + (bx - ax) * j / n, ay + (by - ay) * j / n]); }
   dense.push(pts[pts.length - 1]);
@@ -116,7 +116,7 @@ function handPath(x: CanvasRenderingContext2D, pts: Pt[], color: string, style: 
   }
   if (s.inkDrop) { const [ex, ey] = dense[dense.length - 1]; x.save(); x.fillStyle = color; x.globalAlpha = .8; x.beginPath(); x.arc(ex, ey, s.width * scale * .62, 0, Math.PI * 2); x.fill(); x.restore(); }
 }
-function circlePts(cx: number, cy: number, rx: number, ry: number, start = 0, sweep = Math.PI * 2.04, n = 64): Pt[] { return Array.from({ length: n + 1 }, (_, i) => { const a = start + sweep * i / n; return [cx + Math.cos(a) * rx, cy + Math.sin(a) * ry]; }); }
+export function circlePts(cx: number, cy: number, rx: number, ry: number, start = 0, sweep = Math.PI * 2.04, n = 64): Pt[] { return Array.from({ length: n + 1 }, (_, i) => { const a = start + sweep * i / n; return [cx + Math.cos(a) * rx, cy + Math.sin(a) * ry]; }); }
 
 export type CardKind = 'START' | 'SURGE' | 'TUNE' | 'EVENT';
 const KIND_COLOR: Record<CardKind, string> = { START: TOKENS.start, SURGE: TOKENS.surge, TUNE: TOKENS.tune, EVENT: TOKENS.event };
