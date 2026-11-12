@@ -1,0 +1,60 @@
+[
+  {
+    "mode": "disabled",
+    "pageErrors": [],
+    "consoleErrors": [
+      "THREE.WebGLRenderer: A WebGL context could not be created. Reason:  disabled by enterprise policy or commandline switch",
+      "THREE.WebGLRenderer: A WebGL context could not be created. Reason:  disabled by enterprise policy or commandline switch",
+      "THREE.WebGLRenderer: Error creating WebGL context."
+    ],
+    "linked2DShot": true
+  },
+  {
+    "mode": "renderer-failure",
+    "pageErrors": [],
+    "consoleErrors": [
+      "THREE.WebGLRenderer: Injected renderer initialization failure"
+    ],
+    "linked2DShot": true
+  },
+  {
+    "mode": "context-lost",
+    "pageErrors": [],
+    "consoleErrors": [],
+    "linked2DShot": true
+  },
+  {
+    "mode": "quality",
+    "method": "injected 40ms RAF scheduling delay; not hardware benchmark",
+    "quality": {
+      "level": 3,
+      "fps": 21.935640829805354,
+      "history": [
+        {
+          "level": 1,
+          "fps": 21.560288204664854,
+          "seconds": 4.341666666666667
+        },
+        {
+          "level": 2,
+          "fps": 14.86965262508847,
+          "seconds": 6.625
+        },
+        {
+          "level": 3,
+          "fps": 21.935640829805354,
+          "seconds": 9.65
+        }
+      ],
+      "shadows": false,
+      "pixelRatio": 0.75,
+      "composerPixelRatio": 0.75,
+      "antialias": false,
+      "shadowMapSize": 512,
+      "effects": 4,
+      "effectLimit": 24
+    },
+    "pageErrors": [],
+    "consoleErrors": []
+  }
+]

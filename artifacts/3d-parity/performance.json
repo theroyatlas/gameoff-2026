@@ -1,0 +1,47 @@
+[
+  {
+    "rate": 4,
+    "calm": {
+      "frames": 356,
+      "seconds": 9.952899999999994,
+      "averageFps": 35.76846949130406,
+      "onePercentLow": 12.828736369467787,
+      "tailFrames": 4
+    },
+    "shift": {
+      "frames": 349,
+      "seconds": 4.994099999999999,
+      "averageFps": 69.88246130433915,
+      "onePercentLow": 15.816528272044195,
+      "tailFrames": 4
+    },
+    "quality": {
+      "level": 3,
+      "fps": 43.64949130292091,
+      "history": [
+        {
+          "level": 1,
+          "fps": 35.127253446447504,
+          "seconds": 5.683333333333334
+        },
+        {
+          "level": 2,
+          "fps": 44.651716610438584,
+          "seconds": 7.866666666666666
+        },
+        {
+          "level": 3,
+          "fps": 38.75716519020321,
+          "seconds": 16.933333333333334
+        }
+      ],
+      "shadows": false,
+      "pixelRatio": 0.75,
+      "composerPixelRatio": 0.75,
+      "antialias": false,
+      "shadowMapSize": 512,
+      "effects": 0,
+      "effectLimit": 24
+    }
+  }
+]
