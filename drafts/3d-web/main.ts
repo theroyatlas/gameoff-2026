@@ -12,7 +12,8 @@ import { createHUD } from './hud';
 import { resonanceStyle } from './presentation';
 import { AdaptiveQuality } from './quality';
 import { LOW_GPU_PROFILE, TWO_D_URL } from './settings';
-import { readChoice, TOKENS, LIGHTS, walnutTexture, drawField, badgeCanvas, ballMaterial, yarnTexture, buildRing, SHARED_TEXTURES, type StyleChoice } from './style1';
+import { readChoice, TOKENS, LIGHTS, walnutTexture, drawField, badgeCanvas, ballMaterial, buildRing, SHARED_TEXTURES, type StyleChoice } from './style1';
+import { createYarn, type YarnLink } from './yarn';
 
 export function startRealtime() {
 const canvas = document.querySelector<HTMLCanvasElement>('#scene')!;
@@ -132,11 +133,8 @@ const aimMesh=mesh(aimGeo,aimMat,0,.025,(C.launcher.y-340)*.01);aimMesh.visible=
 const fieldMat=new THREE.ShaderMaterial({transparent:true,depthWrite:false,uniforms:{time:{value:0},strength:{value:0}},vertexShader:'varying vec2 p;void main(){p=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',fragmentShader:'varying vec2 p;uniform float time;uniform float strength;void main(){vec2 q=(p-.5)*vec2(8.,6.8);float r=length(q);float f=pow(max(0.,sin(r*13.-time*3.+sin(atan(q.y,q.x)*6.)*.5)),9.);float a=strength*(.03+f*.07);gl_FragColor=vec4(.56,.86,.78,a);}'});
 const field=mesh(new THREE.PlaneGeometry(8,6.8),fieldMat,0,.014,0);field.rotation.x=-Math.PI/2;field.castShadow=false;field.receiveShadow=false;
 // 共振毛線：一個 InstancedMesh，每條是一段斜捻紋理的細管。
-const YARN_MAX=512,yarnMap=yarnTexture();SHARED_TEXTURES.add(yarnMap);
-const yarnMat=new THREE.MeshStandardMaterial({map:yarnMap,color:0xffffff,emissive:TOKENS.yarn,emissiveIntensity:.55,roughness:.95,metalness:0});
-const yarnGeo=new THREE.CylinderGeometry(.032,.032,1,6,1,true);
-const network=new THREE.InstancedMesh(yarnGeo,yarnMat,YARN_MAX);network.count=0;network.frustumCulled=false;network.castShadow=false;network.visible=false;scene.add(network);
-const yarnMatrix=new THREE.Matrix4(),yarnQuat=new THREE.Quaternion(),yarnScale=new THREE.Vector3(),yarnPos=new THREE.Vector3(),yarnDir=new THREE.Vector3(),yarnUp=new THREE.Vector3(0,1,0);
+// 毛線改用共用的柔軟曲線（yarn.ts）：芯線斜捻＋毛邊，每條是一段彎弧。
+const yarnNet=createYarn(scene,256);
 const ballGeo=new THREE.SphereGeometry(C.ball.radius*.01,24,16);
 const ballVisuals=new Map<number,{group:THREE.Group,sphere:THREE.Mesh,halo:THREE.Mesh,outer:THREE.Mesh,mat:THREE.MeshPhysicalMaterial,label:THREE.Sprite,lastX:number,lastY:number}>();
 function badge(id:number){const t=new THREE.CanvasTexture(badgeCanvas(id));t.colorSpace=THREE.SRGBColorSpace;return t;}
@@ -234,7 +232,7 @@ function removeVisual(group:THREE.Object3D){group.traverse(o=>{const m=o as THRE
   for(const mat of mats)if(![brass,edge,dark,glow,glass,wood].includes(mat as THREE.MeshStandardMaterial)){const map=(mat as THREE.SpriteMaterial).map;if(map&&!SHARED_TEXTURES.has(map))map.dispose();mat.dispose();}});scene.remove(group);}
 function resetScene(){lastImpact.clear();badgeEvidence=[];trailCount=visibleBadgeCount=0;trailGeo.setDrawRange(0,0);trailMesh.visible=false;for(const v of ballVisuals.values())removeVisual(v.group);ballVisuals.clear();for(const v of cages.values())removeVisual(v.group);cages.clear();
   for(const e of effects)disposeEffect(e);effects.length=0;particles=[];particleGeo.setDrawRange(0,0);seen=new WeakSet();
-  for(const key of Object.keys(eventCounts))delete eventCounts[key];maxDepth=0;freeze=shake=recoil=0;nextFreezeAt=0;visualTime=0;drag=null;angle=-Math.PI/2;accumulator=0;previous=performance.now();currentPhase='';network.visible=false;network.count=0;camera.position.copy(baseCamera);
+  for(const key of Object.keys(eventCounts))delete eventCounts[key];maxDepth=0;freeze=shake=recoil=0;nextFreezeAt=0;visualTime=0;drag=null;angle=-Math.PI/2;accumulator=0;previous=performance.now();currentPhase='';yarnNet.set([]);camera.position.copy(baseCamera);
 }
 const hud=createHUD(game,resetScene);
 // 風格一的三組可選外觀；只換呈現，不碰規則與手感。
@@ -275,14 +273,11 @@ const t=game.tick*C.dt,active=game.phase==='active',warning=game.phase==='warnin
   for(const [id,v] of ballVisuals)v.label.visible=visibleIds.has(id);
   updateTrails();
   // 每顆球只牽到最近兩顆（340 內），每條線在中點依球號奇偶往同一側彎 6%，像手拉過去的線。
-  let yarnCount=0;if(active){const pairs=new Set<number>(),n=game.balls.length;
+  const yarnLinks:YarnLink[]=[];if(active){const pairs=new Set<number>(),n=game.balls.length;
     for(let i=0;i<n;i++){const a=game.balls[i];const near:number[]=[];for(let j=0;j<n;j++)if(j!==i&&Math.hypot(a.x-game.balls[j].x,a.y-game.balls[j].y)<340)near.push(j);
       near.sort((p,q)=>Math.hypot(a.x-game.balls[p].x,a.y-game.balls[p].y)-Math.hypot(a.x-game.balls[q].x,a.y-game.balls[q].y));for(const j of near.slice(0,2))pairs.add(Math.min(i,j)*4096+Math.max(i,j));}
-    for(const key of pairs){if(yarnCount>YARN_MAX-2)break;const a=game.balls[Math.floor(key/4096)],b=game.balls[key%4096],ax=(a.x-400)*.01,az=(a.y-340)*.01,bx=(b.x-400)*.01,bz=(b.y-340)*.01,len=Math.hypot(bx-ax,bz-az),side=(a.id+b.id)%2?1:-1;
-      const mx=(ax+bx)/2-(bz-az)/len*len*.06*side,mz=(az+bz)/2+(bx-ax)/len*len*.06*side;
-      for(const [px,pz,qx,qz] of [[ax,az,mx,mz],[mx,mz,bx,bz]]){const l=Math.hypot(qx-px,qz-pz);yarnDir.set(qx-px,0,qz-pz).normalize();yarnPos.set((px+qx)/2,.15,(pz+qz)/2);yarnQuat.setFromUnitVectors(yarnUp,yarnDir);yarnScale.set(1,l+.02,1);network.setMatrixAt(yarnCount++,yarnMatrix.compose(yarnPos,yarnQuat,yarnScale));}}}
-  network.count=yarnCount;if(yarnCount)network.instanceMatrix.needsUpdate=true;network.visible=active&&yarnCount>0;
-  yarnMap.offset.y=reduced?0:-t*.35;yarnMat.emissiveIntensity=reduced?.7:.55+.25*Math.sin(t*Math.PI);
+    for(const key of pairs){const a=game.balls[Math.floor(key/4096)],b=game.balls[key%4096];yarnLinks.push({ax:(a.x-400)*.01,az:(a.y-340)*.01,bx:(b.x-400)*.01,bz:(b.y-340)*.01,side:(a.id+b.id)%2?1:-1,glow:1});}}
+  const yarnCount=yarnNet.set(yarnLinks);yarnNet.animate(t,reduced,1.2);
   fieldMat.uniforms.time.value=reduced?0:t;fieldMat.uniforms.strength.value=active?1:warning?.2:0;
   phaseLight.intensity=active?6:warning?2.2:.25;bloom.strength=active?.35:.12;
   {const L=LIGHTS[choice.light],k=reduced?1:1-Math.exp(-4*elapsed);key.intensity+=((active?.8:1)*L.intensity-key.intensity)*k;(scene.background as THREE.Color).lerp(active?bgShift:bgIdle,k);fog.color.copy(scene.background as THREE.Color);}

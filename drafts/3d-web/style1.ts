@@ -36,16 +36,45 @@ function canvas(w: number, h: number) { const c = document.createElement('canvas
 function lcg(seed: number) { let s = seed >>> 0; return () => { s = (Math.imul(s, 1664525) + 1013904223) >>> 0; return s / 4294967296; }; }
 function tex(c: HTMLCanvasElement, srgb = true) { const t = new THREE.CanvasTexture(c); if (srgb) t.colorSpace = THREE.SRGBColorSpace; return t; }
 
-/** 胡桃木：年輪沿長邊，深淺兩色之間只走正弦波紋，不加白噪點（避免像塑膠）。 */
-export function walnutTexture(size = 1024, light = false) {
-  const { c, x } = canvas(size, size), px = x.createImageData(size, size), r = lcg(811);
+/** 胡桃木：年輪沿長邊，深淺兩色之間只走正弦波紋，不加白噪點（避免像塑膠）。bump=true 時輸出同一組年輪的灰階高度圖。 */
+export function walnutTexture(size = 1024, light = false, bump = false, seed = 811) {
+  const { c, x } = canvas(size, size), px = x.createImageData(size, size), r = lcg(seed);
   const base = light ? [98, 62, 34] : [62, 38, 21];
   for (let v = 0; v < size; v++) for (let u = 0; u < size; u++) {
-    const k = 1024 / size, warp = v * k + 9 * Math.sin(u * k * .008 + v * k * .005) + 4 * Math.sin(u * k * .017 + v * k * .009);
-    const g = Math.sin(warp * .65) * 1.6 + Math.sin(warp * .11) * 4 + Math.sin(warp * .023) * 5 + (r() - .5) * 3, i = (v * size + u) * 4;
-    px.data[i] = base[0] + g; px.data[i + 1] = base[1] + g * .62; px.data[i + 2] = base[2] + g * .38; px.data[i + 3] = 255;
+    const k = 1024 / size, warp = v * k + 9 * Math.sin(u * k * .008 + v * k * .005 + seed) + 4 * Math.sin(u * k * .017 + v * k * .009);
+    // 細年輪（高頻）＋ 寬帶（低頻）；細年輪拉高到 ±5 色階，暖燈下才看得到木紋。
+    const ring = Math.sin(warp * .65), g = ring * 5 + Math.sin(warp * .11) * 6 + Math.sin(warp * .023) * 7 + (r() - .5) * 3, i = (v * size + u) * 4;
+    if (bump) { const h = 128 + ring * 60 + Math.sin(warp * .11) * 30; px.data[i] = px.data[i + 1] = px.data[i + 2] = h; }
+    else { px.data[i] = base[0] + g; px.data[i + 1] = base[1] + g * .62; px.data[i + 2] = base[2] + g * .38; }
+    px.data[i + 3] = 255;
   }
-  x.putImageData(px, 0, 0); return tex(c);
+  x.putImageData(px, 0, 0); const t = tex(c, !bump); t.wrapS = t.wrapT = THREE.RepeatWrapping; return t;
+}
+
+/** 紙的高度圖：短纖維凸起、幾塊吸水後的起伏。所有紙卡與場地共用。 */
+let paperBump: THREE.Texture | undefined;
+export function paperBumpTexture() {
+  if (paperBump) return paperBump;
+  const { c, x } = canvas(512, 512), r = lcg(523);
+  x.fillStyle = 'rgb(128,128,128)'; x.fillRect(0, 0, 512, 512);
+  for (let i = 0; i < 40; i++) { const cx = r() * 512, cy = r() * 512, g = x.createRadialGradient(cx, cy, 0, cx, cy, 30 + r() * 90); const up = r() < .5; g.addColorStop(0, up ? 'rgba(170,170,170,.35)' : 'rgba(90,90,90,.35)'); g.addColorStop(1, 'rgba(128,128,128,0)'); x.fillStyle = g; x.fillRect(0, 0, 512, 512); }
+  for (let i = 0; i < 5200; i++) {
+    const fx = r() * 512, fy = r() * 512, a = r() * Math.PI, l = 3 + r() * 10; x.strokeStyle = r() < .6 ? 'rgba(235,235,235,.5)' : 'rgba(40,40,40,.35)'; x.lineWidth = .6 + r() * .6;
+    x.beginPath(); x.moveTo(fx, fy); x.quadraticCurveTo(fx + Math.cos(a + .7) * l * .5, fy + Math.sin(a + .7) * l * .5, fx + Math.cos(a) * l, fy + Math.sin(a) * l); x.stroke();
+  }
+  paperBump = tex(c, false); paperBump.wrapS = paperBump.wrapT = THREE.RepeatWrapping; return paperBump;
+}
+
+/** 紙卡上表面：細分平面，四角依格序微微翹起，中間有一道很淺的折痕。 */
+export function cardGeometry(w: number, d: number, index: number) {
+  const g = new THREE.PlaneGeometry(w, d, 12, 9); g.rotateX(-Math.PI / 2);
+  const p = g.attributes.position as THREE.BufferAttribute, curl = [.018, .01, .024, .008][index % 4], corner = index % 4, crease = .003 * ((index % 3) - 1);
+  for (let i = 0; i < p.count; i++) {
+    const u = p.getX(i) / (w / 2), v = p.getZ(i) / (d / 2), cu = [-1, 1, 1, -1][corner], cv = [-1, -1, 1, 1][corner];
+    const lift = Math.max(0, (u * cu + v * cv - 1) / 1) ** 2 * curl, wave = crease * Math.cos(u * Math.PI / 2) + .002 * Math.sin(v * 3 + index);
+    p.setY(i, lift + wave);
+  }
+  g.computeVertexNormals(); return g;
 }
 
 /** 紙面：米白底、短纖維與幾塊淡色吸墨斑。 */
@@ -107,7 +136,7 @@ export function drawCard(c: HTMLCanvasElement, kind: CardKind, index: number, st
   paperBase(x, w, h, 300 + index * 17);
   x.save(); x.strokeStyle = KIND_COLOR[kind]; x.globalAlpha = .9; x.lineWidth = 9 * k; x.strokeRect(9 * k + off, 9 * k + off, w - 18 * k, h - 18 * k); x.restore();
   drawIcon(x, kind, w / 2, h * .4, style, k);
-  x.save(); x.fillStyle = css(TOKENS.ink); x.globalAlpha = .9; x.font = `700 ${28 * k}px ${HAND_FONT}`; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(kind, w / 2 + off * .3, h * .79); x.font = `${13 * k}px ${HAND_FONT}`; x.textAlign = 'left'; x.fillText(String(index + 1), 20 * k, 26 * k); x.restore();
+  x.save(); x.fillStyle = css(TOKENS.ink); x.globalAlpha = .9; x.font = `700 ${28 * k}px ${HAND_FONT}`; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(kind, w / 2 + off * .3, h * .79); x.font = `${13 * k}px ${HAND_FONT}`; x.textAlign = 'left'; x.fillText(String(index).padStart(2, '0'), 20 * k, 26 * k); x.restore();
 }
 
 /** 場地紙面與核心外兩圈墨線（style-1.png 的同心圈），共用圖示筆觸。 */
@@ -157,6 +186,25 @@ export function ballMaterial(style: BallStyle, material: number, emissive: numbe
   return new THREE.MeshPhysicalMaterial({ color: [TOKENS.glass, TOKENS.steel, TOKENS.brass][material], metalness: [.05, .95, .9][material], roughness: [.06, .22, .3][material], transmission: material === 0 ? .85 : 0, thickness: .15, clearcoat: 1, emissive, emissiveIntensity: 0 });
 }
 
+/**
+ * 球號直接印在球上：貼圖赤道 u=0.25（朝 +z）放兩位數，球體再往鏡頭仰起，號碼正對畫面。
+ * 淺色球（玻璃、原木、黃銅）用墨色字，深色球（鋼、紅漆、陶土藍）用紙色字，並描一圈反色邊。
+ */
+const DARK_BALL: Record<BallStyle, boolean[]> = { a: [false, true, true], b: [false, true, false], c: [false, true, false] };
+export function numberedBallMaterial(style: BallStyle, material: number, id: number) {
+  const base = ballMaterial(style, material, 0), { c, x } = canvas(256, 128);
+  const src = base.map?.image as HTMLCanvasElement | undefined;
+  if (src) x.drawImage(src, 0, 0, 256, 128); else { x.fillStyle = `#${base.color.getHexString()}`; x.fillRect(0, 0, 256, 128); base.color.set(0xffffff); }
+  const dark = DARK_BALL[style][material], label = String(id).padStart(2, '0');
+  x.font = `700 50px ${NUMBER_FONT}`; x.textAlign = 'center'; x.textBaseline = 'middle';
+  x.lineWidth = 6; x.lineJoin = 'round'; x.strokeStyle = dark ? 'rgba(43,33,24,.75)' : 'rgba(232,220,194,.7)'; x.strokeText(label, 64, 66);
+  x.fillStyle = dark ? css(TOKENS.paper) : css(TOKENS.ink); x.fillText(label, 64, 66);
+  const t = tex(c); t.anisotropy = 4; base.map = t;
+  // 玻璃球：號碼要浮在玻璃表面，透射降一點，避免字被背景吃掉。
+  if (base.transmission > 0) base.transmission = Math.min(base.transmission, .55);
+  base.needsUpdate = true; return base;
+}
+
 /** 共振毛線：斜捻紋理，沿線方向重複；單一 InstancedMesh。 */
 export function yarnTexture() {
   const { c, x } = canvas(64, 256); x.fillStyle = css(TOKENS.yarn); x.fillRect(0, 0, 64, 256);
@@ -179,12 +227,14 @@ export function buildRing(walnut: THREE.Material, style: IconStyle, rules?: read
   const cards: { canvas: HTMLCanvasElement; texture: THREE.Texture; kind: CardKind; index: number; mesh: THREE.Mesh; top: THREE.MeshStandardMaterial }[] = [];
   const layout = rules ? rules.map((tile, index) => ({ ...RING[(14 - index) % 14], kind: tile.kind })) : RING;
   layout.forEach((cell, index) => {
-    const { c } = canvas(256, 196); drawCard(c, cell.kind, index, style); const t = tex(c); t.anisotropy = 4;
-    const top = new THREE.MeshStandardMaterial({ map: t, roughness: .92, metalness: 0 });
-    const card = new THREE.Mesh(new THREE.BoxGeometry(1.5, .014, 1.15), [edgeMat, edgeMat, top, edgeMat, edgeMat, edgeMat]);
+    const { c } = canvas(512, 392); drawCard(c, cell.kind, index, style); const t = tex(c); t.anisotropy = 8;
+    const top = new THREE.MeshStandardMaterial({ map: t, roughness: .92, metalness: 0, bumpMap: paperBumpTexture(), bumpScale: 1.6 });
+    // 上表面是會翹角的細分紙面；下面墊一片薄紙板當側邊。
+    const card = new THREE.Mesh(cardGeometry(1.8, 1.38, index), top);
+    const board = new THREE.Mesh(new THREE.BoxGeometry(1.79, .012, 1.37), edgeMat); board.position.y = -.017; board.receiveShadow = true; card.add(board);
     // 放卡的手往棋盤中心推一點：每張朝內 0.04（約卡寬 3%）。
     const inward = new THREE.Vector2(-cell.x, -cell.z).normalize().multiplyScalar(.04);
-    card.position.set(cell.x + inward.x, -.263, cell.z + inward.y); card.rotation.y = cell.tilt * Math.PI / 180; card.castShadow = card.receiveShadow = true; group.add(card);
+    card.position.set(cell.x + inward.x, -.255, cell.z + inward.y); card.rotation.y = cell.tilt * Math.PI / 180; card.castShadow = card.receiveShadow = true; group.add(card);
     cards.push({ canvas: c, texture: t, kind: cell.kind, index, mesh: card, top });
   });
   // 紅漆木棋子：站在下排 SURGE 上。

@@ -1,10 +1,16 @@
 import * as THREE from 'three';
 import { Game, type Ball } from '../../src/game';
 import { CONFIG as C } from '../../src/config';
-import { Sound } from '../../src/audio';
 import type { BoardPhase } from '../../src/board';
 import './board-ring.css';
-import { readChoice, TOKENS, LIGHTS, walnutTexture, drawField, ballMaterial, buildRing } from './style1';
+import { readChoice, TOKENS, LIGHTS, walnutTexture, drawField, numberedBallMaterial, buildRing, paperBumpTexture } from './style1';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+import { BoardAudio } from './board-audio';
+import { createYarn, createPulses, type YarnLink } from './yarn';
+import { classifyImpact, impactStrength, COMBO_WINDOW_SECONDS, tallyStep, landingZoom, punchScale } from './juice';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
 const phaseNames: Record<BoardPhase, string> = {
@@ -36,7 +42,7 @@ export function startBoard() {
         <div class="board-utilities"><button id="board-mute" aria-pressed="false">音效：開</button><button id="board-restart">重來</button></div>
       </aside>
     </div>
-    <p id="board-result" role="status" hidden></p>
+    <p id="board-result" role="status" hidden></p><p id="board-chain-live" class="sr-only" aria-live="polite"></p>
     <footer class="board-help"><p>擲骰 → 走格 → 射 3 發 → 等球停下（最多 6 秒）→ Boss 鐘 +1。</p><p>點球場或拖拉後放開發射；← → 瞄準、空白鍵擲骰／發射。Boss 歸零獲勝，怪物超過 10 隻失敗。</p></footer>`;
   const get = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id)! as T;
   const realtimeURL = new URL(location.href); realtimeURL.searchParams.set('mode', 'realtime');
@@ -45,66 +51,109 @@ export function startBoard() {
   const canvas = get<HTMLCanvasElement>('board-scene'), stage = get('board-stage'), labels = get('board-labels');
   const roll = get<HTMLButtonElement>('board-roll'), fire = get<HTMLButtonElement>('board-fire');
   const aim = get<HTMLInputElement>('board-angle'), seed = get<HTMLInputElement>('board-seed');
-  const game = new Game(C.seed, 'board'), sound = new Sound();
-  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const game = new Game(C.seed, 'board');
+  const params = new URLSearchParams(location.search);
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches || params.get('motion') === 'reduce';
+  const audio = new BoardAudio(choice.ball === 'a' ? 'wood' : 'shiny'), sound = audio;
   let renderer: THREE.WebGLRenderer;
   try { renderer = new THREE.WebGLRenderer({ canvas, antialias: true }); }
   catch { get('board-failure').hidden = false; return; }
   renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
   renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-  renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = .9;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.1;
   const scene = new THREE.Scene(); scene.background = new THREE.Color(colors.background);
-  const camera = new THREE.OrthographicCamera(-7, 7, 6.4, -6.4, .1, 80);
-  camera.position.set(0, 15, 6.5); camera.lookAt(0, 0, 0);
+  // 參考圖 C1 的斜上方俯視：看得到桌子厚度。寬畫面仰角 47°，窄畫面拉到 60° 讓球號好讀。
+  const camera = new THREE.PerspectiveCamera(30, 16 / 9, .1, 120);
+  const camTarget = new THREE.Vector3(0, -.35, .5), camBase = new THREE.Vector3(), lookNow = new THREE.Vector3();
+  let elevation = 47 * Math.PI / 180;
+  const shot = params.get('cam');
   const L = LIGHTS[choice.light];
-  scene.add(new THREE.HemisphereLight(0xffe5b7, 0x2a1a10, L.ambient));
-  const light = new THREE.SpotLight(L.color, L.intensity, 30, L.angle, L.penumbra, 2);
-  light.position.set(...L.position); light.castShadow = true; light.shadow.mapSize.set(1024, 1024);
+  // 棋盤模式的補光只用一半，讓暖色聚光在中央形成光池、外圈退進暗處（C1、B1）。
+  scene.add(new THREE.HemisphereLight(0xffe5b7, 0x2a1a10, L.ambient * .5));
+  // LIGHTS 的強度是以 1 單位距離表示；燈離桌面約 10 單位，衰減 2，所以乘 SPOT_GAIN 換回桌面上的亮度，否則聚光被補光蓋過、看不出光池。
+  const SPOT_GAIN = 9;
+  const light = new THREE.SpotLight(L.color, L.intensity * SPOT_GAIN, 34, L.angle, L.penumbra, 2);
+  light.position.set(...L.position); light.target.position.set(0, -.3, .3); light.castShadow = true;
+  light.shadow.mapSize.set(2048, 2048); light.shadow.bias = -.0004; light.shadow.normalBias = .02; light.shadow.radius = 4;
   scene.add(light, light.target);
-  const rim = new THREE.DirectionalLight(0xc8d8d4, .35); rim.position.set(4, 6, -5); scene.add(rim);
+  const rim = new THREE.DirectionalLight(0xc8d8d4, .3); rim.position.set(4, 6, -5); scene.add(rim);
   const pmrem = new THREE.PMREMGenerator(renderer), room = new RoomEnvironment();
-  scene.environment = pmrem.fromScene(room, .04).texture; scene.environmentIntensity = .3; room.dispose(); pmrem.dispose();
+  scene.environment = pmrem.fromScene(room, .04).texture; scene.environmentIntensity = .1; room.dispose(); pmrem.dispose();
+  const composer = new EffectComposer(renderer);
+  composer.addPass(new RenderPass(scene, camera));
+  const bloom = new UnrealBloomPass(new THREE.Vector2(256, 256), .32, .5, .86); composer.addPass(bloom); composer.addPass(new OutputPass());
   const mat = (color: number) => new THREE.MeshStandardMaterial({ color, roughness: .55 });
-  function mesh(geometry: THREE.BufferGeometry, material: THREE.Material, x = 0, y = 0, z = 0) {
+  function mesh(geometry: THREE.BufferGeometry, material: THREE.Material | THREE.Material[], x = 0, y = 0, z = 0) {
     const object = new THREE.Mesh(geometry, material); object.position.set(x, y, z); object.castShadow = object.receiveShadow = true; scene.add(object); return object;
   }
-  function box(w: number, h: number, d: number, color: number, x = 0, y = 0, z = 0) {
-    return mesh(new THREE.BoxGeometry(w, h, d), mat(color), x, y, z);
-  }
-  const wood = new THREE.MeshStandardMaterial({ map: walnutTexture(512), roughness: .6 });
+  // 木頭：桌面、台座、邊框都有年輪與對應的凹凸；框條順著長邊走紋。
+  const grain = walnutTexture(1024), grainBump = walnutTexture(512, false, true);
+  const wood = new THREE.MeshStandardMaterial({ map: grain, bumpMap: grainBump, bumpScale: 1.2, roughness: .6 });
+  const railMap = walnutTexture(512, true, false, 233), railBump = walnutTexture(512, true, true, 233);
+  railMap.repeat.set(1, .25); railBump.repeat.set(1, .25);
+  const rail = new THREE.MeshPhysicalMaterial({ map: railMap, bumpMap: railBump, bumpScale: 1.4, color: 0xb08868, roughness: .42, clearcoat: .4, clearcoatRoughness: .5 });
+  const deskMap = walnutTexture(1024, false, false, 977), deskBump = walnutTexture(512, false, true, 977);
+  deskMap.repeat.set(3, 3); deskBump.repeat.set(3, 3);
+  const desk = mesh(new THREE.PlaneGeometry(48, 48), new THREE.MeshStandardMaterial({ map: deskMap, bumpMap: deskBump, bumpScale: 1.6, color: 0xa0704c, roughness: .65 }), 0, -.83, 0);
+  desk.rotation.x = -Math.PI / 2; desk.castShadow = false;
   mesh(new THREE.BoxGeometry(15, .35, 13), wood, 0, -.65);
   const fieldCanvas = document.createElement('canvas'); fieldCanvas.width = 1024; fieldCanvas.height = 870;
   drawField(fieldCanvas, choice.icon, (C.launcher.y - 340) * .01);
-  const fieldMap = new THREE.CanvasTexture(fieldCanvas); fieldMap.colorSpace = THREE.SRGBColorSpace;
-  mesh(new THREE.BoxGeometry(8, .18, 6.8), new THREE.MeshStandardMaterial({ map: fieldMap, roughness: .92 }), 0, -.12);
-  for (const x of [-4.07, 4.07]) mesh(new THREE.BoxGeometry(.18, .25, 6.98), wood, x);
-  for (const z of [-3.47, 3.47]) mesh(new THREE.BoxGeometry(8.32, .25, .18), wood, 0, 0, z);
+  const fieldMap = new THREE.CanvasTexture(fieldCanvas); fieldMap.colorSpace = THREE.SRGBColorSpace; fieldMap.anisotropy = 8;
+  const fieldBump = paperBumpTexture().clone(); fieldBump.repeat.set(2.4, 2); fieldBump.needsUpdate = true;
+  mesh(new THREE.BoxGeometry(8, .18, 6.8), new THREE.MeshStandardMaterial({ map: fieldMap, color: 0xd6c6a2, bumpMap: fieldBump, bumpScale: 1.4, roughness: .92 }), 0, -.12);
+  // 邊框：四條上油的邊條（紋路沿長邊）＋四角的方木塊，照 C1 的角塊。
+  for (const z of [-3.49, 3.49]) mesh(new THREE.BoxGeometry(8.36, .3, .22), rail, 0, .02, z);
+  for (const x of [-4.09, 4.09]) { const side = mesh(new THREE.BoxGeometry(7.2, .3, .22), rail, x, .02, 0); side.rotation.y = Math.PI / 2; }
+  const cornerMat = new THREE.MeshStandardMaterial({ map: grain, bumpMap: grainBump, bumpScale: 2, color: 0x9a7a5c, roughness: .58 });
+  for (const x of [-4.09, 4.09]) for (const z of [-3.49, 3.49]) { const block = mesh(new THREE.BoxGeometry(.36, .38, .36), cornerMat, x, .06, z); block.rotation.y = (x * z > 0 ? 1 : -1) * .06; }
   const outer = buildRing(wood, choice.icon, C.board.tiles); scene.add(outer.group);
   const positions = outer.cards.map(card => [card.mesh.position.x, card.mesh.position.z]);
   const tiles = outer.cards.map((card, i) => {
     const tile = C.board.tiles[i];
     const label = document.createElement('div'); label.className = 'board-tile-label';
-    label.innerHTML = `<b>${String(i).padStart(2, '0')} ${tile.kind}</b>${tile.kind === 'TUNE' ? `<small>${C.materials[tile.material].name}</small>` : ''}`;
+    // 卡面已印格號與類型；標籤只補卡上沒有的資訊（TUNE 的材質）。
+    label.innerHTML = tile.kind === 'TUNE' ? `<small>${C.materials[tile.material].name}</small>` : '';
+    label.hidden = tile.kind !== 'TUNE';
     labels.append(label); return { ...card, label };
   });
-  const pawn = outer.pawn, dice = outer.die; dice.position.set(3.3, .28, 2.65);
-  mesh(new THREE.CylinderGeometry(.59, .59, .16, 32), mat(TOKENS.brass), 0, .08);
-  const boss = mesh(new THREE.SphereGeometry(C.boss.radius * .01, 32, 20, 0, Math.PI * 2, 0, Math.PI / 2),
-    new THREE.MeshPhysicalMaterial({ color: TOKENS.glass, transmission: .9, thickness: .18, roughness: .08 }), 0, .16);
-  mesh(new THREE.OctahedronGeometry(.19), new THREE.MeshStandardMaterial({ color: TOKENS.yarn, emissive: TOKENS.yarn, emissiveIntensity: 1.2 }), 0, .37);
-  const launcher = mesh(new THREE.CylinderGeometry(.23, .23, .15, 20), mat(TOKENS.brass), 0, .08, (C.launcher.y - 340) * .01);
+  const pawn = outer.pawn, dice = outer.die;
+  const dieRest = new THREE.Vector3(3.42, -.265, 5.52); dice.position.copy(dieRest);
+  // 核心：胡桃木底座、黃銅細邊、玻璃罩與發光芯（C1）。
+  mesh(new THREE.CylinderGeometry(.66, .7, .16, 40), wood, 0, .06);
+  mesh(new THREE.TorusGeometry(.67, .018, 8, 48), new THREE.MeshStandardMaterial({ color: TOKENS.brassEdge, metalness: .8, roughness: .4 }), 0, .14).rotation.x = Math.PI / 2;
+  const boss = mesh(new THREE.SphereGeometry(C.boss.radius * .01, 40, 24, 0, Math.PI * 2, 0, Math.PI / 2),
+    new THREE.MeshPhysicalMaterial({ color: TOKENS.glass, transmission: .9, thickness: .18, roughness: .06, clearcoat: 1, transparent: true, opacity: .9 }), 0, .14);
+  boss.castShadow = false;
+  const knob = mesh(new THREE.SphereGeometry(.06, 16, 12), new THREE.MeshPhysicalMaterial({ color: TOKENS.glass, transmission: .8, roughness: .05 }), 0, .64);
+  const core = mesh(new THREE.SphereGeometry(.13, 20, 16), new THREE.MeshStandardMaterial({ color: TOKENS.yarnGlow, emissive: TOKENS.yarn, emissiveIntensity: 2.2 }), 0, .32);
+  core.castShadow = false;
+  const coreLight = new THREE.PointLight(TOKENS.yarn, .3, 4, 2); coreLight.position.set(0, .4, 0); scene.add(coreLight);
+  const launcher = mesh(new THREE.CylinderGeometry(.26, .28, .14, 28), wood, 0, .04, (C.launcher.y - 340) * .01);
+  mesh(new THREE.TorusGeometry(.27, .014, 6, 32), new THREE.MeshStandardMaterial({ color: TOKENS.brassEdge, metalness: .8, roughness: .4 }), 0, .11, (C.launcher.y - 340) * .01).rotation.x = Math.PI / 2;
   const aimLine = new THREE.Line(new THREE.BufferGeometry(), new THREE.LineBasicMaterial({ color: TOKENS.ochre })); scene.add(aimLine);
-  const ballGeometry = new THREE.SphereGeometry(C.ball.radius * .01, 20, 16);
-  const ballMaterials = C.materials.map((_, i) => ballMaterial(choice.ball, i, 0));
-  const ringGeometry = new THREE.TorusGeometry(.20, .023, 6, 24);
+  const ballGeometry = new THREE.SphereGeometry(C.ball.radius * .01, 32, 24);
+  const ringGeometry = new THREE.TorusGeometry(.20, .02, 6, 32);
   const resonanceMaterial = new THREE.MeshBasicMaterial({ color: colors.resonance });
   const balls = new Map<number, { sphere: THREE.Mesh; ring: THREE.Mesh; label: HTMLElement }>();
   const monsters = new Map<number, THREE.Mesh>();
-  const monsterGeometry = new THREE.IcosahedronGeometry(.26, 0), monsterMaterial = new THREE.MeshStandardMaterial({ color: colors.monster, metalness: .65, roughness: .4, wireframe: true });
-  const effectGeometry = new THREE.TorusGeometry(1, .012, 5, 48);
+  const monsterGeometry = new THREE.IcosahedronGeometry(.26, 0), monsterMaterial = new THREE.MeshStandardMaterial({ color: TOKENS.brassEdge, metalness: .75, roughness: .35, wireframe: true });
+  const effectGeometry = new THREE.TorusGeometry(1, .012, 5, 64);
   const effects = new Map<object, THREE.Mesh>();
+  const yarn = createYarn(scene), pulses = createPulses(scene);
+  const vignette = document.createElement('div'); vignette.id = 'board-vignette'; vignette.setAttribute('aria-hidden', 'true');
+  vignette.style.setProperty('--vignette', String(L.vignette)); stage.insertBefore(vignette, labels);
+  const tally = document.createElement('div'); tally.id = 'board-tally'; tally.setAttribute('aria-hidden', 'true'); tally.hidden = true;
+  tally.innerHTML = '<span class="tally-chain"></span><strong class="tally-value"></strong>'; stage.append(tally);
+  const stamp = document.createElement('div'); stamp.id = 'board-stamp'; stamp.setAttribute('aria-hidden', 'true'); stamp.hidden = true; stage.append(stamp);
   let seen = new WeakSet<object>(), previous = performance.now(), accumulator = 0, angle = -Math.PI / 2;
   let drag: number | null = null, stopped = false, frameCount = 0, lastDie = 0;
+  // 回饋狀態：連鎖音階、累加數字、落格放大、棋子跳格、骰子翻滾。全部只讀規則狀態。
+  const juice = { step: -1, lastBurst: -99, total: 0, shown: 0, lastTick: 0, ticks: 0, punchAt: -99, slammed: true, hideAt: 0,
+    landAt: -99, landKind: '', kickAt: -99, kick: 0, hopFrom: 0, hopAt: -99, lastPos: 0, lastLaps: 0, lastPhase: 'roll' as BoardPhase, rollAt: -99, landed: false,
+    bursts: 0, maxStep: 0, damageNumbers: 0, slams: 0 };
+  let ballPx = 0;
+  const floaters: { el: HTMLElement; x: number; z: number; y: number; born: number; life: number }[] = [];
   const raycaster = new THREE.Raycaster(), plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
   const text = (id: string, value: string) => { const node = get(id); if (node.textContent !== value) node.textContent = value; };
   function project(x: number, y: number, height = 0) {
@@ -150,11 +199,14 @@ export function startBoard() {
     if (e.code === 'Space') { e.preventDefault(); if (e.repeat) return; unlock(); if (game.board!.phase === 'roll') game.rollBoard(); else game.fire(angle); }
   });
   function resetVisuals() {
-    for (const item of balls.values()) { scene.remove(item.sphere, item.ring); item.label.remove(); } balls.clear();
+    for (const item of balls.values()) { scene.remove(item.sphere, item.ring); (item.sphere.material as THREE.MeshPhysicalMaterial).map?.dispose(); (item.sphere.material as THREE.Material).dispose(); item.label.remove(); } balls.clear();
     for (const item of monsters.values()) scene.remove(item); monsters.clear();
     for (const item of effects.values()) { scene.remove(item); (item.material as THREE.Material).dispose(); } effects.clear();
+    for (const f of floaters) f.el.remove(); floaters.length = 0;
     seen = new WeakSet(); drag = null; accumulator = 0; previous = performance.now(); setAngle(-Math.PI / 2);
-    lastDie = 0; outer.setDie(1); dice.rotation.set(0, .25, 0);
+    lastDie = 0; outer.setDie(1); dice.rotation.set(0, .25, 0); dice.position.copy(dieRest);
+    Object.assign(juice, { step: -1, lastBurst: -99, total: 0, shown: 0, punchAt: -99, slammed: true, landAt: -99, kickAt: -99, hopAt: -99, lastPos: 0, lastLaps: 0, lastPhase: 'roll', rollAt: -99, landed: false });
+    tally.hidden = true; stamp.hidden = true;
   }
   get('board-setup').addEventListener('submit', e => {
     e.preventDefault(); if (!seed.reportValidity()) return;
@@ -165,12 +217,32 @@ export function startBoard() {
     game.reset(); resetVisuals(); seed.value = String(game.seed); get('board-setup').hidden = false;
     get('board-start').focus({ preventScroll: true });
   });
+  // 整張棋盤（含前緣的骰子）必須完整入鏡：二分搜尋鏡頭距離，讓八個角落都落在畫面 96% 內。
+  const fitCorners = [-5.65, 5.65].flatMap(x => [-.3, .3].flatMap(y => [-5.0, 5.55].map(z => new THREE.Vector3(x, y, z))));
+  const probe = new THREE.Vector3();
+  function fit(aspect: number) {
+    const narrow = aspect < 1.3;
+    elevation = (narrow ? 58 : 45) * Math.PI / 180; camera.fov = narrow ? 34 : 30; camera.aspect = aspect;
+    camTarget.set(0, -.35, narrow ? .3 : .5);
+    const dir = new THREE.Vector3(0, Math.sin(elevation), Math.cos(elevation));
+    let lo = 4, hi = 80;
+    for (let i = 0; i < 26; i++) {
+      const mid = (lo + hi) / 2; camera.position.copy(camTarget).addScaledVector(dir, mid); camera.lookAt(camTarget);
+      camera.updateProjectionMatrix(); camera.updateMatrixWorld();
+      const fits = fitCorners.every(c => { probe.copy(c).project(camera); return Math.abs(probe.x) <= .985 && Math.abs(probe.y) <= .97; });
+      if (fits) hi = mid; else lo = mid;
+    }
+    camBase.copy(camTarget).addScaledVector(dir, hi);
+    // 截圖用特寫鏡頭（?cam=ball／?cam=icon），只改鏡頭，不改任何狀態。
+    if (shot === 'ball') { camTarget.set(-.6, 0, .4); camBase.set(-.6, 2.6, 3.0); camera.fov = 30; }
+    if (shot === 'icon') { camTarget.set(-1.15, -.25, 4.55); camBase.set(-1.15, 1.75, 6.55); camera.fov = 30; }
+    camera.position.copy(camBase); camera.lookAt(camTarget); lookNow.copy(camTarget); camera.updateProjectionMatrix(); camera.updateMatrixWorld();
+    for (const item of balls.values()) item.sphere.rotation.x = -elevation;
+  }
   function resize() {
-    const w = stage.clientWidth, h = stage.clientHeight, aspect = w / h;
-    const height = Math.max(11.4, 13 / aspect);
-    camera.left = -height * aspect / 2; camera.right = height * aspect / 2;
-    camera.top = height / 2; camera.bottom = -height / 2;
-    camera.updateProjectionMatrix(); camera.updateMatrixWorld(); renderer.setSize(w, h, false);
+    const w = stage.clientWidth, h = stage.clientHeight;
+    fit(w / h); renderer.setSize(w, h, false); composer.setSize(w, h);
+    const narrow = w < 600; light.shadow.mapSize.set(narrow ? 1024 : 2048, narrow ? 1024 : 2048); light.shadow.map?.dispose(); light.shadow.map = null;
   }
   new ResizeObserver(resize).observe(stage); resize();
   document.addEventListener('visibilitychange', () => { previous = performance.now(); accumulator = 0; drag = null; });
@@ -189,13 +261,78 @@ export function startBoard() {
     return `START · 繞圈完成，下一回合 +${C.board.lapBonusShots} 發`;
   }
   function addBall(b: Ball) {
-    const sphere = mesh(ballGeometry, ballMaterials[b.material]);
-    const ring = mesh(ringGeometry, resonanceMaterial); ring.rotation.x = -Math.PI / 2;
-    const label = document.createElement('span'); label.className = 'board-ball-label'; label.textContent = String(b.id); labels.append(label);
+    const material = numberedBallMaterial(choice.ball, b.material, b.id); material.envMapIntensity = 3.2; // 只有球：整體環境 0.1 × 3.2 ≈ 0.32，讓鋼與黃銅在遠景仍看得出亮面（C1）
+    const sphere = mesh(ballGeometry, material); sphere.rotation.x = -elevation;
+    const ring = mesh(ringGeometry, resonanceMaterial); ring.rotation.x = -Math.PI / 2; ring.castShadow = false;
+    const label = document.createElement('span'); label.className = 'board-ball-label'; label.textContent = String(b.id).padStart(2, '0'); labels.append(label);
     const item = { sphere, ring, label }; balls.set(b.id, item); return item;
   }
+  const W = (x: number) => (x - 400) * .01, Z = (y: number) => (y - 340) * .01;
+  function floater(text: string, cls: string, x: number, z: number, y = .5, life = .9) {
+    const el = document.createElement('span'); el.className = `board-float ${cls}`; el.textContent = text; labels.append(el);
+    floaters.push({ el, x, z, y, born: performance.now() / 1000, life }); juice.damageNumbers++;
+  }
+  /** 規則效果轉成聲音與畫面回饋；只讀，不回寫。 */
+  function feedback(e: typeof game.effects[number], now: number) {
+    const pan = (e.x - 400) / 400;
+    if (e.kind === 'impact') {
+      const kind = classifyImpact(e.x, e.y, C.ball.radius, C.width, C.height, game.boss.hp > 0 ? game.boss : null, game.monsters);
+      let a = 0, b: number | null = null, best = Infinity, second = Infinity, seed = 0;
+      for (const ball of game.balls) { const d = Math.hypot(ball.x - e.x, ball.y - e.y); if (d < best) { second = best; b = a; best = d; a = ball.material; seed = ball.id; } else if (d < second) { second = d; b = ball.material; } }
+      audio.impact(kind, impactStrength(e.value), a, kind === 'ball' ? b : null, pan, seed);
+      return;
+    }
+    if (e.kind === 'burst') {
+      if (now - juice.lastBurst > COMBO_WINDOW_SECONDS) { juice.step = -1; juice.total = 0; juice.shown = 0; juice.ticks = 0; }
+      juice.step = Math.min(10, juice.step + 1); juice.lastBurst = now; juice.bursts++; juice.maxStep = Math.max(juice.maxStep, juice.step); juice.slammed = false;
+      audio.burst(juice.step, e.value, pan, e.amplified);
+      if (e.value >= 2 && !reduced) { juice.kickAt = now; juice.kick = Math.min(1, e.value * .25); }
+      floater(`${e.value} 層`, 'board-float-chain', W(e.x), Z(e.y), .45, .7);
+      if (effects.size < 32) {
+        const ring = mesh(effectGeometry, new THREE.MeshBasicMaterial({ color: e.amplified ? TOKENS.yarnGlow : TOKENS.ochre, transparent: true, opacity: .7 }), W(e.x), .04, Z(e.y));
+        ring.rotation.x = -Math.PI / 2; ring.castShadow = false; effects.set(e, ring);
+      }
+      return;
+    }
+    if (e.kind === 'ignite' && e.fromX !== undefined && e.fromY !== undefined) { pulses.emit(W(e.fromX), Z(e.fromY!), W(e.x), Z(e.y), 1, now); return; }
+    if (e.kind === 'damage') {
+      juice.total += e.value; if (now - juice.lastBurst > COMBO_WINDOW_SECONDS) juice.lastBurst = now - COMBO_WINDOW_SECONDS + .5;
+      juice.slammed = false; floater(`−${e.value}`, 'board-float-damage', W(e.x), Z(e.y), .6, .8); return;
+    }
+    if ((e.kind === 'resonate' || e.kind === 'release') && effects.size < 32) {
+      const ring = mesh(effectGeometry, new THREE.MeshBasicMaterial({ color: colors.resonance, transparent: true, opacity: .6 }), W(e.x), .04, Z(e.y));
+      ring.rotation.x = -Math.PI / 2; ring.castShadow = false; effects.set(e, ring);
+    }
+    audio.play(e, game.phase === 'active');
+  }
+  /** 棋盤流程的聲音與動作：擲骰、骰子落桌、逐格、落格、繞圈。 */
+  function boardBeats(now: number) {
+    const board = game.board!;
+    if (board.phase === 'rolling' && juice.lastPhase !== 'rolling') { juice.rollAt = now; audio.diceShake(); }
+    if (board.phase === 'moving' && juice.lastPhase === 'rolling') audio.diceLand((dieRest.x) / 7);
+    if (board.position !== juice.lastPos && game.status === 'playing') {
+      juice.hopFrom = juice.lastPos; juice.hopAt = now;
+      const index = board.die - board.stepsLeft - 1, final = board.stepsLeft === 0;
+      audio.step(Math.max(0, index), final, positions[board.position][0] / 6);
+      juice.lastPos = board.position;
+    }
+    if (board.laps > juice.lastLaps) { juice.lastLaps = board.laps; audio.lap(); floater(`+${C.board.lapBonusShots} 發`, 'board-float-lap', positions[0][0], positions[0][1], .4, 1.4); }
+    if (board.landed && !juice.landed) {
+      const tile = C.board.tiles[board.position], pan = positions[board.position][0] / 6;
+      juice.landAt = now; juice.landKind = tile.kind;
+      if (tile.kind === 'SURGE') setTimeout(() => audio.surge(pan), 70);
+      if (tile.kind === 'TUNE') setTimeout(() => audio.tune(tile.material, pan), 70);
+      if (tile.kind === 'SURGE' || tile.kind === 'TUNE') {
+        stamp.textContent = tile.kind === 'TUNE' ? `TUNE · ${C.materials[tile.material].name}` : 'SURGE';
+        stamp.dataset.kind = tile.kind; stamp.hidden = false; stamp.classList.remove('stamp-in'); void stamp.offsetWidth; stamp.classList.add('stamp-in');
+      }
+    }
+    juice.landed = board.landed; juice.lastPhase = board.phase;
+  }
+  const hop = new THREE.Vector3(), cardWorld = new THREE.Vector3(), basePos = new THREE.Vector3();
   function render() {
-    const board = game.board!, running = game.status === 'playing', shooting = running && board.phase === 'shooting';
+    const now = performance.now() / 1000, board = game.board!, running = game.status === 'playing', shooting = running && board.phase === 'shooting';
+    audio.frame(); const rect = canvas.getBoundingClientRect();
     text('board-phase', game.status === 'ready' ? '準備開始' : game.status === 'won' ? '勝利' : game.status === 'lost' ? '失敗' : phaseNames[board.phase]);
     text('board-turn', `回合 ${board.turn}`); text('board-shots', `剩餘 ${board.shotsLeft} 發`); text('board-clock', `Boss 鐘 ${board.bossClock}`);
     text('board-banner', banner()); text('board-die', `骰子 ${board.die || '—'}`);
@@ -208,56 +345,138 @@ export function startBoard() {
     roll.disabled = !running || board.phase !== 'roll'; fire.disabled = !shooting || game.tick - game.lastShotTick < C.launcher.intervalTicks; aim.disabled = !shooting;
     get('board-result').hidden = game.status !== 'won' && game.status !== 'lost';
     if (game.status === 'won' || game.status === 'lost') text('board-result', `${game.status === 'won' ? 'Boss 擊破，獲勝！' : '怪物超過 10 隻，這局結束。'} ${board.turn} 回合 · ${game.shots} 發 · 按「重來」可用同一種子再玩。`);
+    boardBeats(now);
+    for (const e of game.effects) { if (seen.has(e)) continue; seen.add(e); feedback(e, now); }
+
+    // 骰子：擲骰期間從桌邊翻滾進來，落定後顯示點數；減少動態時直接出現在定位。
     dice.visible = board.die > 0 || board.phase === 'rolling';
     if (board.die && board.die !== lastDie) { lastDie = board.die; outer.setDie(board.die); }
-    if (board.phase === 'rolling' && !reduced) dice.rotation.set(game.tick * .13, game.tick * .09, game.tick * .06);
-    else dice.rotation.set(0, .25, 0);
-    const rect = canvas.getBoundingClientRect();
+    const rollT = Math.min(1, (now - juice.rollAt) / .32);
+    if (board.phase === 'rolling' && !reduced) {
+      const bounce = Math.abs(Math.sin(rollT * Math.PI * 2.5)) * (1 - rollT) * .7;
+      dice.position.set(dieRest.x + 2.2 * (1 - rollT), dieRest.y + bounce, dieRest.z + .5 * (1 - rollT));
+      dice.rotation.set(rollT * 9.1, .25 + rollT * 6.3, rollT * 4.7);
+    } else { dice.position.copy(dieRest); dice.rotation.set(0, .25, 0); }
+
+    // 落格：卡片放大彈一下，鏡頭往那張卡推近再退回（C2 的特寫角度）；減少動態時只留高亮。
+    const landT = (now - juice.landAt) / .95, zoom = reduced ? 0 : landingZoom(landT) * (juice.landKind === 'SURGE' || juice.landKind === 'TUNE' ? 1 : .35);
+    tiles.forEach(({ top, label, mesh: card }, i) => {
+      const selected = i === board.position, landed = selected && board.landed;
+      top.emissive.setHex(landed ? colors.landed : 0); top.emissiveIntensity = landed ? .35 + (reduced ? 0 : .4 * zoom) : 0;
+      card.scale.setScalar(landed && !reduced ? 1 + .12 * zoom : 1);
+      label.dataset.active = String(selected); labelAt(label, positions[i][0] + .5, positions[i][1] - .46, .02);
+    });
+    if (stamp.hidden === false) {
+      const p = projectWorld(positions[board.position][0], -.2, positions[board.position][1] - .7);
+      stamp.style.left = `${p.x}px`; stamp.style.top = `${p.y}px`;
+      if (landT > 1.3 || !board.landed) stamp.hidden = true;
+    }
+    // 棋子：每一格跳一下（0.14 秒弧線）。
+    const target = positions[board.position], from = positions[juice.hopFrom] ?? target, hopT = reduced ? 1 : Math.min(1, (now - juice.hopAt) / .14);
+    hop.set(from[0] + (target[0] - from[0]) * hopT + .38, -.25 + Math.sin(Math.PI * hopT) * .35, from[1] + (target[1] - from[1]) * hopT - .18);
+    pawn.position.copy(hop);
+
+    // 鏡頭：落格推近＋連鎖時一點點 FOV 收縮。
+    const kickT = (now - juice.kickAt) / .28, kick = !reduced && kickT >= 0 && kickT < 1 ? juice.kick * (1 - kickT) ** 2 : 0;
+    if (!shot) {
+      cardWorld.set(target[0], -.25, target[1]);
+      basePos.copy(camBase).lerp(cardWorld, .32 * zoom); camera.position.copy(basePos);
+      lookNow.copy(camTarget).lerp(cardWorld, .45 * zoom); camera.lookAt(lookNow);
+      const baseFov = elevation > 50 * Math.PI / 180 ? 34 : 30; const fov = baseFov - kick * 1.6;
+      if (camera.fov !== fov) { camera.fov = fov; camera.updateProjectionMatrix(); }
+      camera.updateMatrixWorld();
+    }
+
     function labelAt(label: HTMLElement, x: number, z: number, y: number) {
       const p = new THREE.Vector3(x, y, z).project(camera);
       label.style.transform = `translate(${(p.x + 1) * rect.width / 2}px,${(1 - p.y) * rect.height / 2}px) translate(-50%,-50%)`;
     }
-    tiles.forEach(({ top, label }, i) => {
-      const selected = i === board.position, landed = selected && board.landed;
-      top.emissive.setHex(landed ? colors.landed : 0); top.emissiveIntensity = landed ? .35 : 0;
-      label.dataset.active = String(selected); labelAt(label, positions[i][0], positions[i][1] + .43, .02);
-    });
-    pawn.position.set(positions[board.position][0] + .38, -.25, positions[board.position][1] - .18);
+    function projectWorld(x: number, y: number, z: number) { const p = new THREE.Vector3(x, y, z).project(camera); return { x: (p.x + 1) * rect.width / 2, y: (1 - p.y) * rect.height / 2 }; }
+    // 球：號碼印在球上；螢幕上的球小於 22 px 時，另補一張小紙籤在右上，不蓋住球。
+    const r = C.ball.radius * .01, edge = projectWorld(r, .14, 0), center = projectWorld(0, .14, 0), diameter = Math.abs(edge.x - center.x) * 2;
+    const needTag = diameter < 22; ballPx = Math.round(diameter * 10) / 10;
     for (const b of game.balls) {
-      const item = balls.get(b.id) ?? addBall(b), x = (b.x - 400) * .01, z = (b.y - 340) * .01;
+      const item = balls.get(b.id) ?? addBall(b), x = W(b.x), z = Z(b.y);
       item.sphere.position.set(x, .14, z); item.ring.position.set(x, .025, z); item.ring.visible = b.resonant;
-      labelAt(item.label, x, z, .32);
+      item.label.hidden = !needTag; if (needTag) { const p = projectWorld(x + r * .9, .14 + r * 1.2, z - r * .2); item.label.style.transform = `translate(${p.x + 6}px,${p.y - 6}px) translate(-50%,-50%)`; }
     }
+    for (const [id, item] of balls) if (!game.balls.some(b => b.id === id)) { scene.remove(item.sphere, item.ring); item.label.remove(); balls.delete(id); }
+    // 毛線：球在爆發半徑內的最近兩顆之間牽線；有一端已共振就亮，相變期全亮。
+    const reach = C.ball.radius * C.resonance.radiusInBalls, links: YarnLink[] = [], pairs = new Set<string>();
+    for (const a of game.balls) {
+      const near = game.balls.filter(o => o !== a && Math.hypot(o.x - a.x, o.y - a.y) <= reach).sort((p, q) => Math.hypot(p.x - a.x, p.y - a.y) - Math.hypot(q.x - a.x, q.y - a.y)).slice(0, 2);
+      for (const o of near) {
+        const key = a.id < o.id ? `${a.id}:${o.id}` : `${o.id}:${a.id}`; if (pairs.has(key)) continue; pairs.add(key);
+        const lit = game.phase === 'active' ? 1 : a.resonant && o.resonant ? 1 : a.resonant || o.resonant ? .7 : 0;
+        links.push({ ax: W(a.x), az: Z(a.y), bx: W(o.x), bz: Z(o.y), side: (a.id + o.id) % 2 ? 1 : -1, glow: lit });
+      }
+    }
+    yarn.set(links); yarn.animate(now, reduced, game.phase === 'active' ? 1.4 : 1); pulses.update(now, reduced);
     for (const [id, item] of monsters) if (!game.monsters.some(m => m.id === id)) { scene.remove(item); monsters.delete(id); }
     for (const m of game.monsters) {
-      if (!monsters.has(m.id)) monsters.set(m.id, mesh(monsterGeometry, monsterMaterial, (m.x - 400) * .01, .23, (m.y - 340) * .01));
-    }
-    for (const e of game.effects) {
-      if (seen.has(e)) continue; seen.add(e); sound.play(e, game.phase === 'active');
-      if ((e.kind === 'burst' || e.kind === 'resonate' || e.kind === 'release') && effects.size < 32) {
-        const ring = mesh(effectGeometry, new THREE.MeshBasicMaterial({ color: colors.resonance, transparent: true, opacity: .6 }), (e.x - 400) * .01, .04, (e.y - 340) * .01);
-        ring.rotation.x = -Math.PI / 2; effects.set(e, ring);
-      }
+      if (!monsters.has(m.id)) monsters.set(m.id, mesh(monsterGeometry, monsterMaterial, W(m.x), .23, Z(m.y)));
+      const cage = monsters.get(m.id)!; if (!reduced) cage.rotation.y = now * .4 + m.id;
     }
     for (const [key, ring] of effects) {
       const e = key as typeof game.effects[number], age = (game.tick - e.tick) / C.feedback.lifetimeTicks;
       if (age >= 1) { scene.remove(ring); (ring.material as THREE.Material).dispose(); effects.delete(key); continue; }
       ring.scale.setScalar(Math.min(3.4, e.radius * .01) * (reduced ? 1 : .3 + age * .7));
-      (ring.material as THREE.MeshBasicMaterial).opacity = (1 - age) * (reduced ? .25 : .6);
+      (ring.material as THREE.MeshBasicMaterial).opacity = (1 - age) * (reduced ? .25 : .7);
     }
-    boss.visible = game.boss.hp > 0;
+    // 浮字：傷害與層數往上飄並淡出；剛出現時彈大一下。
+    for (let i = floaters.length - 1; i >= 0; i--) {
+      const f = floaters[i], age = now - f.born;
+      if (age > f.life) { f.el.remove(); floaters.splice(i, 1); continue; }
+      const p = projectWorld(f.x, f.y, f.z), rise = reduced ? 0 : age * 34, scale = reduced ? 1 : punchScale(age);
+      f.el.style.transform = `translate(${p.x}px,${p.y - rise}px) translate(-50%,-50%) scale(${scale})`;
+      f.el.style.opacity = String(Math.max(0, 1 - Math.max(0, age - f.life * .5) / (f.life * .5)));
+    }
+    // 累加數字：同一串連鎖的傷害一路往上跳，停下來時重重定格。
+    if (juice.total > 0) {
+      const before = juice.shown; juice.shown = reduced ? juice.total : tallyStep(juice.shown, juice.total, Math.min(.05, now - juice.lastTick));
+      if (juice.shown !== before) { juice.ticks++; juice.punchAt = now; if (juice.ticks % 2 === 0) audio.tick(juice.ticks); }
+      tally.hidden = false;
+      (tally.firstElementChild as HTMLElement).textContent = juice.step > 0 ? `連鎖 ×${juice.step + 1}` : '傷害';
+      (tally.lastElementChild as HTMLElement).textContent = `−${juice.shown}`;
+      const scale = reduced ? 1 : punchScale(now - juice.punchAt) * (juice.slammed ? 1 : 1 + Math.min(.4, juice.step * .05));
+      tally.style.setProperty('--tally-scale', String(scale));
+      if (!juice.slammed && now - juice.lastBurst > COMBO_WINDOW_SECONDS && juice.shown >= juice.total) {
+        juice.slammed = true; juice.slams++; text('board-chain-live', `${juice.step > 0 ? `連鎖 ${juice.step + 1} 下，` : ''}傷害 ${juice.total}`); juice.hideAt = now + 1.1; juice.punchAt = now; audio.slam(juice.step + 1); tally.classList.add('tally-slam');
+      }
+      if (juice.slammed && now > juice.hideAt) { juice.total = juice.shown = 0; juice.ticks = 0; juice.step = -1; tally.hidden = true; tally.classList.remove('tally-slam'); }
+    }
+    juice.lastTick = now;
+    boss.visible = knob.visible = game.boss.hp > 0;
+    const shifting = game.phase === 'active', warning = game.phase === 'warning';
+    coreLight.intensity = shifting ? 6 : warning ? 2.2 : .3; core.scale.setScalar(reduced ? 1 : 1 + .08 * Math.sin(now * 3));
+    light.intensity = L.intensity * SPOT_GAIN * (shifting ? .8 : 1);
     aimLine.visible = shooting;
-    const z = (C.launcher.y - 340) * .01;
-    aimLine.geometry.setFromPoints([new THREE.Vector3(0, .08, z), new THREE.Vector3(Math.cos(angle) * 1.2, .08, z + Math.sin(angle) * 1.2)]);
+    const lz = Z(C.launcher.y);
+    aimLine.geometry.setFromPoints([new THREE.Vector3(0, .12, lz), new THREE.Vector3(Math.cos(angle) * 1.2, .12, lz + Math.sin(angle) * 1.2)]);
     launcher.rotation.y = -angle;
-    scene.background = new THREE.Color(game.phase === 'active' ? TOKENS.bgShift : TOKENS.bgIdle);
-    renderer.render(scene, camera);
+    scene.background = new THREE.Color(shifting ? TOKENS.bgShift : TOKENS.bgIdle);
+    composer.render();
     canvas.dataset.ready = 'true'; canvas.dataset.status = game.status; canvas.dataset.phase = board.phase; canvas.dataset.position = String(board.position);
   }
   // 驗收只讀取真實規則與投影；遊戲操作仍走 DOM 輸入。
   Object.assign(window, { boardEvidence: {
-    snapshot: () => ({ game: game.snapshot(), frameCount, visual: { choice, ring: true, cards: tiles.map(t => ({ index: t.index, kind: t.kind, x: t.mesh.position.x, z: t.mesh.position.z, highlighted: t.top.emissiveIntensity > 0 })), pawn: { x: pawn.position.x, z: pawn.position.z }, die: lastDie }, renderedBalls: balls.size, renderedMonsters: monsters.size, drawCalls: renderer.info.render.calls, audio: sound.context?.state ?? 'not-started' }),
+    snapshot: () => ({ game: game.snapshot(), frameCount, visual: { choice, ring: true, reduced, cards: tiles.map(t => ({ index: t.index, kind: t.kind, x: t.mesh.position.x, z: t.mesh.position.z, highlighted: t.top.emissiveIntensity > 0 })), pawn: { x: pawn.position.x, z: pawn.position.z }, die: lastDie, yarn: yarn.core.count, ballPx, ballTags: !!game.balls.length && ballPx < 22, camera: { fov: camera.fov, elevation: elevation * 180 / Math.PI } }, renderedBalls: balls.size, renderedMonsters: monsters.size, drawCalls: renderer.info.render.calls, audio: audio.context?.state ?? 'not-started', sounds: { played: audio.played, log: audio.log.slice(-60) }, juice: { bursts: juice.bursts, maxStep: juice.maxStep, floaters: juice.damageNumbers, slams: juice.slams } }),
     project,
+  } });
+  // ?lab=1：截圖腳本用。用固定角度、固定節奏推進同一個 seed，讓各版本的球位完全相同。只呼叫公開的規則操作。
+  if (params.get('lab') === '1') Object.assign(window, { boardLab: {
+    fastForward(shots: number, seedValue = 20261111) {
+      game.reset(seedValue); resetVisuals(); game.start(); get('board-setup').hidden = true;
+      let guard = 0;
+      while (game.status === 'playing' && game.shots < shots && guard++ < 200000) {
+        if (game.board!.phase === 'roll') { game.rollBoard(); continue; }
+        if (game.board!.phase === 'shooting') game.fire((-90 + Math.sin(game.shots * 2.3) * 55) * Math.PI / 180);
+        game.step();
+      }
+      for (let i = 0; i < 2000 && game.status === 'playing'; i++) { if (game.board!.phase === 'roll') break; game.step(); }
+      seen = new WeakSet(game.effects); juice.lastPos = game.board!.position; juice.hopFrom = juice.lastPos; juice.landed = game.board!.landed; juice.lastPhase = game.board!.phase; juice.lastLaps = game.board!.laps;
+      return { shots: game.shots, balls: game.balls.length, phase: game.board!.phase, resonant: game.balls.filter(b => b.resonant).length };
+    },
   } });
   function frame(now: number) {
     if (stopped) return; requestAnimationFrame(frame);

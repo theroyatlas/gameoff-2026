@@ -19,7 +19,8 @@
     "sim:difficulty": "node --max-old-space-size=2048 tools/run-difficulty.mjs",
     "sim:board-difficulty": "node --max-old-space-size=2048 tools/run-board-difficulty.mjs",
     "build:main": "npm --prefix drafts/3d-web run build:main",
-    "dev:2d": "vite --host 127.0.0.1"
+    "dev:2d": "vite --host 127.0.0.1",
+    "build:polish-board": "npm --prefix drafts/3d-web run build:polish-board"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",

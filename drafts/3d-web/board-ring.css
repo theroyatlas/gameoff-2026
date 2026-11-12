@@ -9,3 +9,26 @@ body.board-mode{min-height:100vh;--board-bg:#17100b;--board-ink:#f3dfbb;--board-
 @media(max-width:700px){.board-mode .board-app{padding:12px 14px}.board-mode h1{font-size:21px}.board-mode .board-topline{font-size:11px;gap:8px}.board-mode .board-boss{gap:6px}.board-mode progress{width:75px;max-width:20vw}.board-mode .board-readout{gap:10px;font-size:12px;margin-top:10px;padding:9px 0}.board-mode #board-phase{min-width:84px}.board-mode #board-banner{font-size:12px;min-height:38px;padding:7px 9px}.board-mode .board-layout{grid-template-columns:1fr;gap:10px;margin-top:8px}.board-mode #board-stage{height:330px}.board-mode .board-tile-label{font-size:10px}.board-mode .board-tile-label b{font-size:10px}.board-mode .board-tile-label small{font-size:10px}.board-mode .board-controls{display:grid;grid-template-columns:1fr 1fr;gap:6px 12px;padding:0}.board-mode .board-die-line{grid-column:1/-1;margin-bottom:0}.board-mode .board-die-line strong{font-size:17px}.board-mode #board-roll{grid-column:1;margin:0;align-self:start}.board-mode #board-fire{grid-column:2;grid-row:2;margin:0;align-self:start}.board-mode .board-angle{grid-column:1/-1;grid-row:3;font-size:12px}.board-mode #board-angle{min-height:44px;height:44px}.board-mode .board-controls p{font-size:11px;line-height:1.5}.board-mode #board-bonus{grid-column:1/-1}.board-mode .board-utilities{grid-column:1/-1;margin-top:2px}.board-mode .board-help{font-size:11px;margin-top:8px;padding-top:8px}.board-mode #board-result{font-size:13px}.board-mode .board-ball-label{font-size:9px}}
 
 .board-mode [hidden]{display:none!important}.board-mode .board-tile-label{background:#e8dcc2;padding:1px 3px;border-radius:2px}.board-mode .board-ball-label{font-family:Georgia,serif;background:#e8dcc2;border:1px solid #2b2118;border-radius:50%;min-width:14px;min-height:14px;text-align:center}.board-mode .board-tile-label[data-active=true]{outline:2px solid #9b2c1c}
+
+/* 斜俯視棋盤：舞台加高，四周用暗角收進黑暗（DESIGN.md 第 3、14 節）。 */
+.board-mode #board-stage{height:452px;background:#120b06;overflow:hidden}
+.board-mode #board-vignette{position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse 70% 72% at 50% 52%,rgba(8,5,3,0) 46%,rgba(8,5,3,var(--vignette,.72)) 100%)}
+.board-mode #board-labels{z-index:2}
+.board-mode .board-tile-label{font-size:11px;padding:0 4px;background:#e8dcc2;color:#2b2118;border-radius:2px;opacity:.92}
+.board-mode .board-tile-label small{font-size:11px}
+.board-mode .board-ball-label{font:700 12px/16px Georgia,"Times New Roman",serif;min-width:18px;min-height:18px;padding:0 1px;border:1px solid #2b2118;border-radius:50%;background:#e8dcc2;color:#2b2118;text-align:center}
+.board-mode .board-float{position:absolute;left:0;top:0;white-space:nowrap;font:800 17px/1 "Microsoft JhengHei",system-ui,sans-serif;color:#efe3c8;text-shadow:0 2px 2px #120b06,1px 0 #120b06,-1px 0 #120b06,0 -1px #120b06;will-change:transform,opacity}
+.board-mode .board-float-chain{color:#8fdcc6;font-size:15px}
+.board-mode .board-float-lap{color:#c9963f;font-size:19px}
+.board-mode #board-tally{position:absolute;top:10px;left:50%;z-index:3;display:flex;align-items:baseline;gap:10px;transform:translateX(-50%) scale(var(--tally-scale,1));transform-origin:50% 0;pointer-events:none;text-shadow:0 2px 3px #120b06,1px 0 #120b06,-1px 0 #120b06}
+.board-mode #board-tally .tally-chain{font:700 14px/1 "Microsoft JhengHei",system-ui,sans-serif;color:#8fdcc6}
+.board-mode #board-tally .tally-value{font:700 32px/1 Georgia,"Times New Roman",serif;color:#c9963f;font-variant-numeric:tabular-nums}
+.board-mode #board-tally.tally-slam .tally-value{color:#efe3c8}
+.board-mode #board-stamp{position:absolute;left:0;top:0;z-index:3;transform:translate(-50%,-100%);pointer-events:none;white-space:nowrap;font:800 26px/1.1 "Microsoft JhengHei",system-ui,sans-serif;color:#efe3c8;padding-bottom:4px;border-bottom:3px solid #c8552d;text-shadow:0 2px 3px #120b06,1px 0 #120b06,-1px 0 #120b06}
+.board-mode #board-stamp[data-kind=TUNE]{border-bottom-color:#8fdcc6}
+.board-mode #board-stamp.stamp-in{animation:board-stamp .42s cubic-bezier(.2,1.4,.4,1) both}
+@keyframes board-stamp{from{opacity:0;transform:translate(-50%,-100%) scale(1.7)}to{opacity:1;transform:translate(-50%,-100%) scale(1)}}
+@media(prefers-reduced-motion:reduce){.board-mode #board-stamp.stamp-in{animation:none}}
+@media(max-width:700px){.board-mode .board-ball-label{font-size:11px;line-height:14px;min-width:16px;min-height:16px}.board-mode #board-stage{height:360px}.board-mode #board-tally .tally-value{font-size:24px}.board-mode #board-stamp{font-size:20px}.board-mode .board-float{font-size:14px}.board-mode .board-tile-label,.board-mode .board-tile-label small{font-size:10px}}
+/* 浮字與蓋章字會疊在亮紙或亮球上：加 3px 夜桌色描邊，對比靠描邊而不是背景。 */
+.board-mode .board-float,.board-mode #board-stamp{-webkit-text-stroke:3px #120b06;paint-order:stroke fill}
