@@ -28,3 +28,17 @@ describe('抽卡展示跳過', () => {
     expect(revealMoments().end).toBeCloseTo(2.17);
   });
 });
+
+
+describe('language selection during a reveal', () => {
+  it('lets the language control act without skipping the card or swallowing its click', () => {
+    const target = new EventTarget(); let finished = 0, clicks = 0;
+    const dispose = bindRevealSkip(target, () => true, () => finished++, e => (e as Event & { languageControl?: boolean }).languageControl === true);
+    target.addEventListener('click', () => clicks++);
+    for (const type of ['pointerdown', 'pointerup', 'click', 'keydown', 'keyup']) {
+      const event = Object.assign(new Event(type, { cancelable: true }), { languageControl: true, button: 0, pointerId: 7, code: 'Enter' });
+      target.dispatchEvent(event); expect(event.defaultPrevented).toBe(false);
+    }
+    expect(finished).toBe(0); expect(clicks).toBe(1); dispose();
+  });
+});

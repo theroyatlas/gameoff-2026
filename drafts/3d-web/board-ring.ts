@@ -1,3 +1,5 @@
+import { t, materialName, cardText } from './i18n';
+import { language, mountLanguageButton } from './language';
 import * as THREE from 'three';
 import { Game, type Ball } from '../../src/game';
 import { CONFIG as C } from '../../src/config';
@@ -19,40 +21,48 @@ import { createEventReveal, faceSheet } from './event-card-art';
 import { EVENT_CARDS } from '../../src/event-cards';
 import { closeupView, aimFan } from './closeup';
 
-const phaseNames: Record<BoardPhase, string> = {
-  roll: '等待擲骰', rolling: '擲骰中', moving: '自動走格', effect: '格子效果', shooting: '瞄準與射擊', settling: '等待球停下',
-};
+const phaseNames = (): Record<BoardPhase, string> => ({
+  roll: t('phaseRoll'), rolling: t('phaseRolling'), moving: t('phaseMoving'), effect: t('phaseEffect'), shooting: t('phaseShooting'), settling: t('phaseSettling'),
+});
 const colors = { background: TOKENS.bgIdle, edge: TOKENS.brass,
   landed: TOKENS.ochre, pawn: TOKENS.lacquer, boss: TOKENS.brass, monster: TOKENS.brass,
   resonance: TOKENS.yarn };
 
 export function startBoard() {
   document.body.classList.add('board-mode');
-  document.title = '共振桌 · 棋盤';
+  document.title = t('title');
   const root = document.querySelector('main')!;
   root.className = 'board-app';
   root.innerHTML = `
-    <header class="board-header"><div><h1>共振桌 · 棋盤</h1><p>14 格順時針 · 每回合 3 發</p></div><a id="board-realtime">即時版</a></header>
+    <header class="board-header"><div><h1 data-i18n="title">${t('title')}</h1><p data-i18n="subtitle">${t('subtitle')}</p></div><a id="board-realtime" data-i18n="realtime">${t('realtime')}</a></header>
     <div class="board-topline"><label class="board-boss">Boss <progress id="board-hp" max="12000" value="12000"></progress><span id="board-hp-value"></span></label><span id="board-monsters"></span></div>
-    <form id="board-setup"><label>種子 <input id="board-seed" type="number" min="0" max="4294967295" step="1" required value="${C.seed}"></label><button id="board-start" type="submit">開始</button></form>
+    <form id="board-setup"><label><span data-i18n="seed">${t('seed')}</span> <input id="board-seed" type="number" min="0" max="4294967295" step="1" required value="${C.seed}"></label><button id="board-start" type="submit" data-i18n="start">${t('start')}</button></form>
     <div class="board-readout"><strong id="board-phase" role="status"></strong><span id="board-turn"></span><span id="board-shots"></span><strong id="board-clock"></strong></div>
-    <p id="board-banner" role="status">擲骰後自動走格，落格效果會改變這一回合。</p>
+    <p id="board-banner" role="status">${t('bannerReady')}</p>
     <div class="board-layout">
-      <section id="board-stage" aria-label="14 格棋盤與中央球場"><canvas id="board-scene" tabindex="0" aria-label="棋盤球場：點擊或拖拉後放開發射，左右鍵瞄準，空白鍵擲骰或發射"></canvas><div id="board-labels" aria-hidden="true"></div><p id="board-failure" role="alert" hidden>無法啟動 3D 畫面。請重新開啟此檔案，或使用已啟用 WebGL 的瀏覽器。</p></section>
-      <aside class="board-controls" aria-label="回合操作">
-        <div class="board-die-line"><strong id="board-die">骰子 —</strong><span id="board-position">00 START</span></div>
-        <button id="board-roll" disabled>擲骰 · 空白鍵</button>
-        <label class="board-angle">發射方向 <output id="board-angle-value">−90°</output><input id="board-angle" type="range" min="-165" max="-15" step="1" value="-90" aria-label="發射方向，角度" disabled></label>
-        <button id="board-fire" disabled>發射</button>
-        <p id="board-next"></p><p id="board-wave"></p><p id="board-bonus"></p>
+      <section id="board-stage" data-i18n-aria="stageAria" aria-label="${t('stageAria')}"><canvas id="board-scene" tabindex="0" data-i18n-aria="sceneAria" aria-label="${t('sceneAria')}"></canvas><div id="board-labels" aria-hidden="true"></div><p id="board-failure" role="alert" hidden data-i18n="failure">${t('failure')}</p></section>
+      <aside class="board-controls" data-i18n-aria="controlsAria" aria-label="${t('controlsAria')}">
+        <div class="board-die-line"><strong id="board-die">${t('die', { v0: '—' })}</strong><span id="board-position">00 START</span></div>
+        <button id="board-roll" disabled data-i18n="roll">${t('roll')}</button>
+        <label class="board-angle"><span data-i18n="aim">${t('aim')}</span> <output id="board-angle-value">−90°</output><input id="board-angle" type="range" min="-165" max="-15" step="1" value="-90" data-i18n-aria="angleAria" aria-label="${t('angleAria')}" disabled></label>
+        <button id="board-fire" disabled data-i18n="fire">${t('fire')}</button>
+        <div class="board-details" tabindex="0" role="region" data-i18n-aria="detailsAria" aria-label="${t('detailsAria')}"><p class="scroll-hint" data-i18n="scrollHint">${t('scrollHint')}</p><p id="board-next"></p><p id="board-wave"></p><p id="board-bonus"></p>
         <p id="board-card" role="status" hidden></p>
-        <p id="board-inspect" role="status">移過球查看球號；觸控請先按「查看球號」。</p>
-        <button id="board-inspect-toggle" aria-pressed="false">查看球號</button>
-        <div class="board-utilities"><button id="board-mute" aria-pressed="false">音效：開</button><button id="board-restart">重來</button></div>
+        <p id="board-inspect" role="status">${t('inspectHint')}</p>
+        </div><button id="board-inspect-toggle" aria-pressed="false">${t('inspect')}</button>
+        <div class="board-utilities"><button id="board-mute" aria-pressed="false">${t('soundOn')}</button><button id="board-restart" data-i18n="restart">${t('restart')}</button></div>
       </aside>
     </div>
     <p id="board-result" role="status" hidden></p><p id="board-chain-live" class="sr-only" aria-live="polite"></p>
-    <footer class="board-help"><p>擲骰 → 走格 → 射 3 發 → 等球停下（最多 6 秒）→ Boss 鐘 +1。</p><p>點球場或拖拉後放開發射；← → 瞄準、空白鍵擲骰／發射。Boss 歸零獲勝，怪物超過 10 隻失敗。</p></footer>`;
+    <footer class="board-help"><p data-i18n="helpFlow">${t('helpFlow')}</p><p data-i18n="helpControls">${t('helpControls')}</p></footer>`;
+  root.querySelector('.board-details')!.append(root.querySelector('.board-help')!);
+  mountLanguageButton(root.querySelector('.board-header')!);
+  function refreshStaticLanguage() {
+    document.title = t('title');
+    root.querySelectorAll<HTMLElement>('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n as Parameters<typeof t>[0]); });
+    root.querySelectorAll<HTMLElement>('[data-i18n-aria]').forEach(el => { el.setAttribute('aria-label', t(el.dataset.i18nAria as Parameters<typeof t>[0])); });
+  }
+  language.subscribe(refreshStaticLanguage);
   const get = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id)! as T;
   const realtimeURL = new URL(location.href); realtimeURL.searchParams.set('mode', 'realtime');
   get<HTMLAnchorElement>('board-realtime').href = realtimeURL.href;
@@ -70,7 +80,7 @@ export function startBoard() {
   audio.cageStyle = art.cage;
   let renderer: THREE.WebGLRenderer;
   try { renderer = new THREE.WebGLRenderer({ canvas, antialias: true }); }
-  catch { get('board-failure').hidden = false; return; }
+  catch { get('board-failure').hidden = false; language.subscribe(() => { get('board-banner').textContent = t('failure'); }); return; }
   renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
   renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.1;
@@ -130,7 +140,8 @@ export function startBoard() {
     const tile = C.board.tiles[i];
     const label = document.createElement('div'); label.className = 'board-tile-label';
     // 卡面已印格號與類型；標籤只補卡上沒有的資訊（TUNE 的材質）。
-    label.innerHTML = tile.kind === 'TUNE' ? `<small>${C.materials[tile.material].name}</small>` : '';
+    label.dataset.index = String(i);
+    label.textContent = tile.kind === 'TUNE' ? materialName(tile.material) : '';
     label.hidden = tile.kind !== 'TUNE';
     labels.append(label); return { ...card, label };
   });
@@ -172,7 +183,7 @@ export function startBoard() {
   const stamp = document.createElement('div'); stamp.id = 'board-stamp'; stamp.setAttribute('aria-hidden', 'true'); stamp.hidden = true; stage.append(stamp);
   // 事件卡卡面（?card=）：抽到時翻卡展示，最近一張的卡面留在操作區文字卡旁。
   const cardSlot = document.createElement('canvas'); cardSlot.id = 'board-card-face'; cardSlot.hidden = true; cardSlot.setAttribute('aria-hidden', 'true');
-  const reveal = art.card ? createEventReveal({ variant: art.card, audio, reduced, stage, slot: cardSlot, values: C.board.events, materialName: m => C.materials[m].name }) : null;
+  const reveal = art.card ? createEventReveal({ variant: art.card, audio, reduced, stage, slot: cardSlot, values: C.board.events, materialName: m => materialName(m) }) : null;
   if (art.card) { const row = document.createElement('div'); row.className = 'board-card-row'; const cardText = get('board-card'); cardText.before(row); row.append(cardSlot, cardText); }
   let lastCards = 0, cardReveals = 0;
   let seen = new WeakSet<object>(), previous = performance.now(), accumulator = 0, angle = -Math.PI / 2;
@@ -182,7 +193,7 @@ export function startBoard() {
     landAt: -99, landKind: '', kickAt: -99, kick: 0, hopFrom: 0, hopAt: -99, lastPos: 0, lastLaps: 0, lastPhase: 'roll' as BoardPhase, rollAt: -99, landed: false,
     bursts: 0, maxStep: 0, damageNumbers: 0, slams: 0 };
   let ballPx = 0;
-  const floaters: { el: HTMLElement; x: number; z: number; y: number; born: number; life: number }[] = [];
+  const floaters: { el: HTMLElement; content: () => string; x: number; z: number; y: number; born: number; life: number }[] = [];
   const raycaster = new THREE.Raycaster(), plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
   const text = (id: string, value: string) => { const node = get(id); if (node.textContent !== value) node.textContent = value; };
   function project(x: number, y: number, height = 0) {
@@ -209,7 +220,7 @@ export function startBoard() {
   inspectToggle.addEventListener('click', () => {
     inspectMode = !inspectMode; inspectedId = null;
     inspectToggle.setAttribute('aria-pressed', String(inspectMode));
-    inspectToggle.textContent = inspectMode ? '結束查看球號' : '查看球號';
+    inspectToggle.textContent = inspectMode ? t('inspectEnd') : t('inspect');
   });
   function inspectAt(e: PointerEvent) {
     let best = 24, found: number | null = null;
@@ -222,7 +233,7 @@ export function startBoard() {
   roll.addEventListener('click', () => { unlock(); game.rollBoard(); canvas.focus({ preventScroll: true }); });
   fire.addEventListener('click', () => { unlock(); game.fire(angle); });
   aim.addEventListener('input', () => setAngle(Number(aim.value) * Math.PI / 180));
-  get('board-mute').addEventListener('click', () => { unlock(); sound.toggle(); text('board-mute', sound.muted ? '音效：關' : '音效：開'); get('board-mute').setAttribute('aria-pressed', String(sound.muted)); });
+  get('board-mute').addEventListener('click', () => { unlock(); sound.toggle(); text('board-mute', sound.muted ? t('soundOff') : t('soundOn')); get('board-mute').setAttribute('aria-pressed', String(sound.muted)); });
   canvas.addEventListener('pointerdown', e => {
     if (inspectMode) { inspectAt(e); canvas.focus({ preventScroll: true }); return; }
     if (e.button !== 0 || game.board!.phase !== 'shooting' || game.status !== 'playing') return;
@@ -308,16 +319,16 @@ export function startBoard() {
   canvas.addEventListener('webglcontextlost', e => { e.preventDefault(); stopped = true; get('board-failure').hidden = false; roll.disabled = fire.disabled = true; });
   function banner() {
     const board = game.board!, tile = C.board.tiles[board.position];
-    if (game.status === 'won') return 'Boss 擊破！按「重來」再玩一局。';
-    if (game.status === 'lost') return '怪物超過 10 隻。按「重來」再玩一局。';
-    if (game.status === 'ready') return '擲骰後自動走格，落格效果會改變這一回合。';
-    if (board.phase === 'rolling') return '擲 1 顆六面骰…';
-    if (board.phase === 'moving') return `順時針前進 · 還有 ${board.stepsLeft} 格`;
-    if (board.phase === 'roll') return `回合結束 · Boss 鐘 ${board.bossClock} · 請擲骰`;
-    if (tile.kind === 'SURGE') return 'SURGE · 全場球喚醒，震盪各 +1';
-    if (tile.kind === 'TUNE') return `TUNE · ${C.materials[tile.material].name}：本回合門檻 −1，同頻倍率 ×1.5`;
-    if (tile.kind === 'EVENT') { const card = board.cards.at(-1); return card ? `EVENT · ${card.name}：${card.effect}` : 'EVENT'; }
-    return `START · 繞圈完成，下一回合 +${C.board.lapBonusShots} 發`;
+    if (game.status === 'won') return t('bannerWin');
+    if (game.status === 'lost') return t('bannerLoss');
+    if (game.status === 'ready') return t('bannerReady');
+    if (board.phase === 'rolling') return t('rolling');
+    if (board.phase === 'moving') return t('moving', { v0: board.stepsLeft });
+    if (board.phase === 'roll') return t('turnEnd', { v0: board.bossClock });
+    if (tile.kind === 'SURGE') return t('surge');
+    if (tile.kind === 'TUNE') return t('tune', { v0: materialName(tile.material) });
+    if (tile.kind === 'EVENT') { const card = board.cards.at(-1); return card ? t('eventBanner', { v0: cardText(card).name, v1: cardText(card).effect }) : 'EVENT'; }
+    return t('lapBanner', { v0: C.board.lapBonusShots });
   }
   function addBall(b: Ball) {
     const material = numberedBallMaterial(choice.ball, b.material, b.id); material.envMapIntensity = 3.2; // 只有球：整體環境 0.1 × 3.2 ≈ 0.32，讓鋼與黃銅在遠景仍看得出亮面（C1）
@@ -327,9 +338,9 @@ export function startBoard() {
     const item = { sphere, ring, label }; balls.set(b.id, item); return item;
   }
   const W = (x: number) => (x - 400) * .01, Z = (y: number) => (y - 340) * .01;
-  function floater(text: string, cls: string, x: number, z: number, y = .5, life = .9) {
-    const el = document.createElement('span'); el.className = `board-float ${cls}`; el.textContent = text; labels.append(el);
-    floaters.push({ el, x, z, y, born: performance.now() / 1000, life }); juice.damageNumbers++;
+  function floater(content: () => string, cls: string, x: number, z: number, y = .5, life = .9) {
+    const el = document.createElement('span'); el.className = `board-float ${cls}`; el.textContent = content(); labels.append(el);
+    floaters.push({ el, content, x, z, y, born: performance.now() / 1000, life }); juice.damageNumbers++;
   }
   /** 規則效果轉成聲音與畫面回饋；只讀，不回寫。 */
   function feedback(e: typeof game.effects[number], now: number) {
@@ -346,7 +357,7 @@ export function startBoard() {
       juice.step = Math.min(10, juice.step + 1); juice.lastBurst = now; juice.bursts++; juice.maxStep = Math.max(juice.maxStep, juice.step); juice.slammed = false;
       audio.burst(juice.step, e.value, pan, e.amplified);
       if (e.value >= 2 && !reduced) { juice.kickAt = now; juice.kick = Math.min(1, e.value * .25); }
-      floater(`${e.value} 層`, 'board-float-chain', W(e.x), Z(e.y), .45, .7);
+      floater(() => t('depth', { v0: e.value }), 'board-float-chain', W(e.x), Z(e.y), .45, .7);
       if (effects.size < 32) {
         const ring = mesh(effectGeometry, new THREE.MeshBasicMaterial({ color: e.amplified ? TOKENS.yarnGlow : TOKENS.ochre, transparent: true, opacity: .7 }), W(e.x), .04, Z(e.y));
         ring.rotation.x = -Math.PI / 2; ring.castShadow = false; effects.set(e, ring);
@@ -356,7 +367,7 @@ export function startBoard() {
     if (e.kind === 'ignite' && e.fromX !== undefined && e.fromY !== undefined) { pulses.emit(W(e.fromX), Z(e.fromY!), W(e.x), Z(e.y), 1, now); return; }
     if (e.kind === 'damage') {
       juice.total += e.value; if (now - juice.lastBurst > COMBO_WINDOW_SECONDS) juice.lastBurst = now - COMBO_WINDOW_SECONDS + .5;
-      juice.slammed = false; floater(`−${e.value}`, 'board-float-damage', W(e.x), Z(e.y), .6, .8);
+      juice.slammed = false; floater(() => `−${e.value}`, 'board-float-damage', W(e.x), Z(e.y), .6, .8);
       // 怪物籠被打到時縮一下再彈回（只有新籠子三版）。
       if (cages.size) { let best: Cage | null = null, d = Infinity; for (const m of game.monsters) { const dd = Math.hypot(m.x - e.x, m.y - e.y); if (dd < d && dd < m.radius + C.ball.radius * 3) { d = dd; best = cages.get(m.id) ?? null; } } best?.jolt(now); }
       return;
@@ -378,14 +389,14 @@ export function startBoard() {
       audio.step(Math.max(0, index), final, positions[board.position][0] / 6);
       juice.lastPos = board.position;
     }
-    if (board.laps > juice.lastLaps) { juice.lastLaps = board.laps; audio.lap(); floater(`+${C.board.lapBonusShots} 發`, 'board-float-lap', positions[0][0], positions[0][1], .4, 1.4); }
+    if (board.laps > juice.lastLaps) { juice.lastLaps = board.laps; audio.lap(); floater(() => t('extraFloater', { v0: C.board.lapBonusShots }), 'board-float-lap', positions[0][0], positions[0][1], .4, 1.4); }
     if (board.landed && !juice.landed) {
       const tile = C.board.tiles[board.position], pan = positions[board.position][0] / 6;
       juice.landAt = now; juice.landKind = tile.kind;
       if (tile.kind === 'SURGE') setTimeout(() => audio.surge(pan), 70);
       if (tile.kind === 'TUNE') setTimeout(() => audio.tune(tile.material, pan), 70);
       if (tile.kind === 'SURGE' || tile.kind === 'TUNE') {
-        stamp.textContent = tile.kind === 'TUNE' ? `TUNE · ${C.materials[tile.material].name}` : 'SURGE';
+        stamp.textContent = tile.kind === 'TUNE' ? `TUNE · ${materialName(tile.material)}` : 'SURGE';
         stamp.dataset.kind = tile.kind; stamp.hidden = false; stamp.classList.remove('stamp-in'); void stamp.offsetWidth; stamp.classList.add('stamp-in');
       }
     }
@@ -401,24 +412,24 @@ export function startBoard() {
   function render() {
     const now = performance.now() / 1000, board = game.board!, running = game.status === 'playing', shooting = running && board.phase === 'shooting';
     audio.frame(); const rect = canvas.getBoundingClientRect();
-    text('board-phase', game.status === 'ready' ? '準備開始' : game.status === 'won' ? '勝利' : game.status === 'lost' ? '失敗' : phaseNames[board.phase]);
-    text('board-turn', `回合 ${board.turn}`); text('board-shots', `剩餘 ${board.shotsLeft} 發`); text('board-clock', `Boss 鐘 ${board.bossClock}`);
-    text('board-banner', banner()); text('board-die', `骰子 ${board.die || '—'}`);
+    text('board-phase', game.status === 'ready' ? t('ready') : game.status === 'won' ? t('won') : game.status === 'lost' ? t('lost') : phaseNames()[board.phase]);
+    text('board-turn', t('turn', { v0: board.turn })); text('board-shots', t('shots', { v0: board.shotsLeft })); text('board-clock', t('clock', { v0: board.bossClock }));
+    text('board-banner', banner()); text('board-die', t('die', { v0: board.die || '—' }));
     const bannerKind = game.status === 'playing' && board.landed && board.phase !== 'roll' ? C.board.tiles[board.position].kind : '';
     if (get('board-banner').dataset.kind !== bannerKind) get('board-banner').dataset.kind = bannerKind;
     text('board-position', `${String(board.position).padStart(2, '0')} ${C.board.tiles[board.position].kind}`);
-    text('board-next', `下一球：${C.materials[game.nextMaterial].name} · 留場 ${game.balls.length} 顆`);
-    text('board-wave', `第 ${game.wave} 波 · ${(game.wave + 1) * C.board.waveEveryTurns - board.bossClock} 回合後下一波`);
-    text('board-bonus', `下一回合額外 ${board.nextTurnBonus} 發 · 已繞 ${board.laps} 圈`);
+    text('board-next', t('next', { v0: materialName(game.nextMaterial), v1: game.balls.length }));
+    text('board-wave', t('wave', { v0: game.wave, v1: (game.wave + 1) * C.board.waveEveryTurns - board.bossClock }));
+    text('board-bonus', t('bonus', { v0: board.nextTurnBonus, v1: board.laps }));
     const card = board.cards.at(-1); get('board-card').hidden = !card;
-    if (card) text('board-card', `第 ${card.turn} 回合 · ${card.name}\n${card.effect}`);
+    if (card) text('board-card', t('card', { v0: card.turn, v1: cardText(card).name, v2: cardText(card).effect }));
     const inspected = game.balls.find(b => b.id === inspectedId);
-    text('board-inspect', inspected ? `球 #${inspected.id} · ${C.materials[inspected.material].name} · ${inspected.resonant ? '共振中' : '蓄能中'}` : inspectMode ? '點球查看；鍵盤 ← → 換球，Esc 結束查看。' : '移過球查看球號；觸控請先按「查看球號」。');
-    text('board-monsters', `怪物 ${game.monsters.length} / ${C.monsters.loseAbove}`);
+    text('board-inspect', inspected ? t('inspected', { id: inspected.id, material: materialName(inspected.material), state: inspected.resonant ? t('resonating') : t('charging') }) : inspectMode ? t('inspectHelp') : t('inspectHint'));
+    text('board-monsters', t('monsters', { v0: game.monsters.length, v1: C.monsters.loseAbove }));
     text('board-hp-value', `${game.boss.hp} / ${game.boss.maxHp}`); get<HTMLProgressElement>('board-hp').value = game.boss.hp;
     roll.disabled = !running || board.phase !== 'roll'; fire.disabled = !shooting || game.tick - game.lastShotTick < C.launcher.intervalTicks; aim.disabled = !shooting;
     get('board-result').hidden = game.status !== 'won' && game.status !== 'lost';
-    if (game.status === 'won' || game.status === 'lost') text('board-result', `${game.status === 'won' ? 'Boss 擊破，獲勝！' : '怪物超過 10 隻，這局結束。'} ${board.turn} 回合 · ${game.shots} 發 · 按「重來」可用同一種子再玩。`);
+    if (game.status === 'won' || game.status === 'lost') text('board-result', t('result', { outcome: game.status === 'won' ? t('resultWin') : t('resultLoss'), turns: board.turn, shots: game.shots }));
     boardBeats(now);
     for (const e of game.effects) { if (seen.has(e)) continue; seen.add(e); feedback(e, now); }
 
@@ -438,9 +449,16 @@ export function startBoard() {
       const selected = i === board.position, landed = selected && board.landed;
       top.emissive.setHex(landed ? colors.landed : 0); top.emissiveIntensity = landed ? .35 + (reduced ? 0 : .4 * zoom) : 0;
       card.scale.setScalar(landed && !reduced ? 1 + .12 * zoom : 1);
-      label.dataset.active = String(selected); labelAt(label, positions[i][0] + .5, positions[i][1] - .46, .02);
+      const tile = C.board.tiles[i], narrow = rect.width < 600, right = positions[i][0] > 4;
+      label.hidden = !(tile.kind === 'TUNE' || (narrow && right));
+      const labelText = narrow && right ? `${String(i).padStart(2, '0')} ${tile.kind}${tile.kind === 'TUNE' ? '\n' + materialName(tile.material) : ''}` : tile.kind === 'TUNE' ? materialName(tile.material) : '';
+      if (label.textContent !== labelText) label.textContent = labelText;
+      label.dataset.active = String(selected); label.dataset.right = String(narrow && right);
+      if (!(narrow && right)) labelAt(label, positions[i][0] + .5, positions[i][1] - .46, .02);
+      if (narrow && right) { const p = projectWorld(positions[i][0], .02, positions[i][1]); label.style.transform = `translate(${rect.width - 4}px,${p.y - 16}px) translate(-100%,-50%)`; }
     });
     if (stamp.hidden === false) {
+      const tile = C.board.tiles[board.position]; stamp.textContent = tile.kind === 'TUNE' ? `TUNE · ${materialName(tile.material)}` : 'SURGE';
       const p = projectWorld(positions[board.position][0], -.2, positions[board.position][1] - .7);
       stamp.style.left = `${p.x}px`; stamp.style.top = `${p.y}px`;
       if (landT > 1.3 || !board.landed) stamp.hidden = true;
@@ -524,6 +542,7 @@ export function startBoard() {
     // 浮字：傷害與層數往上飄並淡出；剛出現時彈大一下。
     for (let i = floaters.length - 1; i >= 0; i--) {
       const f = floaters[i], age = now - f.born;
+      f.el.textContent = f.content();
       if (age > f.life) { f.el.remove(); floaters.splice(i, 1); continue; }
       const p = projectWorld(f.x, f.y, f.z), rise = reduced ? 0 : age * 34, scale = reduced ? 1 : punchScale(age);
       f.el.style.transform = `translate(${p.x}px,${p.y - rise}px) translate(-50%,-50%) scale(${scale})`;
@@ -534,12 +553,12 @@ export function startBoard() {
       const before = juice.shown; juice.shown = reduced ? juice.total : tallyStep(juice.shown, juice.total, Math.min(.05, now - juice.lastTick));
       if (juice.shown !== before) { juice.ticks++; juice.punchAt = now; if (juice.ticks % 2 === 0) audio.tick(juice.ticks); }
       tally.hidden = false;
-      (tally.firstElementChild as HTMLElement).textContent = juice.step > 0 ? `連鎖 ×${juice.step + 1}` : '傷害';
+      (tally.firstElementChild as HTMLElement).textContent = juice.step > 0 ? t('chain', { v0: juice.step + 1 }) : t('damage');
       (tally.lastElementChild as HTMLElement).textContent = `−${juice.shown}`;
       const scale = reduced ? 1 : punchScale(now - juice.punchAt) * (juice.slammed ? 1 : 1 + Math.min(.4, juice.step * .05));
       tally.style.setProperty('--tally-scale', String(scale));
       if (!juice.slammed && now - juice.lastBurst > COMBO_WINDOW_SECONDS && juice.shown >= juice.total) {
-        juice.slammed = true; juice.slams++; text('board-chain-live', `${juice.step > 0 ? `連鎖 ${juice.step + 1} 下，` : ''}傷害 ${juice.total}`); juice.hideAt = now + 1.1; juice.punchAt = now; audio.slam(juice.step + 1); tally.classList.add('tally-slam');
+        juice.slammed = true; juice.slams++; text('board-chain-live', t('chainLive', { chain: Math.max(1, juice.step + 1), damage: juice.total })); juice.hideAt = now + 1.1; juice.punchAt = now; audio.slam(juice.step + 1); tally.classList.add('tally-slam');
       }
       if (juice.slammed && now > juice.hideAt) { juice.total = juice.shown = 0; juice.ticks = 0; juice.step = -1; tally.hidden = true; tally.classList.remove('tally-slam'); }
     }
@@ -561,7 +580,7 @@ export function startBoard() {
     if (!aimHint.hidden) {
       const from = project(C.launcher.x, C.launcher.y), to = project(C.launcher.x + Math.cos(angle) * 100, C.launcher.y + Math.sin(angle) * 100);
       const arrow = to.x < from.x - 8 ? '↖' : to.x > from.x + 8 ? '↗' : '↑';
-      aimHint.textContent = `${arrow} 發射方向 ${Math.round(angle * 180 / Math.PI)}° · 扇形為散射範圍${view.cropped ? '（發射口在近景外）' : ''}`;
+      aimHint.textContent = t('aimHint', { arrow, angle: Math.round(angle * 180 / Math.PI), crop: view.cropped ? t('cropped') : '' });
     }
     launcher.rotation.y = -angle;
     scene.background = new THREE.Color(shifting ? TOKENS.bgShift : TOKENS.bgIdle);
@@ -603,12 +622,12 @@ export function startBoard() {
       if (options.card && reveal) {
         const card = EVENT_CARDS[options.card.index], r = canvas.getBoundingClientRect(), tile = C.board.tiles.findIndex(t => t.kind === 'EVENT');
         const p = new THREE.Vector3(positions[tile][0], -.2, positions[tile][1]).project(camera);
-        reveal.freeze({ id: card.id, name: card.name, material: options.card.material ?? 1, targetBallId: options.card.target }, options.card.t, { x: r.left + (p.x + 1) * r.width / 2, y: r.top + (1 - p.y) * r.height / 2 });
+        reveal.freeze({ id: card.id, name: cardText(card).name, material: options.card.material ?? 1, targetBallId: options.card.target }, options.card.t, { x: r.left + (p.x + 1) * r.width / 2, y: r.top + (1 - p.y) * r.height / 2 });
       }
       render(); return { tallyVisible: !tally.hidden, cardActive: reveal?.active ?? false };
     },
     /** 卡面特寫：回傳某一版六張卡的 PNG data URL（程式繪製）。 */
-    faces(variant: 'a' | 'b' | 'c') { return faceSheet(variant, EVENT_CARDS, C.board.events, C.materials[1].name).map(c => c.toDataURL('image/png')); },
+    faces(variant: 'a' | 'b' | 'c') { return faceSheet(variant, EVENT_CARDS, C.board.events, materialName(1)).map(c => c.toDataURL('image/png')); },
   } });
   function frame(now: number) {
     if (stopped) return; requestAnimationFrame(frame);
@@ -618,5 +637,12 @@ export function startBoard() {
     while (accumulator >= C.dt) { game.step(); accumulator -= C.dt; }
     frameCount++; render();
   }
+  function refreshLanguage() {
+    refreshStaticLanguage();
+    text('board-inspect-toggle', inspectMode ? t('inspectEnd') : t('inspect'));
+    text('board-mute', sound.muted ? t('soundOff') : t('soundOn'));
+    reveal?.refreshLanguage();
+  }
+  language.subscribe(refreshLanguage); refreshLanguage();
   render(); requestAnimationFrame(frame);
 }

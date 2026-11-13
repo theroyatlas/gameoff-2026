@@ -1,18 +1,24 @@
-# 共振桌 · Resonance
+# Resonance
 
-在手工桌遊風格的 14 格棋盤上擲骰走格、發射球，讓碰撞連成共振並擊破中央 Boss。
+[繁體中文](README.zh-TW.md)
 
-## 怎麼玩
+Roll around a handcrafted 14-tile board, launch balls into the central field, and turn collisions into resonance chains to defeat the Boss.
 
-1. 按「開始」，再按「擲骰」；棋子自動順時針走格並結算效果。
-2. 每回合射 3 發。點擊球場，或拖拉後放開來瞄準發射；左右方向鍵瞄準，空白鍵擲骰／發射，也可用方向滑桿與「發射」按鈕。
-3. SURGE 喚醒球並增加震盪；TUNE 強化指定材質；繞過 START 可讓下一回合多射 1 發；EVENT 從 6 張事件卡中抽 1 張（見 `docs/EVENT-CARDS.md`）。
-4. 射完等待球停下（最多 6 秒），Boss 鐘增加 1；Boss 鐘每到 3 的倍數出現一波怪物（事件卡「鐘慢一拍」會把鐘回撥 1）。
-5. Boss 血量歸零即勝利；怪物超過 10 隻即失敗。「重來」可用同一種子重新開始。
+English is the default. Select **中文** or **English** in the header to switch at any time without resetting the board. Your browser remembers the choice when local storage is available; if reading storage fails, the game opens in English.
 
-## 本機執行
+## How to play
 
-需要 Node.js 與 npm。在 repo 根目錄執行：
+1. Select **Start**, then **Roll**. The pawn moves clockwise and activates its landing tile.
+2. Fire 3 shots per turn. Click the field, or drag and release to aim and fire. Arrow keys aim; Space rolls or fires. The aim slider and **Fire** button also work.
+3. SURGE wakes every ball and adds charge. TUNE strengthens one material for the turn. Passing START earns 1 extra shot for the next turn. EVENT draws one of six cards; see the [full rules and event cards](drafts/docs/itch-page.md).
+4. After firing, wait for balls to settle (up to 6 seconds). The Boss clock advances by 1. A wave arrives the **first time the clock reaches 3, 6, 9…**. Clock Rewind moves it back by 1; revisiting an already reached threshold does not spawn that wave again.
+5. Reduce the Boss to zero HP to win. More than 10 monsters ends the game. Select **Restart** to return to setup. In the same browser, you can play again with the same seed.
+
+**Inspect balls** lets touch players identify a ball without firing. Hover with a mouse, or use the arrow keys on the field in inspect mode; Esc exits inspection. Sound starts after your first interaction. The game respects reduced-motion preferences.
+
+## Run locally
+
+Requires Node.js and npm. From the repository root:
 
 ```sh
 npm install
@@ -20,31 +26,39 @@ npm --prefix drafts/3d-web install
 npm run dev
 ```
 
-開啟終端顯示的本機網址。測試與正式建置：
+Open the local URL printed by Vite. Test and build:
 
 ```sh
 npm test
 npm run build:main
 ```
 
-正式產物為 `drafts/3d-web/dist-main/index.html`，可直接用支援 WebGL 的瀏覽器開啟；建置只寫入 `dist-main/`。音效由首次操作啟動，無外部素材或服務依賴。
+The regular build is `drafts/3d-web/dist-main/index.html`. It can be opened directly in a WebGL-enabled browser, offline. Fonts are bundled; runtime makes no external requests. The project code is MIT; the bundled Kalam font is SIL OFL 1.1, documented in [ASSETS.md](ASSETS.md).
 
-## 網址參數
+For the language review build, from `drafts/3d-web` run:
 
-| 參數 | 功能 |
+```sh
+npx vite build --outDir dist-lang-b --emptyOutDir
+```
+
+This writes only `drafts/3d-web/dist-lang-b/`.
+
+## URL options
+
+| Option | Behavior |
 | --- | --- |
-| 不帶參數、`?mode=board` | 正式棋盤模式 |
-| `?mode=realtime` | 即時模式；持續發射，按時間推進波次 |
-| `?ball=a` / `b` / `c` | 原木紅漆陶土（預設 a）／玻璃鋼黃銅／做舊材質 |
-| `?icon=a` / `b` / `c` | 細墨線／粗筆（預設 b）／印刷卡 |
-| `?light=a` / `b` / `c` | 集中暖光／柔和暖光／低角度暖光（預設 c） |
-| `?ui=a` / `b` / `c` | 紙卡介面（預設 a）／胡桃木框／毛線與暖光 |
-| `?cage=a` / `b` / `c` | 鐵絲籠／毛線木樁籠（預設 b）／紙卡燈籠 |
-| `?card=a` / `b` / `c` | 手繪紙卡（預設 a）／印刷卡／胡桃木黃銅牌；含抽卡展示，點一下可跳過 |
-| `?ring=1` | 即時模式顯示外圈；棋盤模式外圈固定存在，包含 `ring=0` |
+| No options, or `?mode=board` | Official board mode |
+| `?mode=realtime` | Realtime mode, with continuous firing and time-based waves |
+| `?ball=a` / `b` / `c` | Wood, red lacquer and blue clay (default a) / glass, steel and brass / weathered materials |
+| `?icon=a` / `b` / `c` | Fine ink / broad marker (default b) / printed cards |
+| `?light=a` / `b` / `c` | Focused warm / soft warm / low-angle warm (default c) |
+| `?ui=a` / `b` / `c` | Paper controls (default a) / walnut frame / yarn and warm light |
+| `?cage=a` / `b` / `c` | Wire cage / yarn and wooden posts (default b) / paper lantern |
+| `?card=a` / `b` / `c` | Hand-drawn paper (default a) / printed card / walnut and brass plaque; click to skip the reveal |
+| `?ring=1` | Show the decorative ring in realtime mode; board mode always includes its required ring |
 
-參數可用 `&` 組合，例如 `?mode=realtime&ball=c&icon=b&light=b&ring=1`。種子從開始畫面輸入；在同一個瀏覽器裡，相同種子與相同輸入時序可重現同一局。
+Options can be combined with `&`, for example `?mode=realtime&ball=c&icon=b&light=b&ring=1`.
 
-## 授權
+## License
 
-[MIT](LICENSE) © 2026 theroyatlas。
+[MIT](LICENSE) © 2026 theroyatlas. Font license: [SIL OFL 1.1](drafts/3d-web/fonts/OFL-Kalam.txt).

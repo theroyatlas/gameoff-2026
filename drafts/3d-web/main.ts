@@ -1,3 +1,5 @@
+import { t as tr } from './i18n';
+import { language, mountLanguageButton } from './language';
 import './style.css';
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
@@ -16,6 +18,9 @@ import { readChoice, TOKENS, LIGHTS, walnutTexture, drawField, badgeCanvas, ball
 import { createYarn, type YarnLink } from './yarn';
 
 export function startRealtime() {
+let lastLanguage = language.current;
+mountLanguageButton(document.querySelector('header')!);
+localizeRealtime(); language.subscribe(localizeRealtime);
 const canvas = document.querySelector<HTMLCanvasElement>('#scene')!;
 const stage = document.querySelector<HTMLElement>('#stage')!;
 const phaseText = document.querySelector<HTMLElement>('#phase')!;
@@ -30,7 +35,7 @@ const fallbackLink=document.querySelector<HTMLAnchorElement>('#fallback-link')!;
 fallbackLink.setAttribute('href',TWO_D_URL);
 function showFallback(){
   canvas.hidden=true;canvas.tabIndex=-1;failure.hidden=false;
-  phaseText.textContent='3D 畫面無法使用';statusText.textContent='可改玩 2D 版';
+  phaseText.textContent=tr('rtUnavailable');statusText.textContent=tr('rtFallback');
   document.querySelector<HTMLElement>('#instructions')!.hidden=true;document.querySelector<HTMLElement>('#overlay')!.hidden=true;
 }
 function startScene(){
@@ -290,8 +295,8 @@ const t=game.tick*C.dt,active=game.phase==='active',warning=game.phase==='warnin
   crystal.scale.setScalar(game.tick<game.boss.flashUntil?1.15:1);
   for(let i=effects.length-1;i>=0;i--){const e=effects[i],q=(t-e.born)/e.duration;if(q>=1){disposeEffect(e);effects.splice(i,1);continue;}const m=e.mesh as THREE.Mesh;(m.material as THREE.MeshBasicMaterial).opacity=(1-q)*(reduced?.22:.65);if(e.kind!=='ignite')m.scale.setScalar(.12+e.radius*(1-(1-q)**3));}
   aimMesh.visible=game.status==='playing'&&(drag!==null||document.activeElement===canvas);aimMesh.rotation.y=-angle;barrel.rotation.y=-angle-Math.PI/2;
-  if(currentPhase!==game.phase){currentPhase=game.phase;phaseText.textContent=active?'SHIFT · 全場同頻':warning?'正在同步':'累積，等待共振';document.querySelector('.phase')!.setAttribute('data-active',String(active));document.querySelector('#announcement')!.textContent=active?'相變開始，低摩擦流動':warning?'即將相變':'等待下一次碰撞';}
-  const status=`${String(game.shots).padStart(2,'0')} 顆球留在場上 · ${active?'一起流動':maxDepth>1?`最深 ${maxDepth} 層連鎖`:'拖拉後放開'}`;if(statusText.textContent!==status)statusText.textContent=status;
+  if(currentPhase!==game.phase || lastLanguage !== language.current){lastLanguage=language.current;currentPhase=game.phase;phaseText.textContent=active?tr('rtActive'):warning?tr('rtSync'):tr('rtCharge');document.querySelector('.phase')!.setAttribute('data-active',String(active));document.querySelector('#announcement')!.textContent=active?tr('rtAnnounceActive'):warning?tr('rtAnnounceWarning'):tr('rtAnnounceIdle');}
+  const status=tr('rtStatus', { shots: String(game.shots).padStart(2,'0'), action: active?tr('rtFlow'):maxDepth>1?tr('rtMaxDepth', { v0: maxDepth }):tr('rtDrag') });if(statusText.textContent!==status)statusText.textContent=status;
   try{composer.render();}catch{stopped=true;showFallback();return;}canvas.dataset.status=game.status;canvas.dataset.ready='true';canvas.dataset.phase=game.phase;canvas.dataset.shots=String(game.shots);
 }
 // 開始前保留材質樣本，預熱實際後處理管線及有／無陰影的 shader。
@@ -315,4 +320,10 @@ previous=performance.now();quality.resetWindow();
 requestAnimationFrame(frame);
 }
 try{startScene();}catch{showFallback();}
+}
+
+function localizeRealtime() {
+  document.title = tr('rtTitle');
+  document.querySelectorAll<HTMLElement>('[data-i18n]').forEach(el => { el.textContent = tr(el.dataset.i18n as Parameters<typeof tr>[0]); });
+  document.querySelectorAll<HTMLElement>('[data-i18n-aria]').forEach(el => { el.setAttribute('aria-label', tr(el.dataset.i18nAria as Parameters<typeof tr>[0])); });
 }

@@ -1,6 +1,6 @@
 /*
  * 美術第二輪：介面三版與抽卡展示。只用 DESIGN.md 第 2 節色票（含其透明度）。
- * 不加 ?ui= 時這些規則都不生效，介面維持原樣。
+ * 預設使用 ui=a；?ui= 可切換其餘保留版本。
  */
 body.board-mode[data-ui]{--night:#120b06;--walnut:#5a3a22;--walnut-dark:#3a2416;--paper:#e8dcc2;--paper-edge:#cdbb98;--ink:#2b2118;--yarn:#8fdcc6;--ochre:#c9963f;--brass:#b88a45;--brass-edge:#d2a862;--surge:#c8552d;--tune:#4f6f9a;--event:#d39a2c;--start:#5f8a5a;
   --board-bg:var(--night);--board-ink:var(--paper);--board-muted:var(--paper-edge);--board-rule:var(--walnut);--board-accent:var(--ochre);background:var(--night);color:var(--paper)}

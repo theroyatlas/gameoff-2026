@@ -5,7 +5,7 @@ const root = fileURLToPath(new URL('.', import.meta.url));
 export default defineConfig({
   root, base: './',
   cacheDir: fileURLToPath(new URL('./node_modules/.vite', import.meta.url)),
-  build: { outDir: fileURLToPath(new URL('./dist', import.meta.url)), modulePreload: false,
+  build: { target: 'esnext', outDir: fileURLToPath(new URL('./dist', import.meta.url)), modulePreload: false,
     assetsInlineLimit: 10000000, minify: 'esbuild', rollupOptions: { output: { inlineDynamicImports: true } } },
   plugins: [{ name: 'offline-single-html', enforce: 'post', generateBundle(_, bundle) {
     const html = bundle['index.html'];

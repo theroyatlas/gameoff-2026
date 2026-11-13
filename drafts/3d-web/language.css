@@ -1,0 +1,67 @@
+@font-face{font-family:"Kalam Cards";src:url('./fonts/kalam-bold-cards.woff2') format('woff2');font-style:normal;font-weight:700;font-display:swap}
+#language-toggle{flex:none;min-width:76px;min-height:44px;padding:4px 10px;font:700 13px/1.2 system-ui,sans-serif}
+html[lang=en] .event-reveal .er-stamp{font-family:"Kalam Cards",cursive;font-weight:700;letter-spacing:.04em}
+/* Fixed action area; only the explicitly labelled information area scrolls. */
+body.board-mode{height:100dvh;min-height:0;overflow:hidden}
+body.board-mode .board-app{box-sizing:border-box;height:100dvh;max-width:1200px;padding:12px 24px;display:flex;flex-direction:column;gap:8px;overflow:hidden}
+body.board-mode .board-header{flex:none;padding:0;align-items:center;gap:12px}
+body.board-mode .board-header>div{margin-right:auto;min-width:0}
+body.board-mode .board-header h1{font-size:23px}
+body.board-mode .board-header a{font-size:12px;padding:4px}
+body.board-mode .board-readout{margin:0;padding:5px 0;gap:14px;flex-wrap:wrap}
+body.board-mode #board-setup{margin:0}
+body.board-mode #board-banner{margin:0;min-height:0;flex:none;font-size:13px;line-height:1.4}
+body.board-mode .board-layout{flex:1;min-height:0;margin:0;grid-template-columns:minmax(0,1fr) 290px;align-items:stretch;gap:16px}
+body.board-mode #board-stage{height:100%;min-height:0}
+body.board-mode[data-ui] .board-controls{box-sizing:border-box;min-height:0;display:flex;flex-direction:column;gap:7px;padding:14px;overflow:hidden;margin:4px}
+body.board-mode .board-controls :is(button,.board-angle,.board-die-line,.board-utilities){flex:none;margin:0}
+body.board-mode .board-die-line strong{font-size:18px}
+body.board-mode .board-angle{font-size:12px}
+body.board-mode .board-controls #board-angle{min-height:32px;height:32px}
+body.board-mode .board-details{min-height:40px;flex:1;overflow-y:scroll;overflow-x:hidden;scrollbar-gutter:stable;padding:0 5px 6px 0;overscroll-behavior:contain;scrollbar-color:#5a3a22 #cdbb98;scrollbar-width:auto;border-block:1px solid #cdbb98}
+body.board-mode .board-details::-webkit-scrollbar{width:10px}
+body.board-mode .board-details::-webkit-scrollbar-track{background:#cdbb98}
+body.board-mode .board-details::-webkit-scrollbar-thumb{background:#5a3a22;border:2px solid #cdbb98;border-radius:5px}
+body.board-mode .board-details .scroll-hint{position:sticky;top:0;z-index:1;background:#e8dcc2;font-weight:700;font-size:11px;line-height:1.5;margin:0 0 5px;padding:3px 0}
+body.board-mode .board-details p{margin:5px 0;line-height:1.5;overflow-wrap:anywhere}
+body.board-mode .board-details:focus-visible{outline:2px solid #c9963f;outline-offset:-2px}
+body.board-mode #board-result{flex:none;margin:0;padding:6px 10px;font-size:12px;line-height:1.4}
+body.board-mode .board-help{padding:6px 0 0;margin:6px 0 0;font-size:11px}
+body.board-mode #board-inspect{min-height:0}
+body.board-mode .board-controls .board-utilities{gap:8px}
+body.board-mode .board-controls .board-utilities button{flex:1;min-width:44px}
+body.board-mode #board-card{font-size:12px;padding:5px 7px}
+body.board-mode .board-card-row{gap:7px}
+body.board-mode .board-tile-label[data-right=true]{font-size:10px;line-height:1.4;white-space:pre;padding:2px 4px;opacity:1;will-change:transform}
+@media(max-width:700px){
+ body.board-mode .board-app{padding:8px 10px;gap:6px}
+ body.board-mode .board-header{gap:8px}
+ body.board-mode .board-header h1{font-size:19px}
+ body.board-mode .board-header p{font-size:10px}
+ body.board-mode .board-header a{font-size:11px}
+ body.board-mode #language-toggle{min-width:66px;font-size:12px;padding:3px 6px}
+ body.board-mode .board-layout{display:grid;grid-template-columns:1fr;grid-template-rows:minmax(180px,1fr) 286px;gap:4px}
+ body.board-mode #board-stage{height:100%;min-height:0}
+ body.board-mode .board-readout{gap:7px;font-size:10px;padding:4px 0}
+ body.board-mode #board-phase{min-width:70px}
+ body.board-mode #board-banner{font-size:11px;padding:7px 10px}
+ body.board-mode #board-seed{width:140px}
+ body.board-mode[data-ui] .board-controls{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:20px 44px 40px minmax(36px,1fr) 44px;gap:5px 10px;padding:12px;margin:4px}
+ body.board-mode .board-die-line{grid-column:1/-1;grid-row:1}
+ body.board-mode #board-roll{grid-column:1;grid-row:2}
+ body.board-mode #board-fire{grid-column:2;grid-row:2}
+ body.board-mode .board-angle{grid-column:1/-1;grid-row:3;font-size:10px}
+ body.board-mode .board-controls #board-angle{height:26px;min-height:26px}
+ body.board-mode .board-details{grid-column:1/-1;grid-row:4;height:100%;min-height:0}
+ body.board-mode #board-inspect-toggle{grid-column:1;grid-row:5;font-size:11px}
+ body.board-mode .board-controls .board-utilities{grid-column:2;grid-row:5;gap:6px}
+ body.board-mode .board-utilities button{font-size:10px;padding:2px 3px}
+ body.board-mode #board-result{font-size:11px;padding:5px 8px}
+}
+
+@media(max-width:700px){
+ body:not(.board-mode) header{display:grid;grid-template-columns:minmax(0,1fr) auto}
+ body:not(.board-mode) header .phase{grid-column:1/-1;grid-row:2;text-align:left}
+ body:not(.board-mode) header #language-toggle{grid-column:2;grid-row:1}
+ body:not(.board-mode) #status{max-width:none}
+}

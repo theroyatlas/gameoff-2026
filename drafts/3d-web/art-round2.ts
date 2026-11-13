@@ -1,3 +1,5 @@
+import { t } from './i18n';
+import type { Language } from './language';
 /**
  * 美術第二輪的三組可挑選版本（介面、怪物籠、事件卡卡面）。純資料，不碰 DOM 或 three.js，方便單元測試。
  * 不加參數時使用紙卡介面、毛線木樁籠與手繪紙卡。
@@ -20,16 +22,17 @@ export interface CardFace {
 }
 
 /** 卡面上的大字與短句，數值一律取自規則設定（CONFIG.board.events），呈現層不另訂數值。 */
-export function cardFace(id: string, values: EventCardValues, materialName?: string, targetBallId?: number): CardFace {
+export function cardFace(id: string, values: EventCardValues, materialName?: string, targetBallId?: number, locale: Language = 'zh-TW'): CardFace {
+  const tr = (key: Parameters<typeof t>[0], values = {}) => t(key, values, locale);
   const face = (prefix: string, count: number | null, suffix: string, short: string): CardFace =>
     ({ headline: `${prefix}${count ?? ''}${suffix}`, prefix, count, suffix, short });
   switch (id) {
-    case 'extra-shot': return face('+', values.bonusShots, ' 發', '下一回合多射');
-    case 'change-material': return face('→ ', null, materialName ?? '換材質', '下一球換材質');
-    case 'rewind': return face('鐘 −', values.rewind, '', 'Boss 鐘往回撥');
-    case 'double-burst': return face('×', values.burstMultiplier, '', targetBallId !== undefined ? `球 #${targetBallId} 下次爆發` : '下一次爆發加倍');
-    case 'burst-now': return face('', null, '爆！', targetBallId !== undefined ? `球 #${targetBallId} 立刻爆發` : '下一球立刻爆發');
-    case 'chip-boss': return face('−', values.bossDamage, '', '直接打 Boss');
+    case 'extra-shot': return face('+', values.bonusShots, tr('shotsSuffix'), tr('extraShort'));
+    case 'change-material': return face('→ ', null, materialName ?? tr('materialSwap'), tr('materialShort'));
+    case 'rewind': return face(tr('clockPrefix'), values.rewind, '', tr('rewindShort'));
+    case 'double-burst': return face('×', values.burstMultiplier, '', targetBallId !== undefined ? tr('doubleTarget', { id: targetBallId }) : tr('doubleShort'));
+    case 'burst-now': return face('', null, tr('burst'), targetBallId !== undefined ? tr('burstTarget', { id: targetBallId }) : tr('burstShort'));
+    case 'chip-boss': return face('−', values.bossDamage, '', tr('chipShort'));
     default: return face('', null, '?', '');
   }
 }

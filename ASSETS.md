@@ -1,10 +1,10 @@
 # 素材清單
 
-範圍：整合後 main 由 Git 追蹤的全部非程式視覺、音訊、字型、影片與模型素材。路徑相對於 repo 根目錄；以 `git ls-files` 及副檔名盤點，共 33 個檔案，全部為 PNG。日期：2026-11-12。
+範圍：整合後 main 由 Git 追蹤的全部非程式視覺、音訊、字型、影片與模型素材。路徑相對於 repo 根目錄；以 `git ls-files` 及副檔名盤點，原有 33 個 PNG；本輪新增 1 個 WOFF2 字型子集及其授權與字集檔。日期：2026-11-13。
 
-本表素材依專案著作權人指定，以根目錄 `LICENSE` 的 MIT 授權提供。版權標示：`Copyright (c) 2026 theroyatlas`。第三方程式庫授權另見 `drafts/3d-web/THIRD-PARTY-NOTICES.txt`。
+本表自製素材依專案著作權人指定，以根目錄 `LICENSE` 的 MIT 授權提供。版權標示：`Copyright (c) 2026 theroyatlas`。第三方程式庫授權另見 `drafts/3d-web/THIRD-PARTY-NOTICES.txt`。
 
-沒有追蹤字型檔、音效檔、影片檔或 3D 模型檔（音效的生成方式見下方「音效」一節）。系統字型由裝置提供，不隨 repo 散布；WebAudio 音效及 three.js 幾何、材質由程式即時生成，程式碼依 MIT 授權。Blender 場景以 Python 腳本保存，渲染結果列於下表。建置目錄中的內嵌程式材質不是另外的素材檔。
+除下方 Kalam 字型子集外，沒有追蹤音效檔、影片檔或 3D 模型檔（音效的生成方式見下方「音效」一節）。系統字型由裝置提供，不隨 repo 散布；WebAudio 音效及 three.js 幾何、材質由程式即時生成，程式碼依 MIT 授權。Blender 場景以 Python 腳本保存，渲染結果列於下表。建置目錄中的內嵌程式材質不是另外的素材檔。
 
 | 路徑 | 類型 | 來源與查證依據 | 授權 |
 | --- | --- | --- | --- |
@@ -98,3 +98,13 @@
 | `directions/shots/c-crew-phase.png` | PNG 圖片 | 自製 HTML 主題草稿的瀏覽器截圖 | MIT（本專案） | 放棄的草稿 |
 | `directions/shots/selection-desktop.png` | PNG 圖片 | 自製 HTML 主題草稿的瀏覽器截圖 | MIT（本專案） | 放棄的草稿 |
 | `directions/shots/selection-mobile.png` | PNG 圖片 | 自製 HTML 主題草稿的瀏覽器截圖 | MIT（本專案） | 放棄的草稿 |
+
+## Bundled English card font
+
+- **Font:** Kalam Bold, version **2.001**, by Indian Type Foundry (Lipi Raval and Jonny Pinhorn).
+- **Source:** https://github.com/google/fonts/tree/main/ofl/kalam ; source file https://raw.githubusercontent.com/google/fonts/main/ofl/kalam/Kalam-Bold.ttf . The source TTF is not shipped; its SHA-256 is recorded below.
+- **License:** SIL Open Font License **1.1**. The complete unmodified license and copyright notice are bundled at `drafts/3d-web/fonts/OFL-Kalam.txt`. The font remains under OFL; the project's MIT license does not replace it.
+- **Shipped subset:** `drafts/3d-web/fonts/kalam-bold-cards.woff2`. Contains only the Unicode characters used by the six English card names and the provisional DRAWN stamp, plus required font shaping glyphs. The exact character list is `drafts/3d-web/fonts/card-glyphs.txt`.
+- **Method:** fontTools **4.61.1**, WOFF2 compression via Brotli. Reproduce from a downloaded source TTF with `python -m fontTools.subset Kalam-Bold.ttf --text-file=drafts/3d-web/fonts/card-glyphs.txt --flavor=woff2 --output-file=drafts/3d-web/fonts/kalam-bold-cards.woff2`. Keep the license alongside the output. Update the character list when a card name or stamp changes.
+- **Use:** English card names and English stamp only. Thick, slightly irregular handwritten strokes fit the existing paper and broad-marker treatment. Chinese names retain the system Kai font stack. Vite embeds the WOFF2 into the single HTML build; no CDN is contacted.
+- Source TTF SHA-256: 2f6576601db015d4f6c08678120277fc8510b98c06e932ce7a6a9cbff4cbdded.

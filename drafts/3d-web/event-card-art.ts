@@ -1,10 +1,13 @@
+import { t, cardName } from './i18n';
+import { language } from './language';
+import type { EventCardId } from '../../src/event-cards';
 import { TOKENS, HAND_FONT, NUMBER_FONT, paperBase, handPath, circlePts, walnutTexture, type Pt, type IconStyle } from './style1';
 import { cardFace, revealMoments, revealCount, REVEAL, type ArtVariant, type CardFace, type EventCardValues } from './art-round2';
 import type { BoardAudio } from './board-audio';
 import { bindRevealSkip } from './reveal-input';
 
 /**
- * 事件卡卡面三版與抽卡展示。全部用 Canvas 程式繪製，不載入圖檔或字型。
+ * 事件卡卡面三版與抽卡展示。全部用 Canvas 程式繪製，不載入圖檔；英文卡名使用隨包附帶的字型。
  * a：手繪紙卡（02-board-closeup 的紙卡、粗筆畫與套印）。
  * b：印刷卡（style-1.png 的平整印刷卡、實心圖示、色帶）。
  * c：胡桃木鑲黃銅牌（01-same-angle 的木框角塊、style-1.png 的黃銅細邊）。
@@ -84,7 +87,7 @@ function drawFrontBase(c: HTMLCanvasElement, variant: ArtVariant, id: string, na
     x.save(); x.strokeStyle = EVENT; x.globalAlpha = .9; x.lineWidth = 10 * k; x.strokeRect(10 * k + off, 10 * k + off, w - 20 * k, h - 20 * k); x.restore();
     x.save(); x.fillStyle = INK; x.globalAlpha = .85; x.font = `700 ${15 * k}px ${HAND_FONT}`; x.textBaseline = 'middle'; x.fillText('EVENT', 24 * k, 30 * k); x.textAlign = 'right'; x.fillText(tag, w - 24 * k, 30 * k); x.restore();
     drawIcon(x, id, w / 2, h * .3, k * 1.05, INK, 'b', css(TOKENS.ochre));
-    x.save(); x.fillStyle = INK; x.textAlign = 'center'; x.textBaseline = 'middle'; fitText(x, name, w - 50 * k, 30 * k, KAI_FONT); x.fillText(name, w / 2, h * .78);
+    x.save(); x.fillStyle = INK; x.textAlign = 'center'; x.textBaseline = 'middle'; fitText(x, name, w - 50 * k, 30 * k, language.current === 'en' ? '"Kalam Cards",cursive' : KAI_FONT); x.fillText(name, w / 2, h * .78);
     x.globalAlpha = .8; fitText(x, face.short, w - 40 * k, 18 * k, UI_FONT, 700); x.fillText(face.short, w / 2, h * .885); x.restore();
   } else if (variant === 'b') {
     // 印刷卡：平整紙面、半色調網點、上方實心色帶（色帶與框線套印錯開 3 px）、實心圖示。
@@ -92,7 +95,7 @@ function drawFrontBase(c: HTMLCanvasElement, variant: ArtVariant, id: string, na
     x.save(); x.fillStyle = PAPER_EDGE; for (let yy = 8; yy < h; yy += 9) for (let xx = (yy / 9) % 2 ? 4 : 8.5; xx < w; xx += 9) { x.beginPath(); x.arc(xx, yy, 1.3, 0, Math.PI * 2); x.fill(); } x.restore();
     const off = 3 * k; x.save(); x.fillStyle = EVENT; x.fillRect(12 * k + off, 12 * k + off, w - 24 * k, 44 * k); x.restore();
     x.save(); x.strokeStyle = INK; x.lineWidth = 2.5 * k; x.strokeRect(12 * k, 12 * k, w - 24 * k, h - 24 * k); x.restore();
-    x.save(); x.fillStyle = PAPER; x.textBaseline = 'middle'; x.textAlign = 'center'; fitText(x, name, w - 90 * k, 22 * k, UI_FONT, 800); x.fillText(name, w / 2 + off, 34 * k + off);
+    x.save(); x.fillStyle = PAPER; x.textBaseline = 'middle'; x.textAlign = 'center'; fitText(x, name, w - 90 * k, 22 * k, language.current === 'en' ? '"Kalam Cards",cursive' : UI_FONT, 700); x.fillText(name, w / 2 + off, 34 * k + off);
     x.font = `800 ${16 * k}px ${NUMBER_FONT}`; x.textAlign = 'left'; x.fillText(String(index), 22 * k + off, 34 * k + off); x.restore();
     drawIcon(x, id, w / 2, h * .37, k * 1.05, INK, 'c', EVENT);
     x.save(); x.fillStyle = INK; x.globalAlpha = .85; x.textAlign = 'center'; x.textBaseline = 'middle'; fitText(x, face.short, w - 40 * k, 18 * k, UI_FONT, 700); x.fillText(face.short, w / 2, h * .87); x.restore();
@@ -110,7 +113,7 @@ function drawFrontBase(c: HTMLCanvasElement, variant: ArtVariant, id: string, na
     const lw = w - 60 * k, lh = 52 * k, lx = 30 * k, ly = h * .74;
     x.save(); x.translate(w / 2, ly + lh / 2); x.rotate(-1.5 * Math.PI / 180); x.translate(-w / 2, -(ly + lh / 2));
     x.fillStyle = PAPER_EDGE; x.fillRect(lx + 2 * k, ly + 3 * k, lw, lh); paperLabel(x, lx, ly, lw, lh);
-    x.fillStyle = INK; x.textAlign = 'center'; x.textBaseline = 'middle'; fitText(x, name, lw - 20 * k, 24 * k, TITLE_FONT); x.fillText(name, w / 2, ly + lh * .42);
+    x.fillStyle = INK; x.textAlign = 'center'; x.textBaseline = 'middle'; fitText(x, name, lw - 20 * k, 24 * k, language.current === 'en' ? '"Kalam Cards",cursive' : TITLE_FONT); x.fillText(name, w / 2, ly + lh * .42);
     x.globalAlpha = .8; fitText(x, face.short, lw - 16 * k, 14 * k, UI_FONT, 700); x.fillText(face.short, w / 2, ly + lh * .8); x.restore();
   }
 }
@@ -167,12 +170,14 @@ export function createEventReveal(o: RevealOptions) {
   const back = makeCanvas(); drawCardBack(back, o.variant); root.querySelector('.er-back')!.append(back);
   for (let i = 0; i < 10; i++) dots.append(document.createElement('i'));
   let front: CardFront | null = null, startAt = -1, frozen: number | null = null, from = { x: 0, y: 0 }, fired = new Set<string>();
+  let lastDrawn: DrawnLike | null = null, slottedDrawn: DrawnLike | null = null;
   const m = revealMoments(), staticEnd = 1.6;
   function faceFor(drawn: DrawnLike) {
-    const face = cardFace(drawn.id, o.values, drawn.material !== undefined ? o.materialName(drawn.material) : undefined, drawn.targetBallId);
-    return new CardFront(o.variant, drawn.id, drawn.name, face);
+    const face = cardFace(drawn.id, o.values, drawn.material !== undefined ? o.materialName(drawn.material) : undefined, drawn.targetBallId, language.current);
+    return new CardFront(o.variant, drawn.id, cardName(drawn.id as EventCardId), face);
   }
-  function paintSlot(f: CardFront) {
+  function paintSlot(f: CardFront, drawn = lastDrawn) {
+    slottedDrawn = drawn;
     f.draw(null); const x = o.slot.getContext('2d')!; o.slot.width = CARD_W / 2; o.slot.height = CARD_H / 2;
     x.drawImage(f.canvas, 0, 0, CARD_W / 2, CARD_H / 2); o.slot.hidden = false;
     o.slot.style.visibility = '';
@@ -184,8 +189,9 @@ export function createEventReveal(o: RevealOptions) {
     fired.add('slot');
     if (!o.reduced) o.slot.classList.add('slot-arrive');
   }
-  bindRevealSkip(document, () => !root.hidden, finish);
+  bindRevealSkip(document, () => !root.hidden, finish, e => e.target instanceof Element && !!e.target.closest('#language-toggle'));
   function start(drawn: DrawnLike, now: number, fromPoint: { x: number; y: number }) {
+    lastDrawn = drawn; stampEl.textContent = t('drawn');
     front?.canvas.remove(); front = faceFor(drawn); front.draw(o.reduced || front.face.count === null ? null : 0);
     root.querySelector('.er-front')!.append(front.canvas); from = fromPoint; startAt = now; frozen = null; fired = new Set(); root.hidden = false; o.slot.classList.remove('slot-arrive');
     if (o.reduced) paintSlot(faceFor(drawn));
@@ -244,11 +250,26 @@ export function createEventReveal(o: RevealOptions) {
   function stamp(scale: number, opacity: number) { stampEl.style.transform = `translate(-50%,-50%) rotate(-12deg) scale(${scale})`; stampEl.style.opacity = String(opacity); }
   return {
     start, update, finish,
+    refreshLanguage() {
+      stampEl.textContent = t('drawn');
+      if (!lastDrawn) return;
+      const wasActive = !root.hidden;
+      front?.canvas.remove(); front = faceFor(lastDrawn); front.draw(null);
+      root.querySelector('.er-front')!.append(front.canvas);
+      if (wasActive) {
+        if (slottedDrawn) {
+          const hidden = o.slot.hidden, visibility = o.slot.style.visibility;
+          paintSlot(faceFor(slottedDrawn), slottedDrawn);
+          o.slot.hidden = hidden; o.slot.style.visibility = visibility;
+        }
+        update(performance.now() / 1000);
+      } else paintSlot(front);
+    },
     /** 截圖用：停在時間表的某一刻，不發聲。 */
     freeze(drawn: DrawnLike, t: number, fromPoint: { x: number; y: number }) { start(drawn, 0, fromPoint); frozen = t; fired = new Set(['draw', 'flip', 'stamp', 'reward', 'slot']); update(0); },
     /** 不播展示，直接把這張卡面放進操作區（例如截圖腳本快轉之後）。 */
-    show(drawn: DrawnLike) { paintSlot(faceFor(drawn)); },
-    reset() { root.hidden = true; o.slot.hidden = true; o.slot.style.visibility = ''; o.stage.style.translate = ''; front = null; },
+    show(drawn: DrawnLike) { lastDrawn = drawn; paintSlot(faceFor(drawn)); },
+    reset() { root.hidden = true; o.slot.hidden = true; o.slot.style.visibility = ''; o.stage.style.translate = ''; front = null; lastDrawn = slottedDrawn = null; },
     get active() { return !root.hidden; },
   };
 }
@@ -257,5 +278,5 @@ function easeInOut(t: number) { return t < .5 ? 4 * t ** 3 : 1 - (-2 * t + 2) **
 
 /** 卡面特寫：一次畫出某一版的六張卡（截圖用）。 */
 export function faceSheet(variant: ArtVariant, names: readonly { id: string; name: string }[], values: EventCardValues, materialName: string) {
-  return names.map(card => { const f = new CardFront(variant, card.id, card.name, cardFace(card.id, values, materialName, 12)); f.draw(null); return f.canvas; });
+  return names.map(card => { const f = new CardFront(variant, card.id, cardName(card.id as EventCardId), cardFace(card.id, values, materialName, 12, language.current)); f.draw(null); return f.canvas; });
 }

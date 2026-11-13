@@ -1,9 +1,10 @@
 /** 展示的跳過手勢由捕捉階段接住，不能同時發射、擲骰或捲動。 */
-export function bindRevealSkip(target: EventTarget, active: () => boolean, finish: () => void) {
+export function bindRevealSkip(target: EventTarget, active: () => boolean, finish: () => void, bypass: (event: Event) => boolean = () => false) {
   let pointer: number | null = null, swallowClick = false;
   const held = new Set<string>();
   const consume = (e: Event) => { e.preventDefault(); e.stopImmediatePropagation(); };
   const down = (event: Event) => {
+    if (bypass(event)) return;
     const e = event as PointerEvent;
     if (e.button !== 0 || e.isPrimary === false) return;
     swallowClick = false;
@@ -16,10 +17,12 @@ export function bindRevealSkip(target: EventTarget, active: () => boolean, finis
     consume(e); pointer = null;
   };
   const click = (e: Event) => {
+    if (bypass(e)) return;
     if (swallowClick) { swallowClick = false; consume(e); }
     else if (active()) { consume(e); finish(); }
   };
   const keydown = (event: Event) => {
+    if (bypass(event)) return;
     const e = event as KeyboardEvent;
     if (!['Space', 'Enter', 'NumpadEnter'].includes(e.code)) return;
     if (held.has(e.code)) { consume(e); return; }
