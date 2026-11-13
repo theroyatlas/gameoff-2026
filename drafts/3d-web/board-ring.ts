@@ -16,7 +16,8 @@ import { classifyImpact, impactStrength, COMBO_WINDOW_SECONDS, tallyStep, landin
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { readArt } from './art-round2';
 import { applyUiSkin } from './ui-skins';
-import { buildCage, type Cage } from './cage';
+import { buildCage, type Cage, type CagePose } from './cage';
+import { readInside } from './inside';
 import { createEventReveal, faceSheet } from './event-card-art';
 import { EVENT_CARDS } from '../../src/event-cards';
 import { closeupView, aimFan } from './closeup';
@@ -69,6 +70,8 @@ export function startBoard() {
   const choice = readChoice(location.search);
   // 介面、怪物籠與事件卡使用選定預設，可由 ?ui=、?cage=、?card= 覆蓋。
   const art = readArt(location.search);
+  // 籠子裡關的東西：不加 ?inside= 時是暖白小光球；a 紅漆木偶怪、b 毛線團怪、c 紙摺怪。
+  const inside = readInside(location.search);
   if (art.ui) applyUiSkin(art.ui);
   const canvas = get<HTMLCanvasElement>('board-scene'), stage = get('board-stage'), labels = get('board-labels');
   const roll = get<HTMLButtonElement>('board-roll'), fire = get<HTMLButtonElement>('board-fire');
@@ -89,7 +92,7 @@ export function startBoard() {
   const camera = new THREE.PerspectiveCamera(30, 16 / 9, .1, 120);
   const camTarget = new THREE.Vector3(0, -.35, .5), camBase = new THREE.Vector3(), lookNow = new THREE.Vector3();
   let elevation = 45 * Math.PI / 180; // resize 的 fit 會依寬高比重新設定。
-  let shot = params.get('cam');
+  let shot = params.get('cam'), cageFocus: THREE.Vector3 | null = null;
   const aimHint = document.createElement('p'); aimHint.id = 'board-closeup-aim'; aimHint.hidden = true;
   aimHint.setAttribute('aria-live', 'polite'); stage.append(aimHint);
   let inspectMode = false, inspectedId: number | null = null, legacyDensity = false;
@@ -172,6 +175,8 @@ export function startBoard() {
   const resonanceMaterial = new THREE.MeshBasicMaterial({ color: colors.resonance });
   const balls = new Map<number, { sphere: THREE.Mesh; ring: THREE.Mesh; label: HTMLElement }>();
   const monsters = new Map<number, THREE.Object3D>(), cages = new Map<number, Cage>();
+  // 已被規則擊破、正在播倒下動作的籠子；只是呈現，規則裡已經沒有這隻怪物。
+  const dying = new Map<number, Cage>(), lastHp = new Map<number, number>();
   const monsterGeometry = new THREE.IcosahedronGeometry(.26, 0), monsterMaterial = new THREE.MeshStandardMaterial({ color: TOKENS.brassEdge, metalness: .75, roughness: .35, wireframe: true });
   const effectGeometry = new THREE.TorusGeometry(1, .012, 5, 64);
   const effects = new Map<object, THREE.Mesh>();
@@ -265,6 +270,7 @@ export function startBoard() {
   function resetVisuals() {
     for (const item of balls.values()) { scene.remove(item.sphere, item.ring); (item.sphere.material as THREE.MeshPhysicalMaterial).map?.dispose(); (item.sphere.material as THREE.Material).dispose(); item.label.remove(); } balls.clear();
     for (const item of monsters.values()) scene.remove(item); monsters.clear(); cages.clear();
+    for (const cage of dying.values()) scene.remove(cage.group); dying.clear(); lastHp.clear();
     reveal?.reset(); lastCards = 0;
     for (const item of effects.values()) { scene.remove(item); (item.material as THREE.Material).dispose(); } effects.clear();
     for (const f of floaters) f.el.remove(); floaters.length = 0;
@@ -306,6 +312,8 @@ export function startBoard() {
     // 截圖用特寫鏡頭（?cam=ball／?cam=icon），只改鏡頭，不改任何狀態。
     if (shot === 'ball') { camTarget.set(-.6, 0, .4); camBase.set(-.6, 2.6, 3.0); camera.fov = 30; }
     if (shot === 'icon') { camTarget.set(-1.15, -.25, 4.55); camBase.set(-1.15, 1.75, 6.55); camera.fov = 30; }
+    // 截圖用（?lab=1 的 cagePose）：對準一隻怪物籠，仰角同整桌鏡頭 45°。
+    if (shot === 'cage' && cageFocus) { camTarget.copy(cageFocus); camBase.set(cageFocus.x, cageFocus.y + 1.3, cageFocus.z + 1.3); camera.fov = 30; }
     camera.position.copy(camBase); camera.lookAt(camTarget); lookNow.copy(camTarget); camera.updateProjectionMatrix(); camera.updateMatrixWorld();
     for (const item of balls.values()) item.sphere.rotation.x = -elevation;
   }
@@ -523,14 +531,22 @@ export function startBoard() {
     }
     visibleLinkCount = links.length;
     yarn.set(links); yarn.animate(now, reduced, game.phase === 'active' ? 1.4 : 1); pulses.update(now, reduced);
-    for (const [id, item] of monsters) if (!game.monsters.some(m => m.id === id)) { scene.remove(item); monsters.delete(id); cages.delete(id); }
+    for (const [id, item] of monsters) if (!game.monsters.some(m => m.id === id)) {
+      const cage = cages.get(id);
+      // 有籠內角色時，被擊破的怪物先播倒下的動作再收走；沒有時照舊立刻移除。
+      if (cage?.inside && game.status !== 'ready') { cage.defeat(now); dying.set(id, cage); } else scene.remove(item);
+      monsters.delete(id); cages.delete(id); lastHp.delete(id);
+    }
+    for (const [id, cage] of dying) { cage.update(now, reduced, 0); if (cage.gone(now)) { scene.remove(cage.group); dying.delete(id); } }
     for (const m of game.monsters) {
       if (!monsters.has(m.id)) {
-        if (art.cage) { const cage = buildCage(art.cage, m.id); cage.group.position.set(W(m.x), -.03, Z(m.y)); scene.add(cage.group); monsters.set(m.id, cage.group); cages.set(m.id, cage); }
+        if (art.cage) { const cage = buildCage(art.cage, m.id, inside); cage.group.position.set(W(m.x), -.03, Z(m.y)); scene.add(cage.group); monsters.set(m.id, cage.group); cages.set(m.id, cage); }
         else monsters.set(m.id, mesh(monsterGeometry, monsterMaterial, W(m.x), .23, Z(m.y)));
       }
-      const cage = cages.get(m.id);
-      if (cage) cage.update(now, reduced); else if (!reduced) monsters.get(m.id)!.rotation.y = now * .4 + m.id;
+      const cage = cages.get(m.id), hp = m.maxHp > 0 ? m.hp / m.maxHp : 1;
+      // 血量往下掉就是被打到：籠內角色晃一下（傷害浮字那條路也會觸發，同一刻重複呼叫無妨）。
+      if (cage?.inside) { const before = lastHp.get(m.id); if (before !== undefined && m.hp < before) cage.jolt(now); lastHp.set(m.id, m.hp); }
+      if (cage) cage.update(now, reduced, hp); else if (!reduced) monsters.get(m.id)!.rotation.y = now * .4 + m.id;
     }
     reveal?.update(now);
     for (const [key, ring] of effects) {
@@ -589,7 +605,7 @@ export function startBoard() {
   }
   // 驗收只讀取真實規則與投影；遊戲操作仍走 DOM 輸入。
   Object.assign(window, { boardEvidence: {
-    snapshot: () => ({ game: game.snapshot(), frameCount, visual: { choice, art, cardReveals, cages: cages.size, ring: true, reduced, cards: tiles.map(t => ({ index: t.index, kind: t.kind, x: t.mesh.position.x, z: t.mesh.position.z, highlighted: t.top.emissiveIntensity > 0 })), pawn: { x: pawn.position.x, z: pawn.position.z }, die: lastDie, yarn: yarn.core.count, ballPx, ballTags: !!game.balls.length && ballPx < 22, camera: { fov: camera.fov, elevation: elevation * 180 / Math.PI } }, renderedBalls: balls.size, renderedMonsters: monsters.size, drawCalls: renderer.info.render.calls, audio: audio.context?.state ?? 'not-started', sounds: { played: audio.played, log: audio.log.slice(-60), kinds: [...audio.kinds].sort() }, juice: { bursts: juice.bursts, maxStep: juice.maxStep, floaters: juice.damageNumbers, slams: juice.slams } }),
+    snapshot: () => ({ game: game.snapshot(), frameCount, visual: { choice, art, inside, cardReveals, cages: cages.size, dyingCages: dying.size, ring: true, reduced, cards: tiles.map(t => ({ index: t.index, kind: t.kind, x: t.mesh.position.x, z: t.mesh.position.z, highlighted: t.top.emissiveIntensity > 0 })), pawn: { x: pawn.position.x, z: pawn.position.z }, die: lastDie, yarn: yarn.core.count, ballPx, ballTags: !!game.balls.length && ballPx < 22, camera: { fov: camera.fov, elevation: elevation * 180 / Math.PI } }, renderedBalls: balls.size, renderedMonsters: monsters.size, drawCalls: renderer.info.render.calls, audio: audio.context?.state ?? 'not-started', sounds: { played: audio.played, log: audio.log.slice(-60), kinds: [...audio.kinds].sort() }, juice: { bursts: juice.bursts, maxStep: juice.maxStep, floaters: juice.damageNumbers, slams: juice.slams } }),
     project,
   } });
   // ?lab=1：截圖腳本用。用固定角度、固定節奏推進同一個 seed，讓各版本的球位完全相同。只呼叫公開的規則操作。
@@ -625,6 +641,16 @@ export function startBoard() {
         reveal.freeze({ id: card.id, name: cardText(card).name, material: options.card.material ?? 1, targetBallId: options.card.target }, options.card.t, { x: r.left + (p.x + 1) * r.width / 2, y: r.top + (1 - p.y) * r.height / 2 });
       }
       render(); return { tallyVisible: !tally.hidden, cardActive: reveal?.active ?? false };
+    },
+    /**
+     * 僅供籠內反應對照截圖：把第 index 隻怪物的籠內反應停在某一刻，並可把鏡頭對準它。
+     * 只改呈現（姿勢與鏡頭），不改規則的血量、RNG 或遊戲時鐘；pose 傳 null 解除。
+     */
+    cagePose(index: number, pose: CagePose | null, focus = false) {
+      const m = game.monsters[index]; if (!m) return null;
+      const cage = cages.get(m.id); cage?.pose(pose);
+      if (focus) { cageFocus = new THREE.Vector3(W(m.x), .15, Z(m.y)); shot = 'cage'; resize(); }
+      render(); return { id: m.id, hp: m.hp, maxHp: m.maxHp, x: m.x, y: m.y, hasInside: !!cage?.inside };
     },
     /** 卡面特寫：回傳某一版六張卡的 PNG data URL（程式繪製）。 */
     faces(variant: 'a' | 'b' | 'c') { return faceSheet(variant, EVENT_CARDS, C.board.events, materialName(1)).map(c => c.toDataURL('image/png')); },

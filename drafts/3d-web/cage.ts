@@ -1,6 +1,8 @@
 import * as THREE from 'three';
 import { TOKENS, paperBase, handPath, paperBumpTexture, walnutTexture } from './style1';
 import type { ArtVariant } from './art-round2';
+import { buildInside, type Inside } from './cage-inside';
+import { INSIDE_TIMING } from './inside';
 
 /**
  * 怪物籠三版。籠子的材料都取自參考圖裡桌上已有的東西，讓怪物一眼和球（玻璃／鋼／黃銅實心球）、
@@ -10,7 +12,14 @@ import type { ArtVariant } from './art-round2';
  * c：紙卡摺成的燈籠籠（02 的紙卡、套印邊框、手抖墨線）：五片紙卡圍成一圈，墨線畫柵欄、柵欄間鏤空。
  */
 const css = (hex: number) => `#${hex.toString(16).padStart(6, '0')}`;
-export interface Cage { group: THREE.Group; inner: THREE.Mesh; jolt(now: number): void; update(now: number, reduced: boolean): void }
+/** 截圖用：把籠內反應停在某一刻（血量比例、受傷後幾秒、擊破後幾秒）。只改呈現。 */
+export interface CagePose { hp: number; hitAgo?: number; defeatAgo?: number }
+export interface Cage {
+  group: THREE.Group; inner: THREE.Mesh; inside: Inside | null;
+  jolt(now: number): void; update(now: number, reduced: boolean, hp?: number): void;
+  /** 怪物被擊破（規則已移除）：籠內播倒下的動作，gone() 為真時再收走。 */
+  defeat(now: number): void; gone(now: number): boolean; pose(p: CagePose | null): void;
+}
 
 let shared: ReturnType<typeof makeShared> | undefined;
 function makeShared() {
@@ -54,9 +63,12 @@ function rod(a: THREE.Vector3, b: THREE.Vector3, radius: number, material: THREE
   m.position.copy(a).add(b).multiplyScalar(.5); m.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), b.clone().sub(a).normalize()); return m;
 }
 
-export function buildCage(variant: ArtVariant, id: number): Cage {
+export function buildCage(variant: ArtVariant, id: number, insideVariant: ArtVariant | null = null): Cage {
   const s = shared ??= makeShared(), group = new THREE.Group(), body = new THREE.Group(); group.add(body);
   const inner = new THREE.Mesh(s.innerGeo, s.inner); inner.position.y = .2; inner.castShadow = false; body.add(inner);
+  // 籠內換成角色時，角色站在底座上、不跟著籠子轉，臉一直朝鏡頭（+z）。
+  const inside = insideVariant ? buildInside(insideVariant, id) : null;
+  if (inside) { inner.visible = false; inside.root.position.y = variant === 'c' ? .02 : .05; group.add(inside.root); }
   if (variant === 'a') {
     const base = new THREE.Mesh(new THREE.CylinderGeometry(.22, .24, .05, 24), s.walnut); base.position.y = .025; group.add(base);
     // 三種線框輪流：二十面體、雙角錐、方塊（取自 style-1.png 場上的線框籠；四角錐改成上下對稱的雙角錐，避免輪廓像棋子）。
@@ -91,14 +103,25 @@ export function buildCage(variant: ArtVariant, id: number): Cage {
     inner.position.y = .17;
   }
   group.scale.setScalar(1.3);
-  group.traverse(o => { if (o instanceof THREE.Mesh && o !== inner) { o.castShadow = true; o.receiveShadow = !(variant === 'c' && o.material === s.paperMat); } });
-  let joltAt = -99;
-  return { group, inner,
+  group.traverse(o => { if (o instanceof THREE.Mesh && o !== inner && !inside?.root.getObjectById(o.id)) { o.castShadow = true; o.receiveShadow = !(variant === 'c' && o.material === s.paperMat); } });
+  let joltAt = -99, defeatAt = -1, override: CagePose | null = null;
+  return { group, inner, inside,
     jolt(now) { joltAt = now; },
-    update(now, reduced) {
+    defeat(now) { if (defeatAt < 0) defeatAt = now; },
+    gone(now) { return defeatAt >= 0 && now - defeatAt >= INSIDE_TIMING.defeat; },
+    pose(p) { override = p; },
+    update(now, reduced, hp = 1) {
+      if (override) { hp = override.hp; joltAt = override.hitAgo !== undefined ? now - override.hitAgo : -99; defeatAt = override.defeatAgo !== undefined ? now - override.defeatAgo : -1; }
       if (!reduced) body.rotation.y = now * .4 + id;
       // 被打到：籠子往上一縮再彈回，0.18 秒；減少動態時不動。
       const t = (now - joltAt) / .18, k = !reduced && t >= 0 && t < 1 ? Math.sin(Math.PI * t) * (1 - t) : 0;
       body.scale.set(1 + .18 * k, 1 - .14 * k, 1 + .18 * k); (inner.material as THREE.MeshStandardMaterial).emissiveIntensity = .9;
+      if (inside) {
+        const defT = defeatAt >= 0 ? now - defeatAt : -1;
+        inside.update({ now, reduced, hp: defT >= 0 ? 0 : hp, hitT: now - joltAt, defT });
+        // 擊破後最後 0.2 秒籠子縮小收走；減少動態時直接在時間到時移除。
+        const end = defT >= 0 && !reduced ? Math.min(1, Math.max(0, (defT - (INSIDE_TIMING.defeat - .2)) / .2)) : 0;
+        group.scale.setScalar(1.3 * (1 - end));
+      }
     } };
 }
