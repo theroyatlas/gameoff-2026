@@ -26,16 +26,16 @@ export const en = {
   "surge": "SURGE · Wake every ball; +1 charge each",
   "tune": "TUNE · {v0}: threshold −1, same-frequency multiplier ×1.5 this turn",
   "eventBanner": "EVENT · {v0}: {v1}",
-  "lapBanner": "START · Lap complete; +{v0} shot next turn",
+  "lapBanner": "START · Lap complete; +{v0} {v0|shot|shots} next turn",
   "depth": "Depth {v0}",
-  "extraFloater": "+{v0} shot",
+  "extraFloater": "+{v0} {v0|shot|shots}",
   "turn": "Turn {v0}",
-  "shots": "{v0} shots left",
+  "shots": "{v0} {v0|shot|shots} left",
   "clock": "Boss clock {v0}",
   "die": "Die {v0}",
-  "next": "Next: {v0} · {v1} balls",
-  "wave": "Wave {v0} · Next in {v1} turns",
-  "bonus": "Next turn: +{v0} shots · {v1} laps",
+  "next": "Next: {v0} · {v1} {v1|ball|balls}",
+  "wave": "Wave {v0} · Next in {v1} {v1|turn|turns}",
+  "bonus": "Next turn: +{v0} {v0|shot|shots} · {v1} {v1|lap|laps}",
   "card": "Turn {v0} · {v1}\n{v2}",
   "resonating": "Resonating",
   "charging": "Charging",
@@ -62,7 +62,7 @@ export const en = {
   "helpFlow": "Roll → Move → Fire 3 shots → Settle (up to 6 seconds) → Boss clock +1.",
   "helpControls": "Click the field or drag and release to fire; ← → aim, Space rolls/fires. Defeat the Boss to win; more than 10 monsters ends the game.",
   "inspected": "Ball #{id} · {material} · {state}",
-  "result": "{outcome} {turns} turns · {shots} shots · Restart to play the same seed again in this browser.",
+  "result": "{outcome} {turns} {turns|turn|turns} · {shots} {shots|shot|shots} · Restart to play the same seed again in this browser.",
   "chainLive": "Chain {chain}, damage {damage}",
   "aimHint": "{arrow} Aim {angle}° · Fan shows spread{crop}",
   "cropped": " (launcher outside close-up)",
@@ -90,7 +90,7 @@ export const en = {
   "burstTarget": "Ball #{id}: burst now",
   "burstShort": "Next ball bursts on launch",
   "chipShort": "Direct Boss damage",
-  "effect.extra-shot": "+{n} shot next turn; stacks with lap bonuses.",
+  "effect.extra-shot": "+{n} {n|shot|shots} next turn; stacks with lap bonuses.",
   "effect.change-material": "Next ball becomes {material}; only that ball changes.",
   "effect.rewind": "Rewind the Boss clock by {n}, down to 0. Existing monsters stay.",
   "effect.double-burst": "{target}: radius, ignition and damage ×{n} for its next burst only.",
@@ -112,7 +112,7 @@ export const en = {
   "replaySummary": "Kills {v0} · Boss −{v1}",
   "rtWin": "Boss defeated!",
   "rtLost": "Monsters filled the field",
-  "rtResult": "{v0} seconds · {v1} shots · {v2} SHIFTs",
+  "rtResult": "{v0} {v0|second|seconds} · {v1} {v1|shot|shots} · {v2} {v2|SHIFT|SHIFTs}",
   "rtDepth": "Depth {depth}",
   "rtUnavailable": "3D is unavailable",
   "rtFallback": "Try the 2D version",
@@ -125,7 +125,7 @@ export const en = {
   "rtFlow": "Flow together",
   "rtDrag": "Drag and release",
   "rtMaxDepth": "Deepest chain: {v0}",
-  "rtStatus": "{shots} balls on the field · {action}",
+  "rtStatus": "{shots} {shots|ball|balls} on the field · {action}",
   "rtTitle": "Resonance",
   "rtSubtitle": "Resonance · Wood and brass",
   "rtWait": "Awaiting the first ball",
@@ -283,7 +283,10 @@ export const zhTW: Record<TextKey, string> = {
 };
 export const strings = { en, 'zh-TW': zhTW };
 export function t(key: TextKey, values: Record<string, string | number> = {}, locale: Language = language.current): string {
-  return strings[locale][key].replace(/\{(\w+)\}/g, (_, name: string) => String(values[name] ?? `{${name}}`));
+  // English counts use {name|one|other}: the singular form when the value is exactly 1.
+  return strings[locale][key]
+    .replace(/\{(\w+)\|([^|}]*)\|([^}]*)\}/g, (_, name: string, one: string, other: string) => Number(values[name]) === 1 ? one : other)
+    .replace(/\{(\w+)\}/g, (_, name: string) => String(values[name] ?? `{${name}}`));
 }
 export function materialName(index: number, locale: Language = language.current) { return t(`material${index}` as TextKey, {}, locale); }
 export function cardName(id: EventCardId, locale: Language = language.current) { return t(`card.${id}`, {}, locale); }

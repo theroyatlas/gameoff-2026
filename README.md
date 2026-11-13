@@ -10,7 +10,7 @@ English is the default. Select **中文** or **English** in the header to switch
 
 1. Select **Start**, then **Roll**. The pawn moves clockwise and activates its landing tile.
 2. Fire 3 shots per turn. Click the field, or drag and release to aim and fire. Arrow keys aim; Space rolls or fires. The aim slider and **Fire** button also work.
-3. SURGE wakes every ball and adds charge. TUNE strengthens one material for the turn. Passing START earns 1 extra shot for the next turn. EVENT draws one of six cards; see the [full rules and event cards](drafts/docs/itch-page.md).
+3. SURGE wakes every ball and adds charge. TUNE strengthens one material for the turn. Passing START earns 1 extra shot for the next turn. EVENT draws one of six cards: One More Shot, Material Swap, Clock Rewind, Double Resonance, Release Now and Core Tap. When a card is drawn, its face shows the effect.
 4. After firing, wait for balls to settle (up to 6 seconds). The Boss clock advances by 1. A wave arrives the **first time the clock reaches 3, 6, 9…**. Clock Rewind moves it back by 1; revisiting an already reached threshold does not spawn that wave again.
 5. Reduce the Boss to zero HP to win. More than 10 monsters ends the game. Select **Restart** to return to setup. In the same browser, you can play again with the same seed.
 
@@ -34,14 +34,6 @@ npm run build:main
 ```
 
 The regular build is `drafts/3d-web/dist-main/index.html`. It can be opened directly in a WebGL-enabled browser, offline. Fonts are bundled; runtime makes no external requests. The project code is MIT; the bundled Kalam font is SIL OFL 1.1, documented in [ASSETS.md](ASSETS.md).
-
-For the language review build, from `drafts/3d-web` run:
-
-```sh
-npx vite build --outDir dist-lang-b --emptyOutDir
-```
-
-This writes only `drafts/3d-web/dist-lang-b/`.
 
 ## URL options
 

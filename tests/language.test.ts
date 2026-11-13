@@ -27,6 +27,23 @@ describe('language B', () => {
       expect(zhTW[key].match(/\{\w+\}/g)?.sort()).toEqual(en[key].match(/\{\w+\}/g)?.sort());
     }
   });
+  it('uses singular English words when a count is exactly 1', () => {
+    expect(t('shots', { v0: 1 }, 'en')).toBe('1 shot left');
+    expect(t('shots', { v0: 0 }, 'en')).toBe('0 shots left');
+    expect(t('shots', { v0: 3 }, 'en')).toBe('3 shots left');
+    expect(t('bonus', { v0: 1, v1: 1 }, 'en')).toBe('Next turn: +1 shot · 1 lap');
+    expect(t('bonus', { v0: 2, v1: 0 }, 'en')).toBe('Next turn: +2 shots · 0 laps');
+    expect(t('next', { v0: 'Solid', v1: 1 }, 'en')).toBe('Next: Solid · 1 ball');
+    expect(t('wave', { v0: 2, v1: 1 }, 'en')).toBe('Wave 2 · Next in 1 turn');
+    expect(t('rtResult', { v0: 1, v1: 1, v2: 2 }, 'en')).toBe('1 second · 1 shot · 2 SHIFTs');
+    expect(t('result', { outcome: 'Won.', turns: 1, shots: 2 }, 'en')).toMatch(/^Won\. 1 turn · 2 shots ·/);
+    for (const key of Object.keys(en) as (keyof typeof en)[]) {
+      for (const n of [0, 1, 2]) expect(t(key, { v0: n, v1: n, v2: n, n, shots: n, turns: n, id: n }, 'en')).not.toMatch(/\{\w+\|/);
+    }
+  });
+  it('leaves Chinese count text unchanged', () => {
+    expect(t('shots', { v0: 1 }, 'zh-TW')).toBe(zhTW.shots.replace('{v0}', '1'));
+  });
   it('has names and descriptions for every event, including empty-field variants', () => {
     for (const card of EVENT_CARDS) for (const locale of ['en', 'zh-TW'] as const) for (const targetBallId of [undefined, 12]) {
       const text = cardText({ ...card, material: 1, targetBallId }, locale);
