@@ -4,10 +4,10 @@ import { CONFIG as C } from '../src/config';
 import { EVENT_CARDS } from '../src/event-cards';
 
 describe('美術第二輪的版本參數與卡面文字', () => {
-  it('不加參數時三組都是 null（維持改版前畫面），只接受 a／b／c', () => {
-    expect(readArt('')).toEqual({ ui: null, cage: null, card: null });
+  it('不加參數時採用選定版本，只接受 a／b／c', () => {
+    expect(readArt('')).toEqual({ ui: 'a', cage: 'b', card: 'a' });
     expect(readArt('?ui=b&cage=c&card=a&ball=a')).toEqual({ ui: 'b', cage: 'c', card: 'a' });
-    expect(readArt('?ui=d&cage=&card=A')).toEqual({ ui: null, cage: null, card: null });
+    expect(readArt('?ui=d&cage=&card=A')).toEqual({ ui: 'a', cage: 'b', card: 'a' });
   });
   it('卡面數字取自規則設定，六張卡都有大字', () => {
     const v = C.board.events;

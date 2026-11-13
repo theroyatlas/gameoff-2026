@@ -11,7 +11,7 @@ export interface StyleChoice { ball: BallStyle; icon: IconStyle; light: LightSty
 
 export function readChoice(search: string): StyleChoice {
   const q = new URLSearchParams(search), pick = (k: string, d: 'a' | 'b' | 'c') => { const v = q.get(k); return v === 'a' || v === 'b' || v === 'c' ? v : d; };
-  return { ball: pick('ball', 'b'), icon: pick('icon', 'a'), light: pick('light', 'a'), ring: q.get('ring') === '1' };
+  return { ball: pick('ball', 'a'), icon: pick('icon', 'b'), light: pick('light', 'c'), ring: q.get('ring') === '1' };
 }
 
 /** 色票：用途寫在 DESIGN.md 第 2 節。 */

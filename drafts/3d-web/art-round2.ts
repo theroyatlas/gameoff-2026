@@ -1,14 +1,14 @@
 /**
  * 美術第二輪的三組可挑選版本（介面、怪物籠、事件卡卡面）。純資料，不碰 DOM 或 three.js，方便單元測試。
- * 不加參數時三組都是 null：畫面維持改版前的樣子。
+ * 不加參數時使用紙卡介面、毛線木樁籠與手繪紙卡。
  */
 export type ArtVariant = 'a' | 'b' | 'c';
 export interface ArtChoice { ui: ArtVariant | null; cage: ArtVariant | null; card: ArtVariant | null }
 
 export function readArt(search: string): ArtChoice {
   const q = new URLSearchParams(search);
-  const pick = (key: string) => { const v = q.get(key); return v === 'a' || v === 'b' || v === 'c' ? v : null; };
-  return { ui: pick('ui'), cage: pick('cage'), card: pick('card') };
+  const pick = (key: string, fallback: ArtVariant) => { const v = q.get(key); return v === 'a' || v === 'b' || v === 'c' ? v : fallback; };
+  return { ui: pick('ui', 'a'), cage: pick('cage', 'b'), card: pick('card', 'a') };
 }
 
 export interface EventCardValues { bonusShots: number; rewind: number; burstMultiplier: number; bossDamage: number }

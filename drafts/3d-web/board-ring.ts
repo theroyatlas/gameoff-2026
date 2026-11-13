@@ -57,7 +57,7 @@ export function startBoard() {
   const realtimeURL = new URL(location.href); realtimeURL.searchParams.set('mode', 'realtime');
   get<HTMLAnchorElement>('board-realtime').href = realtimeURL.href;
   const choice = readChoice(location.search);
-  // 美術第二輪的三組（?ui=、?cage=、?card=）；不加參數時維持改版前的畫面。
+  // 介面、怪物籠與事件卡使用選定預設，可由 ?ui=、?cage=、?card= 覆蓋。
   const art = readArt(location.search);
   if (art.ui) applyUiSkin(art.ui);
   const canvas = get<HTMLCanvasElement>('board-scene'), stage = get('board-stage'), labels = get('board-labels');
