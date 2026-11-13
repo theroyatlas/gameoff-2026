@@ -7,7 +7,8 @@ import { cower, INSIDE_TIMING } from './inside';
  * 籠子裡關的東西三版。材料只用參考圖桌上已有的：紅漆木、骨白、毛線、紙卡、麥克筆墨線。
  * a：紅漆木偶怪（02 特寫與 style-1.png 的紅漆木棋子，眼睛取骰子的骨白與點色），頭上兩支原木小角。
  * b：毛線團怪（01／04 的毛線，顏色取 TUNE 灰藍，不跟共振的青色、籠子的赭色混）。
- * c：紙摺怪（02 的紙卡、EVENT 赭黃套印邊框，臉用粗麥克筆手抖線畫）。
+ * c：紙摺怪（02 的紙卡、EVENT 赭黃套印邊框，臉用粗麥克筆手抖線畫）。紙用 TUNE 灰藍卡色：米白紙在手機整桌鏡頭下
+ *    會和赭色毛線木樁籠混在一起，冷色的卡紙才和暖色的籠子、桌面分得開。
  * 反應全部由規則的血量與擊破驅動，只讀不寫；歪斜、角度都依怪物編號寫死，不用亂數。
  */
 export interface InsideState { now: number; reduced: boolean; hp: number; hitT: number; defT: number }
@@ -28,9 +29,10 @@ function makeShared() {
   const yarnBall = new THREE.MeshStandardMaterial({ map: yarnBallTexture(), roughness: 1, emissive: 0x4f6f9a, emissiveIntensity: .28 });
   const yarnStrand = new THREE.MeshStandardMaterial({ map: strandTexture(), roughness: 1, emissive: 0x4f6f9a, emissiveIntensity: .28 });
   const faces = { calm: paperFace('calm'), hurt: paperFace('hurt'), out: paperFace('out') };
-  const paperFront = new THREE.MeshStandardMaterial({ map: faces.calm, roughness: .92, side: THREE.DoubleSide, emissive: TOKENS.paper, emissiveIntensity: .3, emissiveMap: faces.calm });
+  // 自發光用白色乘上紙面貼圖，讓籠子陰影裡的卡紙仍是原本的灰藍，不被染成暖色。
+  const paperFront = new THREE.MeshStandardMaterial({ map: faces.calm, roughness: .92, side: THREE.DoubleSide, emissive: 0xffffff, emissiveIntensity: .3, emissiveMap: faces.calm });
   const plain = plainPaper();
-  const paperBack = new THREE.MeshStandardMaterial({ map: plain, roughness: .92, side: THREE.DoubleSide, emissive: TOKENS.paper, emissiveIntensity: .3, emissiveMap: plain });
+  const paperBack = new THREE.MeshStandardMaterial({ map: plain, roughness: .92, side: THREE.DoubleSide, emissive: 0xffffff, emissiveIntensity: .3, emissiveMap: plain });
   return {
     lacquer, rawWood, bone, pip, yarnBall, yarnStrand, faces, paperFront, paperBack,
     eye: new THREE.SphereGeometry(.016, 12, 8), pupil: new THREE.SphereGeometry(.009, 10, 6),
@@ -64,12 +66,12 @@ function strandTexture() {
   const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(1, 6); return t;
 }
 /**
- * 紙摺怪的正面：紙纖維底、EVENT 赭黃套印邊框（往右下偏 1.5 px）、粗麥克筆畫的臉。
+ * 紙摺怪的正面：TUNE 灰藍卡紙（紙纖維底）、EVENT 赭黃套印邊框（往右下偏 1.5 px）、粗麥克筆畫的臉。
  * calm：圓眼＋鋸齒嘴；hurt：擠成 > < 的眼＋波浪嘴；out：被擊破的 × 眼。
  */
 function paperFace(mood: 'calm' | 'hurt' | 'out') {
   const w = 160, h = 192, c = document.createElement('canvas'); c.width = w; c.height = h; const x = c.getContext('2d')!;
-  paperBase(x, w, h, 517);
+  paperBase(x, w, h, 517, TOKENS.tune);
   x.save(); x.strokeStyle = TOKENS.event; x.globalAlpha = .9; x.lineWidth = 12; x.strokeRect(9.5, 9.5, w - 16, h - 16); x.restore();
   const ink = css(TOKENS.ink), ex = [52, 108], ey = 78;
   if (mood === 'calm') {
@@ -88,7 +90,7 @@ function paperFace(mood: 'calm' | 'hurt' | 'out') {
 }
 function plainPaper() {
   const c = document.createElement('canvas'); c.width = 96; c.height = 96; const x = c.getContext('2d')!;
-  paperBase(x, 96, 96, 733);
+  paperBase(x, 96, 96, 733, TOKENS.tune);
   x.save(); x.strokeStyle = TOKENS.event; x.globalAlpha = .9; x.lineWidth = 8; x.strokeRect(6, 6, 85, 85); x.restore();
   const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
 }

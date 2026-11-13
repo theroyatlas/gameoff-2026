@@ -1,13 +1,15 @@
 /**
  * 怪物籠裡關的東西（?inside=a|b|c）。純資料，不碰 DOM 或 three.js，方便單元測試。
- * 不加參數時是 null：沿用籠內的暖白小光球。
- * a：紅漆木偶怪；b：毛線團怪；c：紙摺怪。三版都只換呈現，怪物的位置、數量、血量照規則。
+ * 已選定 c 紙摺怪為預設：不加參數、空值或無效值都是 c；a 紅漆木偶怪、b 毛線團怪仍可用參數切換。
+ * 三版都只換呈現，怪物的位置、數量、血量照規則。
  */
 import type { ArtVariant } from './art-round2';
 
-export function readInside(search: string): ArtVariant | null {
+export const DEFAULT_INSIDE: ArtVariant = 'c';
+
+export function readInside(search: string): ArtVariant {
   const v = new URLSearchParams(search).get('inside');
-  return v === 'a' || v === 'b' || v === 'c' ? v : null;
+  return v === 'a' || v === 'b' || v === 'c' ? v : DEFAULT_INSIDE;
 }
 
 /** 反應時間表（秒）。受傷是短暫的晃動或縮起；擊破後籠子留在場上一下，播完倒下的動作才收走。 */

@@ -20,6 +20,9 @@ describe('選定的六項外觀預設', () => {
       ball: 'b', icon: 'c', light: 'a', ui: 'c', cage: 'a', card: 'b',
     });
   });
+  it('切換籠內角色（?inside=）不影響六項預設', () => {
+    for (const q of ['?inside=a', '?inside=b', '?inside=c', '?inside=']) expect(choices(q)).toEqual(defaults);
+  });
   it('空值或無效值回到各自的預設', () => {
     expect(choices('?ball=&icon=d&light=C&ui=d&cage=&card=A')).toEqual(defaults);
   });

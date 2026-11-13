@@ -47,6 +47,7 @@ The regular build is `drafts/3d-web/dist-main/index.html`. It can be opened dire
 | `?ui=a` / `b` / `c` | Paper controls (default a) / walnut frame / yarn and warm light |
 | `?cage=a` / `b` / `c` | Wire cage / yarn and wooden posts (default b) / paper lantern |
 | `?card=a` / `b` / `c` | Hand-drawn paper (default a) / printed card / walnut and brass plaque; click to skip the reveal |
+| `?inside=a` / `b` / `c` | What sits in each monster cage: red lacquer pawn creature / blue-grey yarn ball creature / folded paper creature on blue-grey card stock (default c) |
 | `?ring=1` | Show the decorative ring in realtime mode; board mode always includes its required ring |
 
 Options can be combined with `&`, for example `?mode=realtime&ball=c&icon=b&light=b&ring=1`.

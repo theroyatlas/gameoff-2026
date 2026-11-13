@@ -25,7 +25,8 @@
     "build:closeup-ab-r": "vite build --outDir dist-closeup-ab-r --emptyOutDir",
     "build:mobile-card": "vite build --outDir dist-mobile-card --emptyOutDir",
     "build:mobile-card-r": "vite build --outDir dist-mobile-card-r",
-    "build:cage-inside": "vite build --outDir dist-cage-inside --emptyOutDir"
+    "build:cage-inside": "vite build --outDir dist-cage-inside --emptyOutDir",
+    "build:cage-c": "vite build --outDir dist-cage-c --emptyOutDir"
   },
   "dependencies": {
     "three": "0.180.0"

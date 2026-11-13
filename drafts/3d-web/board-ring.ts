@@ -70,7 +70,7 @@ export function startBoard() {
   const choice = readChoice(location.search);
   // 介面、怪物籠與事件卡使用選定預設，可由 ?ui=、?cage=、?card= 覆蓋。
   const art = readArt(location.search);
-  // 籠子裡關的東西：不加 ?inside= 時是暖白小光球；a 紅漆木偶怪、b 毛線團怪、c 紙摺怪。
+  // 籠子裡關的東西：預設 c 紙摺怪，可用 ?inside=a（紅漆木偶怪）、?inside=b（毛線團怪）覆蓋。
   const inside = readInside(location.search);
   if (art.ui) applyUiSkin(art.ui);
   const canvas = get<HTMLCanvasElement>('board-scene'), stage = get('board-stage'), labels = get('board-labels');
@@ -533,8 +533,8 @@ export function startBoard() {
     yarn.set(links); yarn.animate(now, reduced, game.phase === 'active' ? 1.4 : 1); pulses.update(now, reduced);
     for (const [id, item] of monsters) if (!game.monsters.some(m => m.id === id)) {
       const cage = cages.get(id);
-      // 有籠內角色時，被擊破的怪物先播倒下的動作再收走；沒有時照舊立刻移除。
-      if (cage?.inside && game.status !== 'ready') { cage.defeat(now); dying.set(id, cage); } else scene.remove(item);
+      // 被擊破的怪物先播籠內角色倒下的動作再收走；重來時（ready）和沒有籠子時立刻移除。
+      if (cage && game.status !== 'ready') { cage.defeat(now); dying.set(id, cage); } else scene.remove(item);
       monsters.delete(id); cages.delete(id); lastHp.delete(id);
     }
     for (const [id, cage] of dying) { cage.update(now, reduced, 0); if (cage.gone(now)) { scene.remove(cage.group); dying.delete(id); } }
@@ -545,7 +545,7 @@ export function startBoard() {
       }
       const cage = cages.get(m.id), hp = m.maxHp > 0 ? m.hp / m.maxHp : 1;
       // 血量往下掉就是被打到：籠內角色晃一下（傷害浮字那條路也會觸發，同一刻重複呼叫無妨）。
-      if (cage?.inside) { const before = lastHp.get(m.id); if (before !== undefined && m.hp < before) cage.jolt(now); lastHp.set(m.id, m.hp); }
+      if (cage) { const before = lastHp.get(m.id); if (before !== undefined && m.hp < before) cage.jolt(now); lastHp.set(m.id, m.hp); }
       if (cage) cage.update(now, reduced, hp); else if (!reduced) monsters.get(m.id)!.rotation.y = now * .4 + m.id;
     }
     reveal?.update(now);
